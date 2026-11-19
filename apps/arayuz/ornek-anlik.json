@@ -1,0 +1,264 @@
+{
+  "sema": 2,
+  "yazan": "cetvel",
+  "surum": "0.1.0",
+  "zaman": "2026-11-15T19:50:00Z",
+  "sira": 1842,
+  "havuzlar": {
+    "claude_max": {
+      "platform": "claude",
+      "etiket": "Claude Max",
+      "durum": "ok",
+      "etkin_kalan": 0.15,
+      "baglayici_pencere": "5s",
+      "kullanilabilir": true,
+      "kaynak": {
+        "tur": "mod_koprusu",
+        "guven": "resmi_arayuz",
+        "okuma": "2026-11-15T19:49:19Z",
+        "yas_sn": 41,
+        "hassasiyet": 0.1
+      },
+      "pencereler": {
+        "5s": {
+          "uzunluk_dk": 300,
+          "kullanilan": 0.85,
+          "kalan": 0.15,
+          "sifirlama": "2026-11-15T21:10:00Z"
+        },
+        "hafta": {
+          "uzunluk_dk": 10080,
+          "kullanilan": 0.39,
+          "kalan": 0.61,
+          "sifirlama": "2026-11-20T07:00:00Z"
+        }
+      },
+      "alt_sayaclar": {
+        "fable_hafta": {
+          "kullanilan": 0.12,
+          "kalan": 0.88,
+          "uzunluk_dk": 10080,
+          "sifirlama": "2026-11-20T07:00:00Z"
+        }
+      },
+      "tahmin": {
+        "5s": {
+          "durum": "deneysel",
+          "etiket": "deneysel",
+          "bitis_tahmini": "2026-11-15T20:22:00Z",
+          "bitis_erken": "2026-11-15T20:10:00Z",
+          "bitis_gec": "2026-11-15T20:44:00Z",
+          "saatlik_hiz": 0.281,
+          "sifirlanmadan_biter": true
+        },
+        "hafta": {
+          "durum": "deneysel",
+          "etiket": "deneysel",
+          "gunluk_butce": 0.136,
+          "sifirlanmadan_biter": false
+        }
+      },
+      "baski": "kacin",
+      "hata": null,
+      "notlar": []
+    },
+    "codex_plus": {
+      "platform": "codex",
+      "etiket": "Codex",
+      "durum": "ok",
+      "etkin_kalan": 0.0,
+      "baglayici_pencere": "hafta",
+      "kullanilabilir": false,
+      "kaynak": {
+        "tur": "codex_app_server",
+        "guven": "resmi_arayuz",
+        "okuma": "2026-11-15T19:48:00Z",
+        "yas_sn": 120
+      },
+      "pencereler": {
+        "5s": {
+          "uzunluk_dk": 300,
+          "kullanilan": 0.0,
+          "kalan": 1.0,
+          "sifirlama": "2026-11-16T00:50:00Z"
+        },
+        "hafta": {
+          "uzunluk_dk": 10080,
+          "kullanilan": 1.0,
+          "kalan": 0.0,
+          "sifirlama": "2026-11-18T10:28:00Z"
+        }
+      },
+      "tahmin": {},
+      "baski": "kacin",
+      "ek": {
+        "sifirlama_kredisi": {
+          "adet": 1,
+          "son": "2026-11-22T00:00:00Z"
+        },
+        "olagan_kullanim": false,
+        "plan_turu": "Plus"
+      },
+      "hata": null,
+      "notlar": [
+        "haftalık bitti, 5s dolu görünse de kullanılamaz"
+      ]
+    },
+    "agy_gemini": {
+      "platform": "agy",
+      "etiket": "Antigravity Gemini",
+      "durum": "ok",
+      "etkin_kalan": 0.46,
+      "baglayici_pencere": "5s",
+      "kullanilabilir": true,
+      "kaynak": {
+        "tur": "agy_usage",
+        "guven": "tahmini",
+        "okuma": "2026-11-15T19:41:20Z",
+        "yas_sn": 520
+      },
+      "pencereler": {
+        "5s": {
+          "uzunluk_dk": 300,
+          "kullanilan": 0.54,
+          "kalan": 0.46,
+          "sifirlama": "2026-11-15T22:40:00Z"
+        },
+        "hafta": {
+          "uzunluk_dk": 10080,
+          "kullanilan": 0.34,
+          "kalan": 0.66,
+          "sifirlama": "2026-11-21T07:00:00Z"
+        }
+      },
+      "tahmin": {
+        "5s": {
+          "durum": "deneysel",
+          "etiket": "deneysel",
+          "bitis_tahmini": "2026-11-15T23:15:00Z",
+          "bitis_erken": "2026-11-15T22:25:00Z",
+          "bitis_gec": "2026-11-16T00:10:00Z",
+          "saatlik_hiz": 0.135,
+          "sifirlanmadan_biter": false
+        }
+      },
+      "baski": "rahat",
+      "hata": null,
+      "notlar": [
+        "tek okuma (±%1 oynak)"
+      ]
+    },
+    "agy_claude_gpt": {
+      "platform": "agy",
+      "etiket": "Antigravity Claude-GPT",
+      "durum": "ok",
+      "etkin_kalan": 0.0,
+      "baglayici_pencere": "5s",
+      "kullanilabilir": false,
+      "kaynak": {
+        "tur": "agy_usage",
+        "guven": "tahmini",
+        "okuma": "2026-11-15T19:41:20Z",
+        "yas_sn": 520
+      },
+      "pencereler": {
+        "5s": {
+          "uzunluk_dk": 300,
+          "kullanilan": 1.0,
+          "kalan": 0.0,
+          "sifirlama": "2026-11-15T21:55:00Z"
+        },
+        "hafta": {
+          "uzunluk_dk": 10080,
+          "kullanilan": 0.72,
+          "kalan": 0.28,
+          "sifirlama": "2026-11-21T07:00:00Z"
+        }
+      },
+      "tahmin": {},
+      "baski": "kacin",
+      "hata": null,
+      "notlar": [
+        "5s penceresi %0 kalan"
+      ]
+    },
+    "agy_argon": {
+      "platform": "agy",
+      "etiket": "Antigravity Argon",
+      "durum": "bayat",
+      "etkin_kalan": 0.62,
+      "baglayici_pencere": "hafta",
+      "kullanilabilir": false,
+      "kaynak": {
+        "tur": "agy_usage",
+        "guven": "bayat",
+        "okuma": "2026-11-15T19:11:00Z",
+        "yas_sn": 2340
+      },
+      "pencereler": {
+        "hafta": {
+          "uzunluk_dk": 10080,
+          "kullanilan": 0.38,
+          "kalan": 0.62,
+          "sifirlama": "2026-11-22T07:00:00Z"
+        }
+      },
+      "tahmin": {},
+      "baski": "rahat",
+      "hata": {
+        "tur": "zaman_asimi"
+      },
+      "notlar": [
+        "son okuma 39 dk önce · veri bayat"
+      ]
+    },
+    "deepseek": {
+      "platform": "deepseek",
+      "etiket": "DeepSeek",
+      "durum": "baglanmadi",
+      "kullanilabilir": false,
+      "bakiye": null,
+      "hata": null,
+      "notlar": [
+        "API anahtarı ayarlı değil"
+      ]
+    },
+    "opencode": {
+      "platform": "opencode",
+      "etiket": "OpenCode",
+      "durum": "ok",
+      "kullanilabilir": true,
+      "kaynak": {
+        "tur": "yerel_gunluk",
+        "guven": "yerel_kayit",
+        "okuma": "2026-11-15T19:50:00Z",
+        "yas_sn": 0
+      },
+      "ek": {
+        "kullanim": {
+          "kota_yok": true,
+          "oturum_24s": 4,
+          "oturum_7g": 23,
+          "oturum_toplam": 187,
+          "belirtec_24s": 1284000,
+          "belirtec_7g": 9630500,
+          "son_etkinlik": "2026-11-15T19:42:00Z"
+        }
+      },
+      "hata": null,
+      "notlar": [
+        "kota yok, kullanım sayacı"
+      ]
+    },
+    "dsh": {
+      "platform": "dsh",
+      "etiket": "DeepSeek Harness",
+      "durum": "baglanmadi",
+      "kullanilabilir": false,
+      "hata": null,
+      "notlar": [
+        "DeepSeek Harness kurulu değil"
+      ]
+    }
+  }
+}

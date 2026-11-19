@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="tr" data-renk="terakota" data-kip="koyu" data-mod="koyu" data-tema="murekkep" data-masaustu="0" data-yuzey="acilir">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cetvel</title>
+  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="stylesheet" href="stil.css">
+</head>
+<body>
+  <!-- Renk körlüğü için paylaşılan SVG desen tanımları -->
+  <svg width="0" height="0" aria-hidden="true" focusable="false" class="svg-depo-gizli">
+    <defs>
+      <pattern id="desen-dikkat" width="6" height="6" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+        <line x1="0" y1="0" x2="0" y2="6" stroke="currentColor" stroke-opacity="0.28" stroke-width="2" />
+      </pattern>
+      <pattern id="desen-kacin" width="6" height="6" patternUnits="userSpaceOnUse">
+        <path d="M0 0L6 6M6 0L0 6" stroke="currentColor" stroke-opacity="0.30" stroke-width="1.4" />
+      </pattern>
+    </defs>
+  </svg>
+
+  <div class="proto-kabuk">
+    <!-- Önizleme / Demo Kontrol Çubuğu (Masaüstü canlı kipinde otomatik gizlenir) -->
+    <header class="proto-cubuk" data-i18n-aria="aria.onizlemeDenetimleri" aria-label="Önizleme denetimleri">
+      <div class="proto-sol">
+        <span class="proto-etiket" id="proto-baslik">CETVEL ARAYÜZ</span>
+        <div class="yuzey-secici" role="tablist" data-i18n-aria="aria.arayuzYuzeyleri" aria-label="Arayüz yüzeyleri">
+          <button type="button" class="yuzey-btn aktif" data-yuzey="acilir" role="tab" aria-selected="true" id="btn-yuzey-acilir">Açılır (340 px)</button>
+          <button type="button" class="yuzey-btn" data-yuzey="pencere" role="tab" aria-selected="false" id="btn-yuzey-pencere">Pencere</button>
+          <button type="button" class="yuzey-btn" data-yuzey="serit" role="tab" aria-selected="false" id="btn-yuzey-serit">Şerit</button>
+        </div>
+      </div>
+
+      <div class="proto-sag">
+        <div class="proto-tema-grup" role="group" data-i18n-aria="aria.hizliRenkKip" aria-label="Hızlı renk ve kip">
+          <button type="button" class="mini-btn" id="btn-proto-kip" data-ipucu-anahtar="ayarlar.temaKipEtiket">Sistem</button>
+          <button type="button" class="mini-btn" id="btn-proto-renk" data-ipucu-anahtar="ayarlar.renkTemasiEtiket">Terakota</button>
+        </div>
+        <select class="mini-secim" id="sec-proto-dil" data-i18n-aria="ayarlar.dilEtiket" aria-label="Dil seçimi">
+          <option value="tr">Türkçe (tr)</option>
+          <option value="en">English (en)</option>
+          <option value="de">Deutsch (de)</option>
+          <option value="fr">Français (fr)</option>
+          <option value="es">Español (es)</option>
+          <option value="pt-BR">Português (pt-BR)</option>
+          <option value="ru">Русский (ru)</option>
+          <option value="ja">日本語 (ja)</option>
+          <option value="ko">한국어 (ko)</option>
+          <option value="zh-Hans">简体中文 (zh-Hans)</option>
+          <option value="zh-Hant">繁體中文 (zh-Hant)</option>
+        </select>
+      </div>
+    </header>
+
+    <!-- Gizli Senaryo Çekmecesi (?demo=1 + Alt+S veya sürüm damgası ile açılır) -->
+    <div class="senaryo-cekmecesi gizli" id="senaryo-cekmecesi" role="region" data-i18n-aria="proto.senaryoBaslik" aria-label="Önizleme senaryoları">
+      <span class="senaryo-baslik" id="senaryo-baslik">Önizleme senaryosu:</span>
+      <div class="senaryo-dugmeler" role="radiogroup" aria-labelledby="senaryo-baslik">
+        <button type="button" class="senaryo-btn aktif" data-senaryo="normal" role="radio" aria-checked="true">Normal</button>
+        <button type="button" class="senaryo-btn" data-senaryo="sikisik" role="radio" aria-checked="false">Sıkışık</button>
+        <button type="button" class="senaryo-btn" data-senaryo="bayat" role="radio" aria-checked="false">Bayat</button>
+        <button type="button" class="senaryo-btn" data-senaryo="hepsi_bitti" role="radio" aria-checked="false">Hepsi bitti</button>
+      </div>
+      <span class="senaryo-kisayol" id="senaryo-kisayol">Alt+S ile gizle</span>
+    </div>
+
+    <!-- Ana Sahne -->
+    <main class="sahne" id="sahne">
+      <!-- 1. AÇILIR PENCERE (340 px tepsi penceresi) -->
+      <section class="yuzey-kapsayici aktif" id="yuzey-acilir" data-i18n-aria="uygulama.acilirEtiket" aria-label="Cetvel Kota Özeti">
+        <div class="tepsi-sahne">
+          <div class="acilir-pencere" id="acilir-pencere" role="dialog" data-i18n-aria="uygulama.acilirEtiket" aria-label="Cetvel Kota Özeti" tabindex="-1">
+            <header class="acilir-ust">
+              <div class="acilir-ust-sol">
+                <span class="marka-logo marka-logo-resim" aria-hidden="true">
+                  <img src="logo.png" width="18" height="18" alt="" draggable="false">
+                </span>
+                <span class="uygulama-ad" id="acilir-uygulama-ad">CETVEL</span>
+                <button type="button" class="surum-damgasi" id="btn-surum-acilir" data-ipucu="">v0.1.0</button>
+              </div>
+              <div class="acilir-ust-eylemler">
+                <span class="ust-guncel" id="acilir-guncel"></span>
+                <button type="button" class="ikon-btn" id="btn-acilir-duzenle" aria-pressed="false" aria-label="Düzenle" data-ipucu="">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <circle cx="5.5" cy="4.5" r="1.4" fill="currentColor"/>
+                    <circle cx="10.5" cy="8" r="1.4" fill="currentColor"/>
+                    <circle cx="6.5" cy="11.5" r="1.4" fill="currentColor"/>
+                  </svg>
+                  <span class="gizli" id="lbl-acilir-duzenle">Düzenle</span>
+                </button>
+              </div>
+            </header>
+
+            <!-- Genel + platform sekmeleri (altında platformun en dar kalanı ince çizgi) -->
+            <nav class="platform-sekmeler" id="acilir-platform-sekmeler" role="tablist" aria-label="Platformlar"></nav>
+
+            <div class="duzenle-arac-cubuk gizli" id="acilir-duzenle-cubuk" role="region" data-i18n-aria="aria.kartDuzenleme" aria-label="Kart düzenleme"></div>
+            <div class="canli-bildirim gizli" id="acilir-bildirim" role="status" aria-live="polite"></div>
+            <div class="servis-uyari-cubuk gizli" id="servis-uyari-acilir" role="status" aria-live="polite"></div>
+
+            <div class="acilir-icerik" id="acilir-icerik">
+              <div class="ozet-cubuk gizli" id="acilir-ozet"></div>
+              <div class="acilir-pasta-tek-alan gizli" id="acilir-pasta-tek-alan"></div>
+              <div class="havuz-listesi" id="acilir-havuz-listesi" role="list" data-i18n-aria="aria.kotaHavuzaListe" aria-label="Kota platformları"></div>
+              <div class="platform-detay gizli" id="acilir-detay" role="tabpanel"></div>
+              <button type="button" class="bagla-satir-btn gizli" id="btn-acilir-baglanabilir" data-ipucu="">Bağlanabilir (0)</button>
+            </div>
+
+            <footer class="acilir-menu">
+              <button type="button" class="menu-satir" id="btn-acilir-yenile" data-ipucu="">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.35-3.6M13.5 2.5v2.75H10.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span id="lbl-menu-yenile">Yenile (R)</span>
+              </button>
+              <button type="button" class="menu-satir" id="btn-acilir-ayarlar">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="2.2" stroke="currentColor" stroke-width="1.4"/><path d="M8 2v1.6M8 12.4V14M2 8h1.6M12.4 8H14M3.8 3.8l1.1 1.1M11.1 11.1l1.1 1.1M12.2 3.8l-1.1 1.1M4.9 11.1l-1.1 1.1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                <span id="lbl-menu-ayarlar">Ayarlar</span>
+              </button>
+              <button type="button" class="menu-satir" id="btn-acilir-hakkinda">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="5.8" stroke="currentColor" stroke-width="1.4"/><path d="M8 7.2v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="5" r="0.9" fill="currentColor"/></svg>
+                <span id="lbl-menu-hakkinda">Hakkında</span>
+              </button>
+              <button type="button" class="menu-satir" id="btn-acilir-genislet" data-ipucu="">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M9.5 2.5h4v4M6.5 13.5h-4v-4M13.5 2.5L9 7M2.5 13.5L7 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span id="lbl-menu-genislet">Genişlet ↵</span>
+              </button>
+              <button type="button" class="menu-satir" id="btn-acilir-cikis">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 2.5H3.5a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1H6M10.5 11l3-3-3-3M13.5 8H6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span id="lbl-menu-cikis">Çıkış</span>
+              </button>
+            </footer>
+          </div>
+
+          <!-- Kapalı durum yer tutucusu (?demo=1 Esc basınca görünür) -->
+          <div class="tepsi-kapali-kart gizli" id="tepsi-kapali-kart">
+            <p id="tepsi-kapali-yazi">Açılır pencere Esc ile kapatıldı.</p>
+            <button type="button" class="birincil-btn" id="btn-tepsi-ac">Tepsiden tekrar aç</button>
+          </div>
+
+          <!-- Windows Görev Çubuğu Tepsi Önizlemesi (?demo=1) -->
+          <div class="gorev-cubugu-onizleme" data-i18n-aria="aria.tepsiOnizleme" aria-label="Görev çubuğu tepsi önizlemesi">
+            <div class="gorev-cubugu-bilgi" id="tepsi-ipucu-metin">veri yok</div>
+            <button type="button" class="tepsi-ikonu-btn" id="btn-tepsi-ikon" data-i18n-aria="genel.tepsiIkonIpucu" aria-label="Cetvel tepsi simgesi" data-ipucu="">
+              <svg id="tepsi-ikon-svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                <rect x="1" y="3" width="14" height="4" rx="2" class="tepsi-iz-arka"/>
+                <rect id="tepsi-bar-5s" x="1" y="3" width="0" height="4" rx="2" class="tepsi-iz-dolgu"/>
+                <rect x="1" y="9" width="14" height="4" rx="2" class="tepsi-iz-arka"/>
+                <rect id="tepsi-bar-hafta" x="1" y="9" width="0" height="4" rx="2" class="tepsi-iz-dolgu"/>
+              </svg>
+            </button>
+            <span class="gorev-saat rakam" id="gorev-saat">--:--</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. GENİŞLETİLMİŞ PENCERE -->
+      <section class="yuzey-kapsayici" id="yuzey-pencere" data-i18n-aria="uygulama.pencereEtiket" aria-label="Genişletilmiş Cetvel penceresi">
+        <div class="genis-pencere" id="genis-pencere">
+          <header class="pencere-baslik">
+            <div class="pencere-marka">
+              <span class="marka-logo marka-logo-resim" aria-hidden="true">
+                <img src="logo.png" width="22" height="22" alt="" draggable="false">
+              </span>
+              <span class="pencere-ad" id="genis-uygulama-ad">CETVEL</span>
+            </div>
+
+            <nav class="sekme-cubugu" role="tablist" data-i18n-aria="aria.anaSekmeler" aria-label="Ana sekmeler">
+              <button type="button" class="sekme-btn aktif" data-sekme="simdi" role="tab" aria-selected="true" aria-controls="panel-simdi" id="tab-simdi">Şimdi</button>
+              <button type="button" class="sekme-btn" data-sekme="gecmis" role="tab" aria-selected="false" aria-controls="panel-gecmis" id="tab-gecmis">Geçmiş</button>
+              <button type="button" class="sekme-btn" data-sekme="bagla" role="tab" aria-selected="false" aria-controls="panel-bagla" id="tab-bagla">Bağla</button>
+              <button type="button" class="sekme-btn" data-sekme="ayarlar" role="tab" aria-selected="false" aria-controls="panel-ayarlar" id="tab-ayarlar">Ayarlar</button>
+            </nav>
+
+            <div class="pencere-eylemler">
+              <button type="button" class="duzenle-btn" id="btn-genis-duzenle" aria-pressed="false" data-ipucu="">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  <circle cx="5.5" cy="4.5" r="1.4" fill="currentColor"/>
+                  <circle cx="10.5" cy="8" r="1.4" fill="currentColor"/>
+                  <circle cx="6.5" cy="11.5" r="1.4" fill="currentColor"/>
+                </svg>
+                <span class="duzenle-btn-yazi" id="lbl-genis-duzenle">Düzenle</span>
+              </button>
+              <button type="button" class="ikon-btn" id="btn-genis-yenile" data-i18n-aria="genel.yenile" aria-label="Yenile" data-ipucu="">
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M13.5 8a5.5 5.5 0 1 1-1.35-3.6M13.5 2.5v2.75H10.75" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <button type="button" class="ikon-btn" id="btn-genis-kucult" data-i18n-aria="genel.kucultIpucu" aria-label="Küçült" data-ipucu="">
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M4.5 4.5l7 7M11.5 4.5l-7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+          </header>
+
+          <div class="canli-bildirim gizli" id="genis-bildirim" role="status" aria-live="polite"></div>
+          <div class="servis-uyari-cubuk gizli" id="servis-uyari-genis" role="status" aria-live="polite"></div>
+
+          <div class="pencere-govde">
+            <!-- Sekme 1: Şimdi -->
+            <div class="sekme-icerik aktif" id="panel-simdi" role="tabpanel" aria-labelledby="tab-simdi">
+              <div class="simdi-duzen">
+                <nav class="platform-sekmeler yan" id="simdi-platform-sekmeler" role="tablist" aria-label="Platformlar"></nav>
+                <div class="simdi-ana">
+                  <div class="ozet-cubuk gizli" id="simdi-ozet"></div>
+                  <div class="duzenle-arac-cubuk genis gizli" id="simdi-duzenle-cubuk" role="region" data-i18n-aria="aria.kartDuzenleme" aria-label="Kart düzenleme"></div>
+                  <div class="simdi-pasta-tek-alan gizli" id="simdi-pasta-tek-alan"></div>
+                  <div class="simdi-grid" id="simdi-havuz-grid" role="list" data-i18n-aria="aria.kotaHavuzaListe" aria-label="Kota platformları"></div>
+                  <div class="platform-detay genis gizli" id="simdi-detay" role="tabpanel"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sekme 2: Geçmiş -->
+            <div class="sekme-icerik" id="panel-gecmis" role="tabpanel" aria-labelledby="tab-gecmis">
+              <div class="gecmis-ust">
+                <div class="gecmis-baslik-grup">
+                  <h2 class="bolum-baslik" id="gecmis-baslik">Son 24 saatlik kullanım</h2>
+                  <p class="bolum-aciklama" id="gecmis-aciklama"></p>
+                </div>
+                <div class="gecmis-havuz-secici" id="gecmis-havuz-secici" role="tablist" data-i18n-aria="gecmis.secimEtiket" aria-label="Geçmiş havuzu"></div>
+              </div>
+              <div class="grafik-kart">
+                <div class="grafik-ust-bilgi" id="grafik-ust-bilgi"></div>
+                <div class="svg-grafik-kapsayici" id="gecmis-svg-kapsayici"></div>
+                <div class="grafik-alt-metrikler" id="grafik-alt-metrikler"></div>
+              </div>
+            </div>
+
+            <!-- Sekme 3: Bağla -->
+            <div class="sekme-icerik" id="panel-bagla" role="tabpanel" aria-labelledby="tab-bagla">
+              <div class="bagla-ust">
+                <div>
+                  <h2 class="bolum-baslik" id="bagla-baslik">Platform bağlantıları</h2>
+                  <p class="bolum-aciklama" id="bagla-aciklama"></p>
+                </div>
+                <div class="bagla-ust-sag">
+                  <span class="son-tarama-rozet" id="bagla-son-tarama"></span>
+                  <button type="button" class="birincil-btn" id="btn-bagla-tara">Tara</button>
+                </div>
+              </div>
+              <div class="bagla-liste" id="bagla-liste"></div>
+            </div>
+
+            <!-- Sekme 4: Ayarlar -->
+            <div class="sekme-icerik" id="panel-ayarlar" role="tabpanel" aria-labelledby="tab-ayarlar">
+              <div class="ayarlar-duzen">
+                <nav class="ayarlar-yan-menu" id="ayarlar-bolum-menu" data-i18n-aria="aria.ayarKategorileri" aria-label="Ayar kategorileri"></nav>
+                <div class="ayarlar-grid" id="ayarlar-grid"></div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="pencere-alt">
+            <span class="kisayol-ipucu" id="pencere-kisayol-ipucu" tabindex="0" data-ipucu="">Kısayollar</span>
+            <button type="button" class="surum-damgasi" id="btn-surum-genis" data-ipucu="">v0.1.0</button>
+          </footer>
+        </div>
+      </section>
+
+      <!-- 3. ŞERİT MODU (tek satır, her zaman üstte görünümü) -->
+      <section class="yuzey-kapsayici" id="yuzey-serit" data-i18n-aria="uygulama.seritEtiket" aria-label="Cetvel şerit modu">
+        <div class="serit-sahne" id="serit-sahne">
+          <div class="serit-aciklama-kart">
+            <h2 class="bolum-baslik" id="serit-baslik">Şerit Modu (Her zaman üstte)</h2>
+            <p class="bolum-aciklama" id="serit-aciklama"></p>
+            <div class="serit-kontroller">
+              <label class="onay-etiket">
+                <input type="checkbox" id="chk-tiklama-gecirgen">
+                <span id="lbl-tiklama-gecirgen">Tıklama geçirgen (önizleme)</span>
+              </label>
+              <button type="button" class="ikincil-btn" id="btn-serit-acilir">Açılır pencereye dön</button>
+            </div>
+          </div>
+
+          <div class="serit-cubuk" id="serit-cubuk" role="region" data-i18n-aria="uygulama.seritEtiket" aria-label="Cetvel şerit modu">
+            <span class="serit-tutamak" id="serit-tutamak" title="Sürükle" aria-hidden="true">⋮⋮</span>
+            <span class="serit-marka" id="serit-marka">CETVEL</span>
+            <span class="serit-ayrac" aria-hidden="true"></span>
+            <div class="serit-ogeler" id="serit-ogeler"></div>
+            <span class="serit-ayrac" aria-hidden="true"></span>
+            <span class="serit-baski" id="serit-baski">—</span>
+            <button type="button" class="serit-genislet-btn" id="btn-serit-genislet" data-i18n-aria="serit.genisletIpucu" aria-label="Ana pencereyi aç">↗</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Erişilebilir, pencere kenarından taşmayan yüzen ipucu (tooltip) -->
+  <div class="cetvel-ipucu gizli" id="cetvel-ipucu" role="tooltip"></div>
+  <div class="ekran-okuyucu-gizli" id="ekran-okuyucu-duyuru" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="uygulama.js"></script>
+</body>
+</html>

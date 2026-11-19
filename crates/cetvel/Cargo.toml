@@ -1,0 +1,28 @@
+[package]
+name = "cetvel"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "cetvel"
+path = "src/main.rs"
+
+[dependencies]
+cetvel-baglayici.workspace = true
+cetvel-depo.workspace = true
+cetvel-mcp.workspace = true
+cetvel-model.workspace = true
+cetvel-servis.workspace = true
+cetvel-tahmin.workspace = true
+clap.workspace = true
+serde_json.workspace = true
+time.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+windows.workspace = true
+winreg.workspace = true
+
+[lints]
+workspace = true

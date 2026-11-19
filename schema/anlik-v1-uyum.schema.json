@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OrkestraUyumV1",
+  "description": "Orkestra v1 uyum belgesi (`orkestra-uyum.json`, `plan.md §5.2`).",
+  "type": "object",
+  "properties": {
+    "sema": {
+      "description": "Şema sürümü (sabit `1`).",
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "yazan": {
+      "description": "Orkestra sözleşmesindeki sabit yazan adı (`\"rust-servis\"`).",
+      "type": "string"
+    },
+    "zaman": {
+      "description": "Sonu `Z` olan UTC üretim zamanı.",
+      "$ref": "#/$defs/UtcZaman"
+    },
+    "havuzlar": {
+      "description": "Havuz haritası.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/UyumHavuz"
+      }
+    }
+  },
+  "required": [
+    "sema",
+    "yazan",
+    "zaman",
+    "havuzlar"
+  ],
+  "$defs": {
+    "UtcZaman": {
+      "description": "Her zaman UTC olarak tutulan ve sonu `Z` ile saniye çözünürlüğünde serileştirilen zaman damgası.",
+      "type": "string"
+    },
+    "UyumHavuz": {
+      "description": "Orkestra v1 tekil havuz kaydı.",
+      "type": "object",
+      "properties": {
+        "durum": {
+          "description": "`ok | bilinmiyor | kapali | hata`",
+          "$ref": "#/$defs/UyumDurum"
+        },
+        "etkin_kalan": {
+          "description": "Pencerelerin en küçüğü olan etkin kalan oranı (`0.0..=1.0`).",
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        },
+        "baglayici_pencere": {
+          "description": "Etkin kalanı belirleyen en kısıtlayıcı pencere adı.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "kullanilabilir": {
+          "description": "Havuzun kullanılabilir olup olmadığı (`false` ise orkestra kullanmamalıdır).",
+          "type": "boolean"
+        },
+        "pencereler": {
+          "description": "Aktif ve taze pencereler.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/UyumPencere"
+          }
+        },
+        "alt_sayaclar": {
+          "description": "Alt sayaçlar.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/UyumAltSayac"
+          },
+          "default": {}
+        },
+        "soguma_bitis": {
+          "description": "Bağlayıcı pencere sıfırlandığında havuzun yeniden açılacağı zaman.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UtcZaman"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "notlar": {
+          "description": "İnsan ve karar mekanizması için açıklayıcı notlar.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      },
+      "required": [
+        "durum",
+        "kullanilabilir",
+        "pencereler"
+      ]
+    },
+    "UyumDurum": {
+      "description": "Orkestra v1 durum kümesi.",
+      "type": "string",
+      "enum": [
+        "ok",
+        "bilinmiyor",
+        "kapali",
+        "hata"
+      ]
+    },
+    "UyumPencere": {
+      "description": "Orkestra v1 pencere ölçümü.",
+      "type": "object",
+      "properties": {
+        "kalan": {
+          "type": "number",
+          "format": "double"
+        },
+        "sifirlama": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UtcZaman"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "kaynak": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kalan",
+        "kaynak"
+      ]
+    },
+    "UyumAltSayac": {
+      "description": "Orkestra v1 alt sayaç özeti.",
+      "type": "object",
+      "properties": {
+        "kalan": {
+          "type": "number",
+          "format": "double"
+        },
+        "sifirlama": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UtcZaman"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kalan"
+      ]
+    }
+  }
+}

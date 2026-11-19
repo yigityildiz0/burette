@@ -1,0 +1,18 @@
+[package]
+name = "cetvel-mcp"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+cetvel-depo.workspace = true
+cetvel-model.workspace = true
+cetvel-servis.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+
+[lints]
+workspace = true

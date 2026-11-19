@@ -1,0 +1,676 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AnlikV2",
+  "description": "Anlık v2 kök veri yapısı (`anlik.json`).\n\nOkuma ileri uyumludur ([`Deserialize`] elle yazıldı): ayrıştırılamayan (yeni sürüm biçimli)\nbir havuz tüm anlığı reddettirmez; atlanır ve [`AnlikV2::notlar`]'a not düşülür. Bilinmeyen\n`durum` değeri `bilinmiyor` sayılır, havuz kullanılamaz işaretlenir ve havuza not eklenir.",
+  "type": "object",
+  "properties": {
+    "sema": {
+      "description": "Şema sürümü (sabit `2`).",
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "yazan": {
+      "description": "Üretici uygulama kimliği (`\"cetvel\"`).",
+      "type": "string"
+    },
+    "surum": {
+      "description": "Üretici sürümü.",
+      "type": "string"
+    },
+    "zaman": {
+      "description": "Anlık üretim zamanı (UTC `Z`).",
+      "$ref": "#/$defs/UtcZaman"
+    },
+    "sira": {
+      "description": "Her anlamlı değişiklikte artan sıra numarası.",
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "havuzlar": {
+      "description": "Havuz kimliğine göre durum haritası.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/HavuzAnlik"
+      }
+    },
+    "notlar": {
+      "description": "Okuyucu tarafı notları (ör. atlanan bilinmeyen biçimli havuz). Servis yazmaz; boşsa\nserileştirilmez.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "sema",
+    "yazan",
+    "surum",
+    "zaman",
+    "sira",
+    "havuzlar"
+  ],
+  "$defs": {
+    "UtcZaman": {
+      "description": "Her zaman UTC olarak tutulan ve sonu `Z` ile saniye çözünürlüğünde serileştirilen zaman damgası.",
+      "type": "string"
+    },
+    "HavuzAnlik": {
+      "description": "Havuzun anlık durumu (`plan.md §5.1`).",
+      "type": "object",
+      "properties": {
+        "platform": {
+          "description": "Platform kimliği (`codex`, `deepseek`, `claude`, vb.).",
+          "type": "string"
+        },
+        "etiket": {
+          "description": "İnsan okunur etiket.",
+          "type": "string"
+        },
+        "durum": {
+          "description": "Operasyonel okuma/havuz durumu.",
+          "$ref": "#/$defs/Durum"
+        },
+        "etkin_kalan": {
+          "description": "Tüm pencerelerin en küçüğü olan etkin kalan oran (`0.0..=1.0`).",
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        },
+        "baglayici_pencere": {
+          "description": "Etkin kalanı belirleyen en kısıtlayıcı pencere adı (ör. `\"hafta\"`).",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "kullanilabilir": {
+          "description": "Havuzun şu an kullanılabilir olup olmadığı (`etkin_kalan > 0` ve `durum == Ok`).",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "kaynak": {
+          "description": "Veri kaynağı ve tazelik bilgisi.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/KaynakBilgisi"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pencereler": {
+          "description": "Pencere adına göre ölçümler (`5dk`, `5s`, `gun`, `hafta`, `ay`).",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/PencereOlcum"
+          }
+        },
+        "alt_sayaclar": {
+          "description": "Alt sayaçlar (ör. model-bazlı ek limit kimlikleri).",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/AltSayac"
+          }
+        },
+        "tahmin": {
+          "description": "Pencere bazlı tahmin bilgisi (M4'te dolar).",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/TahminBilgisi"
+          }
+        },
+        "baski": {
+          "description": "Kullanım baskısı etiketi.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Baski"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "bakiye": {
+          "description": "Bakiye bilgisi (bakiye tabanlı sağlayıcılar için).",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BakiyeBilgisi"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ek": {
+          "description": "Sağlayıcıya özgü ek alanlar.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EkBilgi"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "hata": {
+          "description": "Varsa güvenli hata bilgisi (üçüncü taraf ham metni içermez).",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HataBilgisi"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "notlar": {
+          "description": "Yerel bilgilendirme notları.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      },
+      "required": [
+        "platform",
+        "etiket",
+        "durum"
+      ]
+    },
+    "Durum": {
+      "description": "Havuzun okuma / erişim durumu.",
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "ok",
+            "bayat",
+            "baglanmadi",
+            "kapali",
+            "hata"
+          ]
+        },
+        {
+          "description": "Bilinmeyen (yeni sürüm) durum değerleri de buraya düşer; tüm anlık reddedilmez.",
+          "type": "string",
+          "const": "bilinmiyor"
+        }
+      ]
+    },
+    "KaynakBilgisi": {
+      "description": "Ölçüm kaynağı metaverisi.",
+      "type": "object",
+      "properties": {
+        "tur": {
+          "$ref": "#/$defs/KaynakTuru"
+        },
+        "guven": {
+          "$ref": "#/$defs/GuvenEtiketi"
+        },
+        "okuma": {
+          "$ref": "#/$defs/UtcZaman"
+        },
+        "yas_sn": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "hassasiyet": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        }
+      },
+      "required": [
+        "tur",
+        "guven",
+        "okuma",
+        "yas_sn"
+      ]
+    },
+    "KaynakTuru": {
+      "description": "Okuma yöntemi / kaynak türü.",
+      "type": "string",
+      "enum": [
+        "mod_koprusu",
+        "statusline",
+        "codex_app_server",
+        "rollout_yedek",
+        "agy_usage",
+        "resmi_api",
+        "bakiye_api",
+        "hesap",
+        "yerel_gunluk",
+        "bilinmiyor"
+      ]
+    },
+    "GuvenEtiketi": {
+      "description": "Veri güvenilirlik etiketi.",
+      "type": "string",
+      "enum": [
+        "resmi_arayuz",
+        "resmi_api",
+        "tahmini",
+        "bayat",
+        "yerel_kayit",
+        "bilinmiyor"
+      ]
+    },
+    "PencereOlcum": {
+      "description": "Tek bir kota penceresinin normalize edilmiş ölçümü.",
+      "type": "object",
+      "properties": {
+        "uzunluk_dk": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "kullanilan": {
+          "type": "number",
+          "format": "double"
+        },
+        "kalan": {
+          "type": "number",
+          "format": "double"
+        },
+        "sifirlama": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UtcZaman"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "uzunluk_dk",
+        "kullanilan",
+        "kalan"
+      ]
+    },
+    "AltSayac": {
+      "description": "Ek alt sayaç bilgisi.",
+      "type": "object",
+      "properties": {
+        "kullanilan": {
+          "type": "number",
+          "format": "double"
+        },
+        "kalan": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        },
+        "uzunluk_dk": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint64",
+          "minimum": 0
+        },
+        "sifirlama": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UtcZaman"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kullanilan"
+      ]
+    },
+    "TahminBilgisi": {
+      "description": "Tahmin bilgisi (`plan.md §7`).",
+      "type": "object",
+      "properties": {
+        "durum": {
+          "$ref": "#/$defs/TahminDurumu"
+        },
+        "etiket": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "neden": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "bitis_tahmini": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UtcZaman"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "bitis_erken": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UtcZaman"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "bitis_gec": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UtcZaman"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "saatlik_hiz": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        },
+        "sifirlanmadan_biter": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "gunluk_butce": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        }
+      },
+      "required": [
+        "durum"
+      ]
+    },
+    "TahminDurumu": {
+      "type": "string",
+      "enum": [
+        "deneysel",
+        "hazir",
+        "tahmin_yok"
+      ]
+    },
+    "Baski": {
+      "description": "Kota kullanım baskısı etiketi.",
+      "type": "string",
+      "enum": [
+        "rahat",
+        "dikkat",
+        "kacin"
+      ]
+    },
+    "BakiyeBilgisi": {
+      "description": "Bakiye bilgisi (bakiye tabanlı API'ler için).",
+      "type": "object",
+      "properties": {
+        "para_birimi": {
+          "type": "string"
+        },
+        "toplam": {
+          "type": "number",
+          "format": "double"
+        },
+        "hibe": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        },
+        "yuklenen": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        },
+        "kullanilabilir": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "para_birimi",
+        "toplam"
+      ]
+    },
+    "EkBilgi": {
+      "description": "Platforma özgü ek alanlar.",
+      "type": "object",
+      "properties": {
+        "sifirlama_kredisi": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SifirlamaKredisi"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "olagan_kullanim": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "limit_turu": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "kredi_bakiye": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sinirsiz_kredi": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "plan_turu": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "kampanya_bitis": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UtcZaman"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "eszamanli_istek": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint64",
+          "minimum": 0
+        },
+        "eszamanli_tavan": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint64",
+          "minimum": 0
+        },
+        "seviye": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "muaf": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "kalan_istek_baslik": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint64",
+          "minimum": 0
+        },
+        "kullanim": {
+          "description": "Resmî kotası olmayan yerel araçlar (OpenCode, DeepSeek Harness) için kullanım sayacı.\nBu alan doluysa havuz bir kota değil, yalnız sayaçtır: yüzde/pencere yoktur.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/KullanimSayaci"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "SifirlamaKredisi": {
+      "description": "Codex sıfırlama kredisi özeti.",
+      "type": "object",
+      "properties": {
+        "adet": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "son": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UtcZaman"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "adet"
+      ]
+    },
+    "KullanimSayaci": {
+      "description": "Kotası olmayan yerel bir aracın kullanım sayacı (son 24 saat, son 7 gün, toplam).\n\nBelirteç sayıları yalnız kaynak açıkça verdiyse doludur (ör. sıkıştırılmış günlükte `None`).",
+      "type": "object",
+      "properties": {
+        "kota_yok": {
+          "description": "Her zaman `true`: arayüz \"kota yok, kullanım sayacı\" etiketini gösterir.",
+          "type": "boolean"
+        },
+        "oturum_24s": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "oturum_7g": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "oturum_toplam": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "belirtec_24s": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint64",
+          "minimum": 0
+        },
+        "belirtec_7g": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint64",
+          "minimum": 0
+        },
+        "son_etkinlik": {
+          "description": "En son oturum etkinliği.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UtcZaman"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kota_yok",
+        "oturum_24s",
+        "oturum_7g",
+        "oturum_toplam"
+      ]
+    },
+    "HataBilgisi": {
+      "description": "Ham üçüncü taraf hata metni taşımayan sadeleştirilmiş hata yapısı.",
+      "type": "object",
+      "properties": {
+        "tur": {
+          "type": "string"
+        },
+        "http_kodu": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint16",
+          "minimum": 0,
+          "maximum": 65535
+        }
+      },
+      "required": [
+        "tur"
+      ]
+    }
+  }
+}

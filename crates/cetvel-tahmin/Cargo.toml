@@ -1,0 +1,12 @@
+[package]
+name = "cetvel-tahmin"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+cetvel-model.workspace = true
+serde.workspace = true
+
+[lints]
+workspace = true

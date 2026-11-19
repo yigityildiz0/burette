@@ -1,0 +1,26 @@
+[package]
+name = "cetvel-baglayici"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+cetvel-depo.workspace = true
+cetvel-model.workspace = true
+reqwest.workspace = true
+rusqlite.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+time.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+windows.workspace = true
+winreg.workspace = true
+
+[lints]
+workspace = true
+
+[[test]]
+name = "codex_ve_job"
+harness = false

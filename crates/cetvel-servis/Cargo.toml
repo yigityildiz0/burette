@@ -1,0 +1,27 @@
+[package]
+name = "cetvel-servis"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+axum.workspace = true
+cetvel-ajan.workspace = true
+cetvel-baglayici.workspace = true
+cetvel-depo.workspace = true
+cetvel-model.workspace = true
+cetvel-tahmin.workspace = true
+serde.workspace = true
+serde_json = { workspace = true, features = ["preserve_order"] }
+subtle.workspace = true
+thiserror.workspace = true
+time.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+windows.workspace = true
+
+[dev-dependencies]
+reqwest.workspace = true
+
+[lints]
+workspace = true

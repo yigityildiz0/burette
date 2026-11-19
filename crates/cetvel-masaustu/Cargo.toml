@@ -1,0 +1,36 @@
+[package]
+name = "cetvel-masaustu"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[build-dependencies]
+tauri-build = { version = "2.7", features = [] }
+
+[dependencies]
+cetvel-depo.workspace = true
+cetvel-model.workspace = true
+cetvel-servis.workspace = true
+reqwest.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tauri = { version = "2.12", features = ["tray-icon"] }
+tauri-plugin-autostart = "2.7"
+tauri-plugin-global-shortcut = "2.4"
+tauri-plugin-single-instance = "2.5"
+time = { workspace = true, features = ["local-offset"] }
+tiny-skia = "0.12"
+tokio.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+windows.workspace = true
+winreg.workspace = true
+
+[target.'cfg(windows)'.dependencies]
+webview2-com = "=0.39.1"
+
+[dev-dependencies]
+axum.workspace = true
+
+[lints]
+workspace = true
