@@ -24,21 +24,35 @@
           "uzunluk_dk": 300,
           "kullanilan": 0.85,
           "kalan": 0.15,
-          "sifirlama": "2026-11-15T21:10:00Z"
+          "sifirlama": "2026-11-15T21:10:00Z",
+          "etiket": "5-hour limit"
         },
         "hafta": {
           "uzunluk_dk": 10080,
           "kullanilan": 0.39,
           "kalan": 0.61,
-          "sifirlama": "2026-11-20T07:00:00Z"
+          "sifirlama": "2026-11-20T07:00:00Z",
+          "etiket": "Weekly · all models"
         }
       },
       "alt_sayaclar": {
-        "fable_hafta": {
+        "fable": {
+          "etiket": "Weekly · Fable",
+          "ebeveyn": "hafta",
           "kullanilan": 0.12,
           "kalan": 0.88,
           "uzunluk_dk": 10080,
-          "sifirlama": "2026-11-20T07:00:00Z"
+          "sifirlama": "2026-11-20T07:00:00Z",
+          "ilk_gorulme": "2026-10-02T09:00:00Z"
+        },
+        "nova": {
+          "etiket": "Weekly · Nova",
+          "ebeveyn": "hafta",
+          "kullanilan": 0.47,
+          "kalan": 0.53,
+          "uzunluk_dk": 10080,
+          "sifirlama": "2026-11-20T07:00:00Z",
+          "ilk_gorulme": "2026-11-15T12:30:00Z"
         }
       },
       "tahmin": {
@@ -104,9 +118,49 @@
         "haftalık bitti, 5s dolu görünse de kullanılamaz"
       ]
     },
+    "codex_spark": {
+      "platform": "codex",
+      "etiket": "Codex GPT5.3 Spark Research Preview Long Context",
+      "durum": "ok",
+      "etkin_kalan": 0.58,
+      "baglayici_pencere": "480dk",
+      "kullanilabilir": true,
+      "kaynak": {
+        "tur": "codex_app_server",
+        "guven": "resmi_arayuz",
+        "okuma": "2026-11-15T19:48:00Z",
+        "yas_sn": 120
+      },
+      "pencereler": {
+        "480dk": {
+          "uzunluk_dk": 480,
+          "kullanilan": 0.42,
+          "kalan": 0.58,
+          "sifirlama": "2026-11-15T23:10:00Z",
+          "etiket": "8h"
+        },
+        "hafta": {
+          "uzunluk_dk": 10080,
+          "kullanilan": 0.2,
+          "kalan": 0.8,
+          "sifirlama": "2026-11-18T10:28:00Z"
+        }
+      },
+      "tahmin": {},
+      "baski": "rahat",
+      "hata": null,
+      "notlar": [],
+      "kesif": {
+        "dinamik": true,
+        "grup": "gpt-5.3-spark",
+        "ilk_gorulme": "2026-11-10T08:00:00Z",
+        "son_gorulme": "2026-11-15T19:48:00Z",
+        "yasam": "aktif"
+      }
+    },
     "agy_gemini": {
       "platform": "agy",
-      "etiket": "Antigravity Gemini",
+      "etiket": "Antigravity Gemini Models",
       "durum": "ok",
       "etkin_kalan": 0.46,
       "baglayici_pencere": "5s",
@@ -146,11 +200,18 @@
       "hata": null,
       "notlar": [
         "tek okuma (±%1 oynak)"
-      ]
+      ],
+      "kesif": {
+        "dinamik": false,
+        "grup": "Gemini Models",
+        "ilk_gorulme": "2026-08-01T09:00:00Z",
+        "son_gorulme": "2026-11-15T19:41:20Z",
+        "yasam": "aktif"
+      }
     },
     "agy_claude_gpt": {
       "platform": "agy",
-      "etiket": "Antigravity Claude-GPT",
+      "etiket": "Antigravity Claude and GPT models",
       "durum": "ok",
       "etkin_kalan": 0.0,
       "baglayici_pencere": "5s",
@@ -180,11 +241,18 @@
       "hata": null,
       "notlar": [
         "5s penceresi %0 kalan"
-      ]
+      ],
+      "kesif": {
+        "dinamik": false,
+        "grup": "Claude and GPT models",
+        "ilk_gorulme": "2026-08-01T09:00:00Z",
+        "son_gorulme": "2026-11-15T19:41:20Z",
+        "yasam": "aktif"
+      }
     },
     "agy_argon": {
       "platform": "agy",
-      "etiket": "Antigravity Argon",
+      "etiket": "Antigravity Gemini 4 Argon",
       "durum": "bayat",
       "etkin_kalan": 0.62,
       "baglayici_pencere": "hafta",
@@ -210,7 +278,95 @@
       },
       "notlar": [
         "son okuma 39 dk önce · veri bayat"
-      ]
+      ],
+      "kesif": {
+        "dinamik": false,
+        "grup": "Gemini 4 Argon",
+        "ilk_gorulme": "2026-09-01T09:00:00Z",
+        "son_gorulme": "2026-11-15T19:11:00Z",
+        "yasam": "aktif",
+        "ebeveyn_havuz": "agy_gemini",
+        "ebeveyn_guven": "tahmini"
+      },
+      "etkin_kalan_zincir": 0.46
+    },
+    "agy_gemini_5_xenon": {
+      "platform": "agy",
+      "etiket": "Antigravity Gemini 5 Xenon",
+      "durum": "ok",
+      "etkin_kalan": 0.71,
+      "baglayici_pencere": "5s",
+      "kullanilabilir": true,
+      "kaynak": {
+        "tur": "agy_usage",
+        "guven": "tahmini",
+        "okuma": "2026-11-15T19:41:20Z",
+        "yas_sn": 520
+      },
+      "pencereler": {
+        "5s": {
+          "uzunluk_dk": 300,
+          "kullanilan": 0.29,
+          "kalan": 0.71,
+          "sifirlama": "2026-11-15T23:30:00Z",
+          "etiket": "5h"
+        },
+        "hafta": {
+          "uzunluk_dk": 10080,
+          "kullanilan": 0.08,
+          "kalan": 0.92,
+          "sifirlama": "2026-11-21T07:00:00Z",
+          "etiket": "weekly"
+        }
+      },
+      "tahmin": {},
+      "baski": "rahat",
+      "hata": null,
+      "notlar": [],
+      "kesif": {
+        "dinamik": true,
+        "grup": "Gemini 5 Xenon",
+        "ilk_gorulme": "2026-11-15T16:05:00Z",
+        "son_gorulme": "2026-11-15T19:41:20Z",
+        "yasam": "aktif",
+        "ebeveyn_havuz": "agy_gemini",
+        "ebeveyn_guven": "tahmini"
+      },
+      "etkin_kalan_zincir": 0.46
+    },
+    "agy_gemini_3_flash": {
+      "platform": "agy",
+      "etiket": "Antigravity Gemini 3 Flash",
+      "durum": "bayat",
+      "etkin_kalan": 0.4,
+      "baglayici_pencere": "5s",
+      "kullanilabilir": false,
+      "kaynak": {
+        "tur": "agy_usage",
+        "guven": "bayat",
+        "okuma": "2026-11-13T15:00:00Z",
+        "yas_sn": 190200
+      },
+      "pencereler": {
+        "5s": {
+          "uzunluk_dk": 300,
+          "kullanilan": 0.6,
+          "kalan": 0.4,
+          "sifirlama": "2026-11-13T18:00:00Z",
+          "etiket": "5h"
+        }
+      },
+      "tahmin": {},
+      "baski": "rahat",
+      "hata": null,
+      "notlar": [],
+      "kesif": {
+        "dinamik": true,
+        "grup": "Gemini 3 Flash",
+        "ilk_gorulme": "2026-10-20T08:00:00Z",
+        "son_gorulme": "2026-11-13T15:00:00Z",
+        "yasam": "gorulmuyor"
+      }
     },
     "deepseek": {
       "platform": "deepseek",

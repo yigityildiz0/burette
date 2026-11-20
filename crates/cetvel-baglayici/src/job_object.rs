@@ -2,11 +2,15 @@ use std::ffi::c_void;
 use std::os::windows::io::RawHandle;
 
 use windows::Win32::Foundation::{CloseHandle, HANDLE};
+use windows::Win32::System::Diagnostics::ToolHelp::{
+    CreateToolhelp32Snapshot, TH32CS_SNAPTHREAD, THREADENTRY32, Thread32First, Thread32Next,
+};
 use windows::Win32::System::JobObjects::{
     AssignProcessToJobObject, CreateJobObjectW, JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE,
     JOBOBJECT_EXTENDED_LIMIT_INFORMATION, JobObjectExtendedLimitInformation,
     SetInformationJobObject, TerminateJobObject,
 };
+use windows::Win32::System::Threading::{OpenThread, ResumeThread, THREAD_SUSPEND_RESUME};
 
 /// Alt süreç ve çocuk süreç ağacını Windows Job Object ile güvenli biçimde öldüren RAII koruması.
 pub struct JobSuresKorumasi {
@@ -62,6 +66,46 @@ impl JobSuresKorumasi {
             let _ = TerminateJobObject(job, 1);
         }
     }
+}
+
+/// `CREATE_SUSPENDED` ile başlatılmış sürecin tüm iş parçacıklarını devam ettirir. Süreç önce
+/// askıda başlatılıp Job'a eklenir, sonra bu çağrıyla çalıştırılır: böylece erken doğan çocuk
+/// süreçler de (ör. `cmd.exe` -> `node` -> `agy`) Job dışında kalamaz.
+pub fn askidaki_sureci_devam_ettir(pid: u32) -> std::io::Result<()> {
+    // SAFETY: Anlık görüntü tutamacı yalnız bu işlevde kullanılır ve kapatılır.
+    let anlik = unsafe { CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0) }
+        .map_err(|e| std::io::Error::from_raw_os_error(e.code().0))?;
+    let mut giris = THREADENTRY32 {
+        dwSize: size_of::<THREADENTRY32>() as u32,
+        ..Default::default()
+    };
+    let mut devam_eden = 0usize;
+    // SAFETY: `giris.dwSize` doğru ayarlandı; tutamaç geçerli.
+    let mut var = unsafe { Thread32First(anlik, &mut giris) }.is_ok();
+    while var {
+        if giris.th32OwnerProcessID == pid {
+            // SAFETY: İş parçacığı kimliği az önce sistemden okundu; tutamaç kapatılır.
+            if let Ok(h) = unsafe { OpenThread(THREAD_SUSPEND_RESUME, false, giris.th32ThreadID) } {
+                unsafe {
+                    if ResumeThread(h) != u32::MAX {
+                        devam_eden += 1;
+                    }
+                    let _ = CloseHandle(h);
+                }
+            }
+        }
+        // SAFETY: Aynı anlık görüntü üzerinde ilerlenir.
+        var = unsafe { Thread32Next(anlik, &mut giris) }.is_ok();
+    }
+    unsafe {
+        let _ = CloseHandle(anlik);
+    }
+    if devam_eden == 0 {
+        return Err(std::io::Error::other(
+            "askıdaki süreç iş parçacığı bulunamadı",
+        ));
+    }
+    Ok(())
 }
 
 impl Drop for JobSuresKorumasi {

@@ -15,7 +15,7 @@ use cetvel_model::{HavuzAnlik, UtcZaman};
 pub use agy::{AntigravityBaglayicisi, agy_cikti_ayristir, agy_ikili_coz};
 pub use codex::{CodexBaglayicisi, codex_app_server_oku, codex_ikili_coz, codex_yanit_ayristir};
 pub use deepseek::{DeepSeekBaglayicisi, deepseek_yanit_ayristir};
-pub use job_object::JobSuresKorumasi;
+pub use job_object::{JobSuresKorumasi, askidaki_sureci_devam_ettir};
 pub use yerel_sayac::{
     YerelArac, YerelSayacBaglayicisi, dsh_dizini_coz, opencode_dizini_coz, yerel_arac_var_mi,
     yerel_sayac_oku,

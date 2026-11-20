@@ -164,7 +164,13 @@
     "hakkinda": "關於",
     "cikis": "結束",
     "kisayollar": "快速鍵",
-    "kaynakBilgi": "{kaynak} · {guven} · 讀取於 {yas}"
+    "kaynakBilgi": "{kaynak} · {guven} · 讀取於 {yas}",
+    "baglacVe": "{a}與{b}",
+    "dahaFazlaPencere": "+{n}",
+    "dahaFazlaPencereIpucu": "其他視窗：{liste}",
+    "altSayacSinirliIpucu": "{ad}：可用 {kullanilabilir}（原始 {ham}）— 受整體{ebeveyn}限制（{ebeveynDeger}）",
+    "altSayacSinirliKullanilanIpucu": "{ad}：實質已用 {etkin}（原始 {ham}）— 受整體{ebeveyn}限制（{ebeveynDeger}）",
+    "altSayacOzetIpucu": "子計數器：{liste}"
   },
   "gorunum": {
     "gostergeEtiket": "指示器",
@@ -208,6 +214,7 @@
   },
   "pencereAdlari": {
     "5dk": "5 分鐘視窗",
+    "1s": "1 小時視窗",
     "5s": "5 小時視窗",
     "gun": "每日視窗",
     "hafta": "每週視窗",
@@ -215,6 +222,7 @@
   },
   "pencereEtiket": {
     "5dk": "5 分鐘",
+    "1s": "1 小時",
     "5s": "5 小時",
     "gun": "每日",
     "hafta": "每週",
@@ -222,6 +230,7 @@
   },
   "pencereBaslik": {
     "5dk": "5 分鐘",
+    "1s": "1 小時",
     "5s": "工作階段（5 小時）",
     "gun": "每日",
     "hafta": "每週",
@@ -229,6 +238,7 @@
   },
   "pencereKisa": {
     "5dk": "5分",
+    "1s": "1時",
     "5s": "5時",
     "gun": "日",
     "hafta": "週",
@@ -236,10 +246,43 @@
   },
   "pencereIpucu": {
     "5dk": "短時脈衝請求速率上限（5 分鐘視窗）",
+    "1s": "1 小時滾動配額視窗",
     "5s": "5 小時滾動工作階段配額視窗",
     "gun": "24 小時每日 token 或請求視窗",
     "hafta": "7 天累計每週配額視窗",
     "ay": "每月計費配額視窗"
+  },
+  "pencereSure": {
+    "dk": "{n} 分鐘",
+    "saat": "{n} 小時",
+    "gun": "{n} 天",
+    "kisaDk": "{n}分",
+    "kisaSaat": "{n}h",
+    "kisaGun": "{n}天"
+  },
+  "kesif": {
+    "yeniAlgilandiIpucu": "新偵測 · {zaman}",
+    "yeniHavuzSerit": "新集區：{ad}",
+    "cokYeniHavuz": "{n} 個新集區",
+    "incele": "檢視",
+    "kapat": "關閉",
+    "gorulmeyenBaslik": "未出現的集區（{n}）",
+    "sonGorulme": "上次出現：{zaman}",
+    "ebeveynIpucu": "用量也會計入 {ebeveyn} 額度（{guven}）",
+    "ebeveynIpucuGuvensiz": "用量也會計入 {ebeveyn} 額度",
+    "zincirEtkin": "連動有效：{oran}",
+    "altSekmelerAria": "集區子分頁",
+    "ekmekKirintisiAria": "導覽路徑",
+    "durumAktif": "使用中",
+    "durumYeni": "新發現",
+    "durumGorulmuyor": "未出現"
+  },
+  "baglamMenu": {
+    "aria": "卡片動作",
+    "yenile": "重新整理",
+    "ayrintiyiAc": "開啟詳細資訊",
+    "degerleriKopyala": "複製數值",
+    "kopyalandi": "數值已複製到剪貼簿。"
   },
   "kaynakTur": {
     "mod_koprusu": "外掛橋接",
@@ -358,9 +401,18 @@
       "bildirimler": "通知",
       "baglantilar": "連線",
       "platformlar": "平台",
+      "havuzlar": "集區",
       "teknik": "技術",
       "hakkinda": "關於與法律"
     },
+    "aramaYerTutucu": "搜尋設定…",
+    "aramaTemizle": "清除搜尋",
+    "aramaSonucYok": "找不到符合「{sorgu}」的設定。",
+    "havuzlarBaslik": "已偵測的集區",
+    "havuzlarBos": "尚未偵測到任何集區。",
+    "geneldeGoster": "在總覽顯示",
+    "havuzSabitle": "釘選",
+    "gorulmeyenGenelIpucu": "未出現的集區不會顯示在總覽中。",
     "hakkindaKisa": "關於",
     "grupGorunum": "外觀與語言",
     "grupDavranis": "視窗與系統",

@@ -365,6 +365,7 @@ mod tests {
             kullanilan: 0.2,
             kalan: 0.8,
             sifirlama: Some(sifirlama),
+            etiket: None,
         };
         let ornekler = vec![
             OrnekNoktasi {
@@ -397,6 +398,7 @@ mod tests {
             kullanilan: 0.3,
             kalan: 0.7,
             sifirlama: Some(sifirlama),
+            etiket: None,
         };
         let ornekler = vec![
             OrnekNoktasi {
@@ -435,6 +437,7 @@ mod tests {
             kullanilan: 0.109,
             kalan: 0.891,
             sifirlama: Some(sifirlama),
+            etiket: None,
         };
         let ornekler = vec![
             OrnekNoktasi {
@@ -474,6 +477,7 @@ mod tests {
             kullanilan: 0.50,
             kalan: 0.50,
             sifirlama: Some(sifirlama),
+            etiket: None,
         };
         // İlk 30 dk yavaş (%10), sonraki 30 dk hızlı (%40) -> toplam 1 saatte %50.
         let ornekler = vec![
@@ -552,6 +556,7 @@ mod tests {
             kullanilan: 0.10,
             kalan: 0.90,
             sifirlama: Some(sifirlama),
+            etiket: None,
         };
         let t = pencere_tahmini(&ornekler, &mevcut, simdi, false);
         assert_eq!(t.durum, TahminDurumu::Deneysel);
@@ -577,6 +582,7 @@ mod tests {
             kullanilan: 0.22,
             kalan: 0.78,
             sifirlama: Some(sifirlama),
+            etiket: None,
         };
         let t = pencere_tahmini(&ornekler, &mevcut, simdi, false);
         assert_eq!(t.durum, TahminDurumu::Deneysel);
@@ -594,6 +600,7 @@ mod tests {
             kullanilan: 1.0 - kalan,
             kalan,
             sifirlama: Some(simdi.ekle_sn(3600)),
+            etiket: None,
         };
         let yok = tahmin_yok("test");
         // Claude 5s: %18 tabanın (%15) üstünde → model bandı (dikkat) korunur; %15 eşitlik kaçın değil.
@@ -628,6 +635,7 @@ mod tests {
             kullanilan: 0.35,
             kalan: 0.65,
             sifirlama: Some(sifirlama),
+            etiket: None,
         };
         let mut tahmin = tahmin_yok("x");
         tahmin.durum = TahminDurumu::Deneysel;
@@ -662,6 +670,7 @@ mod tests {
                 kullanilan: 0.78,
                 kalan: 0.22,
                 sifirlama: Some(simdi.ekle_sn(3600)),
+                etiket: None,
             },
         );
         pencereler.insert(
@@ -671,6 +680,7 @@ mod tests {
                 kullanilan: 0.75,
                 kalan: 0.25,
                 sifirlama: Some(simdi.ekle_sn(86_400)),
+                etiket: None,
             },
         );
         let mut havuz = HavuzAnlik {
@@ -689,6 +699,8 @@ mod tests {
             ek: None,
             hata: None,
             notlar: Vec::new(),
+            kesif: None,
+            etkin_kalan_zincir: None,
         };
         havuz.hesapla_etkin_durum();
         assert_eq!(havuz.baglayici_pencere.as_deref(), Some("5s"));
@@ -710,6 +722,7 @@ mod tests {
             kullanilan: 0.30,
             kalan: 0.70,
             sifirlama: Some(yeni_sifirlama),
+            etiket: None,
         };
         let ornekler = vec![
             OrnekNoktasi {

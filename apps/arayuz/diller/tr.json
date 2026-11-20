@@ -164,7 +164,13 @@
     "hakkinda": "Hakkında",
     "cikis": "Çıkış",
     "kisayollar": "Kısayollar",
-    "kaynakBilgi": "{kaynak} · {guven} · okuma {yas}"
+    "kaynakBilgi": "{kaynak} · {guven} · okuma {yas}",
+    "baglacVe": "{a} ve {b}",
+    "dahaFazlaPencere": "+{n}",
+    "dahaFazlaPencereIpucu": "Diğer pencereler: {liste}",
+    "altSayacSinirliIpucu": "{ad}: {kullanilabilir} kullanılabilir (ham {ham}) — genel {ebeveyn} sınırlıyor ({ebeveynDeger})",
+    "altSayacSinirliKullanilanIpucu": "{ad}: {etkin} etkin kullanım (ham {ham}) — genel {ebeveyn} sınırlıyor ({ebeveynDeger})",
+    "altSayacOzetIpucu": "Alt sayaçlar: {liste}"
   },
   "gorunum": {
     "gostergeEtiket": "Gösterge",
@@ -208,6 +214,7 @@
   },
   "pencereAdlari": {
     "5dk": "5 dakikalık pencere",
+    "1s": "1 saatlik pencere",
     "5s": "5 saatlik pencere",
     "gun": "Günlük pencere",
     "hafta": "Haftalık pencere",
@@ -215,6 +222,7 @@
   },
   "pencereEtiket": {
     "5dk": "5 dk",
+    "1s": "1 saat",
     "5s": "5 saat",
     "gun": "Günlük",
     "hafta": "Haftalık",
@@ -222,6 +230,7 @@
   },
   "pencereBaslik": {
     "5dk": "5 dakika",
+    "1s": "1 saat",
     "5s": "Oturum (5 saat)",
     "gun": "Günlük",
     "hafta": "Haftalık",
@@ -229,6 +238,7 @@
   },
   "pencereKisa": {
     "5dk": "5dk",
+    "1s": "1s",
     "5s": "5s",
     "gun": "gün",
     "hafta": "hafta",
@@ -236,10 +246,43 @@
   },
   "pencereIpucu": {
     "5dk": "Kısa süreli istek hızı limiti (5 dakikalık kayan pencere)",
+    "1s": "1 saatlik kota penceresi",
     "5s": "5 saatlik oturum/kota penceresi",
     "gun": "24 saatlik günlük token veya istek penceresi",
     "hafta": "7 günlük haftalık toplam limit penceresi",
     "ay": "Aylık kota penceresi"
+  },
+  "pencereSure": {
+    "dk": "{n} dk",
+    "saat": "{n} saat",
+    "gun": "{n} gün",
+    "kisaDk": "{n}dk",
+    "kisaSaat": "{n}s",
+    "kisaGun": "{n}g"
+  },
+  "kesif": {
+    "yeniAlgilandiIpucu": "Yeni algılandı · {zaman}",
+    "yeniHavuzSerit": "Yeni havuz: {ad}",
+    "cokYeniHavuz": "{n} yeni havuz",
+    "incele": "İncele",
+    "kapat": "Kapat",
+    "gorulmeyenBaslik": "Görülmeyen havuzlar ({n})",
+    "sonGorulme": "Son görülme: {zaman}",
+    "ebeveynIpucu": "Kullanımı {ebeveyn} kotasından da düşer ({guven})",
+    "ebeveynIpucuGuvensiz": "Kullanımı {ebeveyn} kotasından da düşer",
+    "zincirEtkin": "etkin zincir: {oran}",
+    "altSekmelerAria": "Havuz alt sekmeleri",
+    "ekmekKirintisiAria": "Gezinme yolu",
+    "durumAktif": "Aktif",
+    "durumYeni": "Yeni",
+    "durumGorulmuyor": "Görülmüyor"
+  },
+  "baglamMenu": {
+    "aria": "Kart işlemleri",
+    "yenile": "Yenile",
+    "ayrintiyiAc": "Ayrıntıyı aç",
+    "degerleriKopyala": "Değerleri kopyala",
+    "kopyalandi": "Değerler panoya kopyalandı."
   },
   "kaynakTur": {
     "mod_koprusu": "Eklenti köprüsü",
@@ -358,9 +401,18 @@
       "bildirimler": "Bildirimler",
       "baglantilar": "Bağlantılar",
       "platformlar": "Platformlar",
+      "havuzlar": "Havuzlar",
       "teknik": "Teknik",
       "hakkinda": "Hakkında ve Yasal"
     },
+    "aramaYerTutucu": "Ayarlarda ara…",
+    "aramaTemizle": "Aramayı temizle",
+    "aramaSonucYok": "\"{sorgu}\" için ayar bulunamadı.",
+    "havuzlarBaslik": "Keşfedilen havuzlar",
+    "havuzlarBos": "Henüz keşfedilmiş havuz yok.",
+    "geneldeGoster": "Genel'de göster",
+    "havuzSabitle": "Sabitle",
+    "gorulmeyenGenelIpucu": "Görülmeyen havuzlar Genel'de gösterilmez.",
     "hakkindaKisa": "Hakkında",
     "grupGorunum": "Görünüm ve dil",
     "grupDavranis": "Pencere ve sistem",

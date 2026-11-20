@@ -96,32 +96,39 @@ pub async fn pipe_sunucusu_baslat(
     let sinir = Arc::new(tokio::sync::Semaphore::new(AZAMI_ESZAMANLI_PIPE));
     let gorev = tokio::spawn(async move {
         loop {
-            let bagli_sunucu = tokio::select! {
+            let baglanti = tokio::select! {
                 _ = kapanis.changed() => {
                     if *kapanis.borrow() {
                         break;
                     }
                     continue;
                 }
-                res = sonraki_sunucu.connect() => {
-                    match res {
-                        Ok(()) => sonraki_sunucu,
-                        Err(e) => {
-                            tracing::warn!("Named pipe bağlantı hatası: {e}");
-                            break;
-                        }
-                    }
-                }
+                res = sonraki_sunucu.connect() => res,
             };
 
-            match guvenli_pipe_olustur(&pipe_adi, &sddl, false) {
-                Ok(yeni_dinleyici) => {
-                    sonraki_sunucu = yeni_dinleyici;
+            // Geçici hatada pipe sunucusu sessizce ölmez: kısa bekleyip yeni örnekle sürdürür.
+            let mut yeni = None;
+            while yeni.is_none() {
+                match guvenli_pipe_olustur(&pipe_adi, &sddl, false) {
+                    Ok(y) => yeni = Some(y),
+                    Err(e) => {
+                        tracing::warn!("Sonraki named pipe örneği açılamadı: {e}");
+                        if *kapanis.borrow() {
+                            break;
+                        }
+                        tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+                    }
                 }
-                Err(e) => {
-                    tracing::warn!("Sonraki named pipe örneği açılamadı: {e}");
-                    break;
-                }
+            }
+            let Some(yeni) = yeni else {
+                break;
+            };
+            let bagli_sunucu = std::mem::replace(&mut sonraki_sunucu, yeni);
+            if let Err(e) = baglanti {
+                tracing::warn!("Named pipe bağlantı hatası: {e}");
+                drop(bagli_sunucu);
+                tokio::time::sleep(std::time::Duration::from_millis(200)).await;
+                continue;
             }
 
             let Ok(izin) = Arc::clone(&sinir).try_acquire_owned() else {
@@ -882,6 +889,7 @@ mod tests {
                     kullanilan: 0.1,
                     kalan: 0.9,
                     sifirlama: Some(simdi.ekle_sn(3600)),
+                    etiket: None,
                 },
             )]),
             alt_sayaclar: BTreeMap::new(),
@@ -891,6 +899,8 @@ mod tests {
             ek: None,
             hata: None,
             notlar: Vec::new(),
+            kesif: None,
+            etkin_kalan_zincir: None,
         };
         codex.hesapla_etkin_durum();
         durum

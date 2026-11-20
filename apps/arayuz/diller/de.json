@@ -164,7 +164,13 @@
     "hakkinda": "Über",
     "cikis": "Beenden",
     "kisayollar": "Tastenkürzel",
-    "kaynakBilgi": "{kaynak} · {guven} · gelesen {yas}"
+    "kaynakBilgi": "{kaynak} · {guven} · gelesen {yas}",
+    "baglacVe": "{a} und {b}",
+    "dahaFazlaPencere": "+{n}",
+    "dahaFazlaPencereIpucu": "Weitere Fenster: {liste}",
+    "altSayacSinirliIpucu": "{ad}: {kullanilabilir} nutzbar (roh {ham}) — begrenzt durch {ebeveyn} ({ebeveynDeger})",
+    "altSayacSinirliKullanilanIpucu": "{ad}: {etkin} effektiv genutzt (roh {ham}) — begrenzt durch {ebeveyn} ({ebeveynDeger})",
+    "altSayacOzetIpucu": "Unterzähler: {liste}"
   },
   "gorunum": {
     "gostergeEtiket": "Anzeige",
@@ -208,6 +214,7 @@
   },
   "pencereAdlari": {
     "5dk": "5-Minuten-Fenster",
+    "1s": "1-Stunden-Fenster",
     "5s": "5-Stunden-Fenster",
     "gun": "Tagesfenster",
     "hafta": "Wochenfenster",
@@ -215,6 +222,7 @@
   },
   "pencereEtiket": {
     "5dk": "5 Min.",
+    "1s": "1 Std.",
     "5s": "5 Std.",
     "gun": "Täglich",
     "hafta": "Wöchentlich",
@@ -222,6 +230,7 @@
   },
   "pencereBaslik": {
     "5dk": "5 Minuten",
+    "1s": "1 Stunde",
     "5s": "Sitzung (5 Stunden)",
     "gun": "Täglich",
     "hafta": "Wöchentlich",
@@ -229,6 +238,7 @@
   },
   "pencereKisa": {
     "5dk": "5 Min.",
+    "1s": "1 Std.",
     "5s": "5 Std.",
     "gun": "Tag",
     "hafta": "Woche",
@@ -236,10 +246,43 @@
   },
   "pencereIpucu": {
     "5dk": "Kurzzeit-Anfragelimit (5-Minuten-Fenster)",
+    "1s": "1-Stunden-Kontingentfenster",
     "5s": "5-Stunden-Kontingentfenster (gleitend)",
     "gun": "24-Stunden-Token- oder Anfragefenster",
     "hafta": "7-Tage-Wochenkontingentfenster",
     "ay": "Monatliches Abrechnungskontingentfenster"
+  },
+  "pencereSure": {
+    "dk": "{n} Min.",
+    "saat": "{n} Std.",
+    "gun": "{n} Tage",
+    "kisaDk": "{n}m",
+    "kisaSaat": "{n}h",
+    "kisaGun": "{n}T"
+  },
+  "kesif": {
+    "yeniAlgilandiIpucu": "Neu erkannt · {zaman}",
+    "yeniHavuzSerit": "Neuer Pool: {ad}",
+    "cokYeniHavuz": "{n} neue Pools",
+    "incele": "Prüfen",
+    "kapat": "Schließen",
+    "gorulmeyenBaslik": "Nicht gesehene Pools ({n})",
+    "sonGorulme": "Zuletzt gesehen: {zaman}",
+    "ebeveynIpucu": "Nutzung zählt auch zum {ebeveyn}-Kontingent ({guven})",
+    "ebeveynIpucuGuvensiz": "Nutzung zählt auch zum {ebeveyn}-Kontingent",
+    "zincirEtkin": "effektiv verkettet: {oran}",
+    "altSekmelerAria": "Pool-Untertabs",
+    "ekmekKirintisiAria": "Navigationspfad",
+    "durumAktif": "Aktiv",
+    "durumYeni": "Neu",
+    "durumGorulmuyor": "Nicht gesehen"
+  },
+  "baglamMenu": {
+    "aria": "Kartenaktionen",
+    "yenile": "Aktualisieren",
+    "ayrintiyiAc": "Details öffnen",
+    "degerleriKopyala": "Werte kopieren",
+    "kopyalandi": "Werte in die Zwischenablage kopiert."
   },
   "kaynakTur": {
     "mod_koprusu": "Plugin-Bridge",
@@ -358,9 +401,18 @@
       "bildirimler": "Benachrichtigungen",
       "baglantilar": "Verbindungen",
       "platformlar": "Plattformen",
+      "havuzlar": "Pools",
       "teknik": "Technisch",
       "hakkinda": "Über & Rechtliches"
     },
+    "aramaYerTutucu": "Einstellungen suchen…",
+    "aramaTemizle": "Suche leeren",
+    "aramaSonucYok": "Keine Einstellungen für „{sorgu}“ gefunden.",
+    "havuzlarBaslik": "Erkannte Pools",
+    "havuzlarBos": "Noch keine Pools erkannt.",
+    "geneldeGoster": "In Übersicht zeigen",
+    "havuzSabitle": "Anheften",
+    "gorulmeyenGenelIpucu": "Nicht gesehene Pools erscheinen nicht in der Übersicht.",
     "hakkindaKisa": "Über",
     "grupGorunum": "Darstellung & Sprache",
     "grupDavranis": "Fenster & System",

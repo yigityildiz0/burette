@@ -15,7 +15,8 @@ use thiserror::Error;
 #[cfg(windows)]
 pub use atomik::nesne_sahibi_sid;
 pub use atomik::{
-    atomik_yaz, atomik_yaz_json, gecerli_kullanici_sid, kullanici_dacl_uygula, surec_kullanici_sid,
+    atomik_yaz, atomik_yaz_json, eski_gecici_dosyalari_temizle, gecerli_kullanici_sid,
+    kullanici_dacl_uygula, surec_kullanici_sid,
 };
 pub use ayarlar::{
     AgyAyari, AgyOkumaIzni, AjanAyari, AyarKurtarma, AyarYukleme, Ayarlar, BildirimAyari,

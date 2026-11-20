@@ -66,6 +66,16 @@ impl CetvelYollar {
         self.local_kok.join("jeton")
     }
 
+    /// Dinamik kova kaydı: havuz ve alt sayaç başına ilk/son görülme.
+    pub fn kovalar_dosyasi(&self) -> PathBuf {
+        self.local_kok.join("kovalar.json")
+    }
+
+    /// Antigravity okuma durumu (saatlik çağrılar, model-turu askısı); servis ve CLI paylaşır.
+    pub fn agy_durum_dosyasi(&self) -> PathBuf {
+        self.local_kok.join("agy-durum.json")
+    }
+
     pub fn gecmis_veritabani(&self) -> PathBuf {
         self.local_kok.join("gecmis.sqlite")
     }

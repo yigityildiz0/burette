@@ -265,7 +265,7 @@ fn arac_tanimlari() -> Value {
                 "properties": {
                     "havuz": {
                         "type": "string",
-                        "description": "Havuz kimliği (ör. codex_plus, claude_max, deepseek, agy_gemini)"
+                        "description": "Havuz kimliği (ör. codex_plus, claude_max, deepseek, agy_gemini). Liste sabit değildir: sağlayıcı yeni havuz çıkarınca dinamik kimlikler (ör. agy_<grup>) oluşabilir; güncel kimlikler için kota_anlik kullanın."
                     }
                 },
                 "required": ["havuz"],
@@ -464,6 +464,7 @@ mod tests {
                     kullanilan: (1.0 - kalan).clamp(0.0, 1.0),
                     kalan,
                     sifirlama: None,
+                    etiket: None,
                 },
             )]),
             alt_sayaclar: BTreeMap::new(),
@@ -473,6 +474,8 @@ mod tests {
             ek: None,
             hata: None,
             notlar: Vec::new(),
+            kesif: None,
+            etkin_kalan_zincir: None,
         };
         h.hesapla_etkin_durum();
         h
@@ -543,6 +546,8 @@ mod tests {
             ek: None,
             hata: None,
             notlar: Vec::new(),
+            kesif: None,
+            etkin_kalan_zincir: None,
         };
         ds.hesapla_etkin_durum();
         havuzlar.insert("deepseek".to_string(), ds);

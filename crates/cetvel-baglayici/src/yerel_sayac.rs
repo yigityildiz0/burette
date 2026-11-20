@@ -656,6 +656,8 @@ fn bos_havuz(arac: YerelArac, durum: Durum) -> HavuzAnlik {
         ek: None,
         hata: None,
         notlar: Vec::new(),
+        kesif: None,
+        etkin_kalan_zincir: None,
     }
 }
 

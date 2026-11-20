@@ -164,7 +164,13 @@
     "hakkinda": "정보",
     "cikis": "종료",
     "kisayollar": "단축키",
-    "kaynakBilgi": "{kaynak} · {guven} · {yas} 읽음"
+    "kaynakBilgi": "{kaynak} · {guven} · {yas} 읽음",
+    "baglacVe": "{a} 및 {b}",
+    "dahaFazlaPencere": "+{n}",
+    "dahaFazlaPencereIpucu": "기타 창: {liste}",
+    "altSayacSinirliIpucu": "{ad}: 사용 가능 {kullanilabilir} (원래 {ham}) — 전체 {ebeveyn} 한도로 제한됨 ({ebeveynDeger})",
+    "altSayacSinirliKullanilanIpucu": "{ad}: 실질 사용 {etkin} (원래 {ham}) — 전체 {ebeveyn} 한도로 제한됨 ({ebeveynDeger})",
+    "altSayacOzetIpucu": "하위 카운터: {liste}"
   },
   "gorunum": {
     "gostergeEtiket": "표시기",
@@ -208,6 +214,7 @@
   },
   "pencereAdlari": {
     "5dk": "5분 창",
+    "1s": "1시간 창",
     "5s": "5시간 창",
     "gun": "일간 창",
     "hafta": "주간 창",
@@ -215,6 +222,7 @@
   },
   "pencereEtiket": {
     "5dk": "5분",
+    "1s": "1시간",
     "5s": "5시간",
     "gun": "일간",
     "hafta": "주간",
@@ -222,6 +230,7 @@
   },
   "pencereBaslik": {
     "5dk": "5분",
+    "1s": "1시간",
     "5s": "세션 (5시간)",
     "gun": "일간",
     "hafta": "주간",
@@ -229,6 +238,7 @@
   },
   "pencereKisa": {
     "5dk": "5분",
+    "1s": "1시간",
     "5s": "5시간",
     "gun": "일",
     "hafta": "주",
@@ -236,10 +246,43 @@
   },
   "pencereIpucu": {
     "5dk": "단기 요청 속도 제한 (5분 창)",
+    "1s": "1시간 롤링 할당량 창",
     "5s": "5시간 롤링 세션 할당량 창",
     "gun": "24시간 일간 토큰/요청 창",
     "hafta": "7일 누적 주간 할당량 창",
     "ay": "월간 청구 할당량 창"
+  },
+  "pencereSure": {
+    "dk": "{n}분",
+    "saat": "{n}시간",
+    "gun": "{n}일",
+    "kisaDk": "{n}분",
+    "kisaSaat": "{n}h",
+    "kisaGun": "{n}일"
+  },
+  "kesif": {
+    "yeniAlgilandiIpucu": "새로 감지됨 · {zaman}",
+    "yeniHavuzSerit": "새 풀: {ad}",
+    "cokYeniHavuz": "새 풀 {n}개",
+    "incele": "보기",
+    "kapat": "닫기",
+    "gorulmeyenBaslik": "미표시 풀 ({n})",
+    "sonGorulme": "마지막 확인: {zaman}",
+    "ebeveynIpucu": "사용량은 {ebeveyn} 할당량에서도 차감됩니다 ({guven})",
+    "ebeveynIpucuGuvensiz": "사용량은 {ebeveyn} 할당량에서도 차감됩니다",
+    "zincirEtkin": "연동 유효: {oran}",
+    "altSekmelerAria": "풀 하위 탭",
+    "ekmekKirintisiAria": "이동 경로",
+    "durumAktif": "활성",
+    "durumYeni": "신규",
+    "durumGorulmuyor": "미감지"
+  },
+  "baglamMenu": {
+    "aria": "카드 작업",
+    "yenile": "새로고침",
+    "ayrintiyiAc": "상세 열기",
+    "degerleriKopyala": "값 복사",
+    "kopyalandi": "값을 클립보드에 복사했습니다."
   },
   "kaynakTur": {
     "mod_koprusu": "플러그인 브리지",
@@ -358,9 +401,18 @@
       "bildirimler": "알림",
       "baglantilar": "연결",
       "platformlar": "플랫폼",
+      "havuzlar": "풀",
       "teknik": "기술",
       "hakkinda": "정보 및 법적 고지"
     },
+    "aramaYerTutucu": "설정 검색…",
+    "aramaTemizle": "검색 지우기",
+    "aramaSonucYok": "\"{sorgu}\"에 대한 설정을 찾을 수 없습니다.",
+    "havuzlarBaslik": "감지된 풀",
+    "havuzlarBos": "감지된 풀이 아직 없습니다.",
+    "geneldeGoster": "개요에 표시",
+    "havuzSabitle": "고정",
+    "gorulmeyenGenelIpucu": "미감지 풀은 개요에 표시되지 않습니다.",
     "hakkindaKisa": "정보",
     "grupGorunum": "모양 및 언어",
     "grupDavranis": "창 및 시스템",

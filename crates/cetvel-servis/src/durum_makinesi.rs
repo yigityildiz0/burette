@@ -11,6 +11,13 @@ const DEVRE_ESIGI: u32 = 5;
 /// `baglanmadi` (kurulu değil / anahtar yok) havuzlar bu aralıkla yeniden denenir; böylece
 /// sonradan kurulan Codex veya eklenen anahtar servis yeniden başlatılmadan algılanır.
 pub const BAGLANMADI_YENIDEN_DENEME_SN: i64 = 600;
+/// `Retry-After` ve bağlayıcı bekleme isteklerinin üst sınırı (24 sa): dev değer `i64`'e
+/// çevrilirken taşıp geçmişe sarmasın ya da havuzu süresiz kapatmasın.
+pub const RETRY_AFTER_TAVAN_SN: u64 = 24 * 3600;
+/// Ek köprü havuzlarının güncellenmeden anlıkta kalabileceği süre (sn).
+pub const KOPRU_HAVUZ_OMRU_SN: i64 = 30 * 86_400;
+/// Yenileme sınırlayıcısının tuttuğu en fazla anahtar sayısı.
+const YENILE_ANAHTAR_TAVANI: usize = 128;
 /// Elle/zorla yenilemede havuz başına en kısa okuma aralığı (havuz başına 1/dk).
 pub const ZORLA_OKUMA_ASGARI_SN: i64 = 60;
 
@@ -186,7 +193,7 @@ impl HavuzDurumMakinesi {
             let bekleme = sonuc
                 .retry_after_sn
                 .unwrap_or(DEVRE_KESICI_SN)
-                .max(DEVRE_KESICI_SN);
+                .clamp(DEVRE_KESICI_SN, RETRY_AFTER_TAVAN_SN);
             self.evre = TakipEvresi::DevreAcik {
                 acilis: simdi,
                 sonraki_deneme: simdi.ekle_sn(bekleme as i64),
@@ -197,7 +204,11 @@ impl HavuzDurumMakinesi {
                 .saturating_sub(1)
                 .min(GERI_CEKILME_ADIMLARI_SN.len() - 1);
             let geri_sn = GERI_CEKILME_ADIMLARI_SN[idx];
-            let bekleme = sonuc.retry_after_sn.unwrap_or(0).max(geri_sn);
+            let bekleme = sonuc
+                .retry_after_sn
+                .unwrap_or(0)
+                .min(RETRY_AFTER_TAVAN_SN)
+                .max(geri_sn);
             self.evre = TakipEvresi::GeriCekilme {
                 ardisik_hata: yeni_hata_sayisi,
                 sonraki_deneme: simdi.ekle_sn(bekleme as i64),
@@ -264,11 +275,20 @@ impl YayinKoordinatoru {
                 if let Some(mevcut) = self.havuzlar.get_mut(&havuz_id)
                     && !mevcut.pencereler.is_empty()
                 {
+                    // Kalıcı askı (agy model turu): son bilinen değerler bayat ve hata notuyla.
+                    let askida = yeni
+                        .hata
+                        .as_ref()
+                        .is_some_and(|h| h.tur == cetvel_baglayici::agy::AGY_MODEL_TURU_HATA);
                     mevcut.hata = yeni.hata;
                     for not in yeni.notlar {
                         if !mevcut.notlar.contains(&not) {
                             mevcut.notlar.push(not);
                         }
+                    }
+                    if askida && mevcut.durum == Durum::Ok {
+                        mevcut.durum = Durum::Bayat;
+                        mevcut.hesapla_etkin_durum();
                     }
                     return;
                 }
@@ -341,6 +361,14 @@ pub fn yayin_birlestir(
         if yoklanan_kimlikler.contains(id) || havuzlar.contains_key(id) || !kopru_havuzu_mu(h) {
             continue;
         }
+        // 30 gündür güncellenmeyen ek köprü havuzu (`claude_max` dışı) temizlenir.
+        if id != "claude_max"
+            && h.kaynak
+                .as_ref()
+                .is_some_and(|k| simdi.fark_sn(k.okuma) > KOPRU_HAVUZ_OMRU_SN)
+        {
+            continue;
+        }
         let mut kopya = h.clone();
         kopya.yas_guncelle(simdi, kopru_bayat_esigi_sn);
         havuzlar.insert(id.clone(), kopya);
@@ -394,6 +422,21 @@ impl YenileSinirlayici {
                 return Err((self.aralik_sn - gecen) as u64);
             }
         }
+        // Serbest metin anahtarlar haritayı sınırsız büyütmesin: süresi dolanlar atılır, yine
+        // de doluysa en eski giriş çıkarılır.
+        if self.son.len() >= YENILE_ANAHTAR_TAVANI {
+            let aralik = self.aralik_sn;
+            self.son.retain(|_, t| simdi.fark_sn(*t) < aralik);
+            if self.son.len() >= YENILE_ANAHTAR_TAVANI
+                && let Some(eski) = self
+                    .son
+                    .iter()
+                    .min_by_key(|(_, t)| **t)
+                    .map(|(k, _)| k.clone())
+            {
+                self.son.remove(&eski);
+            }
+        }
         self.son.insert(temiz.to_string(), simdi);
         Ok(())
     }
@@ -417,6 +460,7 @@ mod tests {
                 kullanilan: 1.0 - kalan,
                 kalan,
                 sifirlama: None,
+                etiket: None,
             },
         );
         let mut h = HavuzAnlik {
@@ -441,6 +485,8 @@ mod tests {
             ek: None,
             hata: None,
             notlar: Vec::new(),
+            kesif: None,
+            etkin_kalan_zincir: None,
         };
         h.hesapla_etkin_durum();
         BaglayiciSonucu {
@@ -473,6 +519,8 @@ mod tests {
                     http_kodu: Some(429),
                 }),
                 notlar: Vec::new(),
+                kesif: None,
+                etkin_kalan_zincir: None,
             },
             retry_after_sn,
             gecici_hata: true,
@@ -754,5 +802,38 @@ mod tests {
         assert!(s.izin_ver("", t0).is_ok());
         assert_eq!(s.izin_ver("*", t0.ekle_sn(1)), Err(59));
         assert!(s.izin_ver("codex_plus", t0.ekle_sn(60)).is_ok());
+    }
+
+    #[test]
+    fn model_turu_askisi_son_degerleri_bayat_ve_hata_notuyla_tutar() {
+        let t0 = z("2026-11-20T10:00:00Z");
+        let mut k = YayinKoordinatoru::default();
+        k.havuz_sonucu_birlestir(ok_sonuc("agy_gemini_5_xenon", t0, 0.7));
+        let mut aski = hata_sonuc("agy_gemini_5_xenon", None);
+        aski.gecici_hata = false;
+        aski.havuz.hata = Some(HataBilgisi {
+            tur: cetvel_baglayici::agy::AGY_MODEL_TURU_HATA.to_string(),
+            http_kodu: None,
+        });
+        aski.havuz.notlar = vec!["agy /usage model isteğine dönüştü".into()];
+        k.havuz_sonucu_birlestir(aski);
+        let h = &k.havuzlar["agy_gemini_5_xenon"];
+        assert_eq!(h.durum, Durum::Bayat);
+        assert!((h.pencereler["5s"].kalan - 0.7).abs() < 1e-9);
+        assert!(h.notlar.iter().any(|n| n.contains("model isteğine")));
+        assert_eq!(h.kullanilabilir, Some(false));
+    }
+
+    #[test]
+    fn retry_after_dev_deger_kistirilir() {
+        let t0 = z("2026-11-20T10:00:00Z");
+        let mut dm = HavuzDurumMakinesi::yeni(HavuzZamanlamaKurali::default());
+        dm.sonuc_isle(t0, &hata_sonuc("deepseek", Some(u64::MAX)));
+        match dm.evre {
+            TakipEvresi::GeriCekilme { sonraki_deneme, .. } => {
+                assert_eq!(sonraki_deneme.fark_sn(t0), RETRY_AFTER_TAVAN_SN as i64);
+            }
+            diger => panic!("beklenmeyen evre {diger:?}"),
+        }
     }
 }

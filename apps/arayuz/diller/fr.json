@@ -164,7 +164,13 @@
     "hakkinda": "À propos",
     "cikis": "Quitter",
     "kisayollar": "Raccourcis",
-    "kaynakBilgi": "{kaynak} · {guven} · lu {yas}"
+    "kaynakBilgi": "{kaynak} · {guven} · lu {yas}",
+    "baglacVe": "{a} et {b}",
+    "dahaFazlaPencere": "+{n}",
+    "dahaFazlaPencereIpucu": "Autres fenêtres : {liste}",
+    "altSayacSinirliIpucu": "{ad} : {kullanilabilir} utilisable (brut {ham}) — limité par {ebeveyn} ({ebeveynDeger})",
+    "altSayacSinirliKullanilanIpucu": "{ad} : {etkin} utilisé effectif (brut {ham}) — limité par {ebeveyn} ({ebeveynDeger})",
+    "altSayacOzetIpucu": "Sous-compteurs : {liste}"
   },
   "gorunum": {
     "gostergeEtiket": "Indicateur",
@@ -208,6 +214,7 @@
   },
   "pencereAdlari": {
     "5dk": "Fenêtre 5 minutes",
+    "1s": "Fenêtre 1 heure",
     "5s": "Fenêtre 5 heures",
     "gun": "Fenêtre quotidienne",
     "hafta": "Fenêtre hebdomadaire",
@@ -215,6 +222,7 @@
   },
   "pencereEtiket": {
     "5dk": "5 min",
+    "1s": "1 h",
     "5s": "5 h",
     "gun": "Quotidien",
     "hafta": "Hebdomadaire",
@@ -222,6 +230,7 @@
   },
   "pencereBaslik": {
     "5dk": "5 minutes",
+    "1s": "1 heure",
     "5s": "Session (5 h)",
     "gun": "Quotidien",
     "hafta": "Hebdomadaire",
@@ -229,6 +238,7 @@
   },
   "pencereKisa": {
     "5dk": "5m",
+    "1s": "1h",
     "5s": "5h",
     "gun": "jour",
     "hafta": "sem.",
@@ -236,10 +246,43 @@
   },
   "pencereIpucu": {
     "5dk": "Limite de débit par courtes rafales (fenêtre de 5 minutes)",
+    "1s": "Fenêtre de quota glissante d'une heure",
     "5s": "Fenêtre de quota de session glissante de 5 heures",
     "gun": "Fenêtre quotidienne de 24 h (tokens ou requêtes)",
     "hafta": "Fenêtre de quota hebdomadaire cumulée sur 7 jours",
     "ay": "Fenêtre de quota de facturation mensuelle"
+  },
+  "pencereSure": {
+    "dk": "{n} min",
+    "saat": "{n} h",
+    "gun": "{n} j",
+    "kisaDk": "{n}m",
+    "kisaSaat": "{n}h",
+    "kisaGun": "{n}j"
+  },
+  "kesif": {
+    "yeniAlgilandiIpucu": "Nouveau détecté · {zaman}",
+    "yeniHavuzSerit": "Nouveau pool : {ad}",
+    "cokYeniHavuz": "{n} nouveaux pools",
+    "incele": "Voir",
+    "kapat": "Fermer",
+    "gorulmeyenBaslik": "Pools non vus ({n})",
+    "sonGorulme": "Vu le : {zaman}",
+    "ebeveynIpucu": "L'usage compte aussi sur le quota {ebeveyn} ({guven})",
+    "ebeveynIpucuGuvensiz": "L'usage compte aussi sur le quota {ebeveyn}",
+    "zincirEtkin": "effectif chaîné : {oran}",
+    "altSekmelerAria": "Sous-onglets des pools",
+    "ekmekKirintisiAria": "Fil d'Ariane",
+    "durumAktif": "Actif",
+    "durumYeni": "Nouveau",
+    "durumGorulmuyor": "Non vu"
+  },
+  "baglamMenu": {
+    "aria": "Actions de carte",
+    "yenile": "Actualiser",
+    "ayrintiyiAc": "Ouvrir les détails",
+    "degerleriKopyala": "Copier les valeurs",
+    "kopyalandi": "Valeurs copiées dans le presse-papiers."
   },
   "kaynakTur": {
     "mod_koprusu": "Pont d'extension",
@@ -358,9 +401,18 @@
       "bildirimler": "Notifications",
       "baglantilar": "Connexions",
       "platformlar": "Plateformes",
+      "havuzlar": "Pools",
       "teknik": "Technique",
       "hakkinda": "À propos et mentions légales"
     },
+    "aramaYerTutucu": "Rechercher…",
+    "aramaTemizle": "Effacer la recherche",
+    "aramaSonucYok": "Aucun paramètre trouvé pour « {sorgu} ».",
+    "havuzlarBaslik": "Pools découverts",
+    "havuzlarBos": "Aucun pool découvert pour le moment.",
+    "geneldeGoster": "Afficher dans Vue d'ensemble",
+    "havuzSabitle": "Épingler",
+    "gorulmeyenGenelIpucu": "Les pools non vus ne s'affichent pas dans la vue d'ensemble.",
     "hakkindaKisa": "À propos",
     "grupGorunum": "Apparence et langue",
     "grupDavranis": "Fenêtre et système",

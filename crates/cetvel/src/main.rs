@@ -547,6 +547,19 @@ async fn statusline_komutu(args: StatuslineArgs) -> ExitCode {
     let mut girdi = Vec::new();
     let _ = std::io::stdin().take(1_048_576).read_to_end(&mut girdi);
 
+    // Kota köprüsü önce gönderilir: takılan önceki statusLine komutu köprüyü durdurmasın.
+    if let Ok(json) = serde_json::from_slice::<serde_json::Value>(&girdi)
+        && let Some(yuk) = cetvel_servis::bagla::statusline_kota_yuku(&json)
+        && servis_calisiyor_mu()
+        && let Ok(yollar) = CetvelYollar::ortamdan()
+    {
+        let _ = tokio::time::timeout(
+            std::time::Duration::from_millis(800),
+            servis_pipe_istegi(&yollar, "kopru.claude", Some(yuk)),
+        )
+        .await;
+    }
+
     if let Some(onceki) = args
         .onceki_hex
         .as_deref()
@@ -577,28 +590,54 @@ async fn statusline_komutu(args: StatuslineArgs) -> ExitCode {
             .stdin(std::process::Stdio::piped())
             .stdout(std::process::Stdio::piped())
             .stderr(std::process::Stdio::null());
-        if let Ok(mut cocuk) = komut.spawn() {
-            if let Some(mut stdin) = cocuk.stdin.take() {
-                let _ = stdin.write_all(&girdi);
-            }
-            if let Ok(cikti) = cocuk.wait_with_output() {
-                let _ = std::io::stdout().write_all(&cikti.stdout);
-            }
+        if let Some(cikti) = onceki_komutu_calistir(komut, girdi, ONCEKI_STATUSLINE_SURESI) {
+            let _ = std::io::stdout().write_all(&cikti);
         }
     }
 
-    if let Ok(json) = serde_json::from_slice::<serde_json::Value>(&girdi)
-        && let Some(yuk) = cetvel_servis::bagla::statusline_kota_yuku(&json)
-        && servis_calisiyor_mu()
-        && let Ok(yollar) = CetvelYollar::ortamdan()
-    {
-        let _ = tokio::time::timeout(
-            std::time::Duration::from_millis(800),
-            servis_pipe_istegi(&yollar, "kopru.claude", Some(yuk)),
-        )
-        .await;
-    }
     ExitCode::SUCCESS
+}
+
+/// Zincirlenen önceki statusLine komutuna tanınan en uzun süre.
+const ONCEKI_STATUSLINE_SURESI: std::time::Duration = std::time::Duration::from_secs(3);
+
+/// Önceki statusLine komutunu zaman aşımıyla çalıştırır: stdin ayrı iş parçacığından yazılır
+/// (çocuk stdin tüketmeden büyük çıktı yazarsa kilitlenmesin), süre dolunca süreç ağacı Job ile
+/// öldürülür. Zaman aşımında `None`.
+fn onceki_komutu_calistir(
+    mut komut: std::process::Command,
+    girdi: Vec<u8>,
+    sure: std::time::Duration,
+) -> Option<Vec<u8>> {
+    use std::io::{Read, Write};
+    let job = cetvel_baglayici::JobSuresKorumasi::yeni().ok();
+    let mut cocuk = komut.spawn().ok()?;
+    #[cfg(windows)]
+    if let Some(j) = &job {
+        use std::os::windows::io::AsRawHandle;
+        let _ = j.sureci_ekle(cocuk.as_raw_handle());
+    }
+    if let Some(mut stdin) = cocuk.stdin.take() {
+        std::thread::spawn(move || {
+            let _ = stdin.write_all(&girdi);
+        });
+    }
+    let mut stdout = cocuk.stdout.take()?;
+    let (tx, rx) = std::sync::mpsc::channel();
+    std::thread::spawn(move || {
+        let mut tampon = Vec::new();
+        let _ = stdout.by_ref().take(1_048_576).read_to_end(&mut tampon);
+        let _ = tx.send(tampon);
+    });
+    let sonuc = rx.recv_timeout(sure).ok();
+    if sonuc.is_none() {
+        if let Some(j) = &job {
+            j.sonlandir();
+        }
+        let _ = cocuk.kill();
+    }
+    let _ = cocuk.wait();
+    sonuc
 }
 
 fn tablo_yazdir(anlik: &AnlikV2, servis_aktif: bool, dogrudan: bool) {

@@ -671,9 +671,7 @@ pub async fn ayarlari_sifirla(
         let _kilit = AYAR_DOSYA_KILIDI.lock().unwrap_or_else(|e| e.into_inner());
         let _ = ayarlari_yazmak_icin_yukle(&y.ayarlar_dosyasi())?;
         let mut ayarlar = Ayarlar::default();
-        if let Ok(son) =
-            otomatik_baslat_uygula(&app, &durum, ayarlar.masaustu.windows_ile_baslat)
-        {
+        if let Ok(son) = otomatik_baslat_uygula(&app, &durum, ayarlar.masaustu.windows_ile_baslat) {
             ayarlar.masaustu.windows_ile_baslat = son;
         }
         ayarlar

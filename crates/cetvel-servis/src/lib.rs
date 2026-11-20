@@ -7,6 +7,7 @@ pub mod claude_kopru;
 pub mod durum;
 pub mod durum_makinesi;
 pub mod http_sunucu;
+pub mod kova_kaydi;
 pub mod pipe_sunucu;
 pub mod sistem;
 
@@ -14,6 +15,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
 use std::time::Duration;
 
+use cetvel_baglayici::BaglayiciSonucu;
 use cetvel_baglayici::{
     AntigravityBaglayicisi, Baglayici, CodexBaglayicisi, DeepSeekBaglayicisi, YerelArac,
     YerelSayacBaglayicisi,
@@ -22,7 +24,7 @@ use cetvel_depo::{
     AgyOkumaIzni, AyarYukleme, Ayarlar, BaglantiBilgisi, CetvelYollar, GecmisDeposu,
     atomik_yaz_json, baglanti_bilgisi_yaz, jeton_yukle_veya_uret, kullanici_dacl_uygula,
 };
-use cetvel_model::{AnlikV2, HavuzAnlik, UtcZaman, uyum_uret_agy_araligi};
+use cetvel_model::{AnlikV2, Durum, HavuzAnlik, UtcZaman, uyum_uret_esikli};
 use thiserror::Error;
 use tokio::sync::watch;
 use tracing::info;
@@ -218,8 +220,14 @@ pub async fn tek_sefer_oku_secenekli(ayarlar: &Ayarlar, sec: &OkuSecenekleri) ->
         }
     }
 
-    if sec.agy || (tumu && ayarlar.agy.okuma == AgyOkumaIzni::Otomatik) {
-        let agy = AntigravityBaglayicisi::yeni(ayarlar.agy.clone());
+    // agy (kota harcayabilen süreç) yalnız `--agy` açıkça verildiğinde çalışır; filtresiz
+    // `cetvel oku` / `durum --dogrudan` onu tetiklemez. Saatlik tavan ve model turu askısı
+    // servisle aynı kalıcı durum dosyasından paylaşılır.
+    if sec.agy {
+        let agy = match CetvelYollar::ortamdan() {
+            Ok(y) => AntigravityBaglayicisi::kalici(ayarlar.agy.clone(), y.agy_durum_dosyasi()),
+            Err(_) => AntigravityBaglayicisi::yeni(ayarlar.agy.clone()),
+        };
         for sonuc in agy
             .istekle_veya_zamanli_oku(UtcZaman::simdi(), sec.agy)
             .await
@@ -248,10 +256,57 @@ pub fn anlik_ve_uyum_yayinla_ayarli(
     simdi: UtcZaman,
     agy_aralik_sn: Option<u64>,
 ) -> Result<(), ServisHatasi> {
-    let uyum = uyum_uret_agy_araligi(anlik, simdi, agy_aralik_sn);
+    anlik_ve_uyum_yayinla_esikli(yollar, anlik, simdi, agy_aralik_sn, &BTreeMap::new())
+}
+
+/// Havuz başına uyum yaş eşikleriyle (bkz. [`cetvel_model::uyum_uret_esikli`]) yayınlar.
+pub fn anlik_ve_uyum_yayinla_esikli(
+    yollar: &CetvelYollar,
+    anlik: &AnlikV2,
+    simdi: UtcZaman,
+    agy_aralik_sn: Option<u64>,
+    uyum_esikleri: &BTreeMap<String, u64>,
+) -> Result<(), ServisHatasi> {
+    let uyum = uyum_uret_esikli(anlik, simdi, agy_aralik_sn, uyum_esikleri);
     atomik_yaz_json(&yollar.anlik_dosyasi(), anlik)?;
     atomik_yaz_json(&yollar.orkestra_uyum_dosyasi(), &uyum)?;
     Ok(())
+}
+
+/// Çok havuzlu bağlayıcının durum makinesine verilecek bileşik sonuç: başarılı (geçici hatasız
+/// `Ok`) bir havuz varsa o, yoksa ilk sonuç. Alfabetik ilk havuz (ör. `agy_argon`) tek başına
+/// makineyi yönetmesin.
+fn bilesik_sonuc(sonuclar: &[BaglayiciSonucu]) -> Option<&BaglayiciSonucu> {
+    sonuclar
+        .iter()
+        .find(|s| s.havuz.durum == Durum::Ok && !s.gecici_hata)
+        .or_else(|| sonuclar.first())
+}
+
+/// Okuma turunda başarıyla okunan platformun yanıtında görülen havuz kimlikleri.
+fn basarili_okuma(sonuclar: &[BaglayiciSonucu]) -> Option<(String, BTreeSet<String>)> {
+    let platform = sonuclar
+        .iter()
+        .find(|s| s.havuz.durum == Durum::Ok && !s.gecici_hata)?
+        .havuz
+        .platform
+        .clone();
+    let gorulen = sonuclar
+        .iter()
+        .filter(|s| s.havuz.durum == Durum::Ok)
+        .map(|s| s.havuz_id.clone())
+        .collect();
+    Some((platform, gorulen))
+}
+
+/// Orkestra uyumu pencere yaş eşiği: havuzun en uzun planlı yoklama aralığı + 5 dk tampon
+/// (en az 10 dk). Codex boşta 30 dk okunuyorsa uyum 10 dk sonra "bilinmiyor" demesin.
+fn uyum_yas_esigi(kural: &HavuzZamanlamaKurali) -> u64 {
+    kural
+        .etkin_aralik_sn
+        .max(kural.bosta_aralik_sn)
+        .saturating_add(300)
+        .max(600)
 }
 
 /// Ayarlardan türetilen bağlayıcı, durum makinesi ve bayatlık kümesi. Ayar değişince yeniden kurulur.
@@ -264,26 +319,47 @@ struct DonguKurulumu {
     yoklanan: BTreeSet<String>,
     imzalar: BTreeMap<String, u64>,
     agy_ayar: cetvel_depo::AgyAyari,
+    /// Orkestra uyumu pencere yaş eşikleri (havuz başına).
+    uyum_esikleri: BTreeMap<String, u64>,
 }
 
 impl DonguKurulumu {
+    #[cfg(test)]
     fn olustur(ayarlar: &Ayarlar) -> Self {
+        Self::olustur_tam(ayarlar, None, &[])
+    }
+
+    /// `yollar` verilirse agy durumu (saatlik çağrılar, model turu askısı, son başarılı okuma)
+    /// kalıcıdır; `agy_tohum` kayıttaki (`kovalar.json`) dinamik agy havuz kimlikleridir.
+    fn olustur_tam(ayarlar: &Ayarlar, yollar: Option<&CetvelYollar>, agy_tohum: &[String]) -> Self {
         let baglayicilar = baglayicilari_hazirla(ayarlar);
-        let agy = AntigravityBaglayicisi::yeni(ayarlar.agy.clone());
+        let agy = match yollar {
+            Some(y) => AntigravityBaglayicisi::kalici(ayarlar.agy.clone(), y.agy_durum_dosyasi()),
+            None => AntigravityBaglayicisi::yeni(ayarlar.agy.clone()),
+        };
+        agy.kimlikleri_tohumla(agy_tohum.iter().cloned());
         let agy_aralik = ayarlar.agy.aralik_sn.max(60);
+        // İstek üzerine kipte zamanlı okuma yok: bir saat sonra "bayat" demek yanlış alarm olur.
+        let agy_bayat = if ayarlar.agy.okuma == AgyOkumaIzni::IstekUzerine {
+            u64::MAX / 4
+        } else {
+            bayat_esigi_hesapla(1800, agy_aralik)
+        };
         let agy_kural = HavuzZamanlamaKurali {
             etkin_aralik_sn: agy_aralik,
             bosta_aralik_sn: agy_aralik,
-            bayat_esigi_sn: bayat_esigi_hesapla(1800, agy_aralik),
+            bayat_esigi_sn: agy_bayat,
         };
 
         let mut makineler = BTreeMap::new();
         let mut bayat_esikleri = BTreeMap::new();
         let mut yoklanan = BTreeSet::new();
+        let mut uyum_esikleri = BTreeMap::new();
         for (b, kural) in &baglayicilar {
             makineler.insert(b.havuz_id().to_string(), HavuzDurumMakinesi::yeni(*kural));
             for kimlik in b.havuz_kimlikleri() {
                 bayat_esikleri.insert(kimlik.clone(), kural.bayat_esigi_sn);
+                uyum_esikleri.insert(kimlik.clone(), uyum_yas_esigi(kural));
                 yoklanan.insert(kimlik);
             }
         }
@@ -295,15 +371,34 @@ impl DonguKurulumu {
         }
         bayat_esikleri.insert("claude_max".to_string(), 900);
 
+        // Servis yeniden başlarken son başarılı agy okuması aralık içindeyse hemen yeniden
+        // okunmaz (her yeniden başlatma bir `agy` çalıştırması demekti).
+        let mut agy_makine = HavuzDurumMakinesi::yeni(agy_kural);
+        if let Some(son) = agy.son_basarili()
+            && UtcZaman::simdi().fark_sn(son) < agy_aralik as i64
+        {
+            agy_makine.evre = TakipEvresi::Aktif { son_okuma: son };
+        }
+
         Self {
             baglayicilar,
             makineler,
             agy,
-            agy_makine: HavuzDurumMakinesi::yeni(agy_kural),
+            agy_makine,
             bayat_esikleri,
             yoklanan,
             imzalar: baglayici_imzalari(ayarlar),
             agy_ayar: ayarlar.agy.clone(),
+            uyum_esikleri,
+        }
+    }
+
+    /// Okuma turunda yeni görülen (dinamik) havuzları yoklanan kümeye ve bayat eşiklerine ekler.
+    fn kimlikleri_kaydet(&mut self, sonuclar: &[BaglayiciSonucu], esik: u64) {
+        for s in sonuclar {
+            if self.yoklanan.insert(s.havuz_id.clone()) {
+                self.bayat_esikleri.insert(s.havuz_id.clone(), esik);
+            }
         }
     }
 
@@ -325,8 +420,19 @@ impl DonguKurulumu {
             }
         }
         self.agy.sayaci_devral(&eski.agy);
-        if self.agy_ayar == eski.agy_ayar {
+        // agy makinesi yalnız okuma kipi ya da ikili yolu değişince sıfırlanır: aralık/tavan/
+        // zaman aşımı ayarını oynatmak yeni bir `agy` çalıştırması tetiklemez.
+        if self.agy_ayar.okuma == eski.agy_ayar.okuma
+            && self.agy_ayar.ikili_yol == eski.agy_ayar.ikili_yol
+        {
             self.agy_makine.evre = eski.agy_makine.evre;
+        }
+        for id in eski.yoklanan {
+            if id.starts_with("agy_") && self.agy_ayar.okuma != AgyOkumaIzni::Kapali {
+                let esik = self.agy_makine.kural.bayat_esigi_sn;
+                self.bayat_esikleri.entry(id.clone()).or_insert(esik);
+                self.yoklanan.insert(id);
+            }
         }
     }
 
@@ -338,7 +444,8 @@ impl DonguKurulumu {
         kullanici_etkin: bool,
         uyanma: bool,
         hedefler: &BTreeSet<String>,
-    ) {
+    ) -> Vec<(String, BTreeSet<String>)> {
+        let mut okunanlar = Vec::new();
         let hepsi = hedefler.contains("*");
         for (b, _) in &self.baglayicilar {
             let id = b.havuz_id();
@@ -359,9 +466,10 @@ impl DonguKurulumu {
             }
             let okuma_ani = UtcZaman::simdi();
             let sonuclar = b.oku_coklu(okuma_ani).await;
-            if let Some(ilk) = sonuclar.first() {
+            if let Some(ilk) = bilesik_sonuc(&sonuclar) {
                 dm.sonuc_isle(okuma_ani, ilk);
             }
+            okunanlar.extend(basarili_okuma(&sonuclar));
             for sonuc in sonuclar {
                 koordinator.havuz_sonucu_birlestir(sonuc);
             }
@@ -383,13 +491,19 @@ impl DonguKurulumu {
                 .agy
                 .istekle_veya_zamanli_oku(okuma_ani, agy_istendi)
                 .await;
-            if let Some(ilk) = sonuclar.first() {
+            if let Some(ilk) = bilesik_sonuc(&sonuclar) {
                 self.agy_makine.sonuc_isle(okuma_ani, ilk);
             }
+            if self.agy.izin() != AgyOkumaIzni::Kapali {
+                let esik = self.agy_makine.kural.bayat_esigi_sn;
+                self.kimlikleri_kaydet(&sonuclar, esik);
+            }
+            okunanlar.extend(basarili_okuma(&sonuclar));
             for sonuc in sonuclar {
                 koordinator.havuz_sonucu_birlestir(sonuc);
             }
         }
+        okunanlar
     }
 
     /// "Test et": bağlayıcıyı tek okuyucu olan servis döngüsünde çalıştırır. Hız sınırı veya
@@ -439,12 +553,16 @@ impl DonguKurulumu {
                 );
             }
             let sonuclar = self.agy.istekle_veya_zamanli_oku(simdi, true).await;
-            if let Some(ilk) = sonuclar.first() {
+            if let Some(ilk) = bilesik_sonuc(&sonuclar) {
                 self.agy_makine.sonuc_isle(simdi, ilk);
             }
+            let esik = self.agy_makine.kural.bayat_esigi_sn;
+            self.kimlikleri_kaydet(&sonuclar, esik);
             return okuma_test_sonucu(platform, sonuclar, koordinator, ms(baslangic));
         }
 
+        // Platform adı doğrudan bir bağlayıcı kimliğiyse (yeni OpenAI uyumlu sağlayıcı) o;
+        // bilinmeyen platform sessizce başka bir sağlayıcıya yönlenmez.
         let hedef_id = match platform {
             "codex" => "codex_plus",
             "deepseek" => "deepseek",
@@ -476,7 +594,7 @@ impl DonguKurulumu {
             );
         }
         let sonuclar = b.oku_coklu(simdi).await;
-        if let Some(ilk) = sonuclar.first() {
+        if let Some(ilk) = bilesik_sonuc(&sonuclar) {
             dm.sonuc_isle(simdi, ilk);
         }
         okuma_test_sonucu(platform, sonuclar, koordinator, ms(baslangic))
@@ -591,8 +709,20 @@ pub async fn servis_calistir(yollar: &CetvelYollar, tek_tur: bool) -> Result<(),
 
     std::fs::create_dir_all(&yollar.local_kok)?;
     std::fs::create_dir_all(&yollar.roaming_kok)?;
-    let _ = kullanici_dacl_uygula(&yollar.local_kok);
-    let _ = kullanici_dacl_uygula(&yollar.roaming_kok);
+    // DACL uygulanamazsa (jeton dosyası miras ACL ile kalır) sessiz geçilmez.
+    for kok in [&yollar.local_kok, &yollar.roaming_kok] {
+        if let Err(e) = kullanici_dacl_uygula(kok) {
+            tracing::warn!(
+                "kullanıcı-yalnız DACL uygulanamadı ({}): {e}",
+                kok.display()
+            );
+        }
+    }
+    let supurulen =
+        cetvel_depo::eski_gecici_dosyalari_temizle(&yollar.local_kok, Duration::from_secs(600));
+    if supurulen > 0 {
+        info!(supurulen, "yarım kalmış geçici dosyalar temizlendi");
+    }
 
     let ilk_yukleme = ayarlari_kurtarmali_yukle(yollar);
     let ayarlar = ilk_yukleme.ayarlar.clone();
@@ -617,6 +747,7 @@ pub async fn servis_calistir(yollar: &CetvelYollar, tek_tur: bool) -> Result<(),
         durum.ajan_sirasini_tohumla(sira);
     }
     durum.bildirim_yoneticisi_bagla(BildirimYoneticisi::yeni(WindowsToastGonderici::default()));
+    durum.kova_kaydini_yukle();
 
     let (kap_tx, kap_rx) = watch::channel(false);
     let (baglanan_port, adresler, http_gorev) = http_sunucusu_baslat(
@@ -654,7 +785,9 @@ pub async fn servis_calistir(yollar: &CetvelYollar, tek_tur: bool) -> Result<(),
     };
     baglanti_bilgisi_yaz(yollar, &baglanti)?;
 
-    let mut kurulum = DonguKurulumu::olustur(&ayarlar);
+    let mut kurulum =
+        DonguKurulumu::olustur_tam(&ayarlar, Some(yollar), &durum.kayitli_kimlikler("agy"));
+    durum.uyum_esiklerini_ayarla(kurulum.uyum_esikleri.clone());
     let mut koordinator = YayinKoordinatoru::yeni(kurulum.bayat_esikleri.clone());
 
     // Yeniden başlatmada sira ve son bilinen değerler (Claude dahil) korunur.
@@ -675,6 +808,7 @@ pub async fn servis_calistir(yollar: &CetvelYollar, tek_tur: bool) -> Result<(),
     let mut ayar_yenile = ilk_okunamadi;
     let mut ayar_ani = dosya_degisim_ani(&yollar.ayarlar_dosyasi());
     let mut test_rx = durum.test_alicisini_al();
+    let mut son_temizlik = UtcZaman::simdi();
 
     info!(
         havuz_sayisi = kurulum.baglayicilar.len(),
@@ -688,7 +822,6 @@ pub async fn servis_calistir(yollar: &CetvelYollar, tek_tur: bool) -> Result<(),
         if uyanma {
             info!("sistem uyanması algılandı; havuzlar yenileniyor");
         }
-        onceki_tik = simdi;
 
         // Ayar dosyası dışarıdan (masaüstü, elle) değiştiyse ya da açıkça istendiyse yeniden yükle.
         let guncel_ani = dosya_degisim_ani(&yollar.ayarlar_dosyasi());
@@ -699,9 +832,14 @@ pub async fn servis_calistir(yollar: &CetvelYollar, tek_tur: bool) -> Result<(),
             let yukleme = ayarlari_kurtarmali_yukle(yollar);
             durum.ayar_uyarisi_ayarla(yukleme.kurtarma.aciklama());
             if yukleme.kurtarma.yazmaya_uygun() {
-                let eski =
-                    std::mem::replace(&mut kurulum, DonguKurulumu::olustur(&yukleme.ayarlar));
+                let yeni_kurulum = DonguKurulumu::olustur_tam(
+                    &yukleme.ayarlar,
+                    Some(yollar),
+                    &durum.kayitli_kimlikler("agy"),
+                );
+                let eski = std::mem::replace(&mut kurulum, yeni_kurulum);
                 kurulum.devral(eski);
+                durum.uyum_esiklerini_ayarla(kurulum.uyum_esikleri.clone());
                 koordinator.kimlikleri_koru(&kurulum.yoklanan);
                 koordinator.bayat_esikleri = kurulum.bayat_esikleri.clone();
                 durum.ayarlari_degistir(yukleme.ayarlar);
@@ -717,9 +855,20 @@ pub async fn servis_calistir(yollar: &CetvelYollar, tek_tur: bool) -> Result<(),
         let hedefler = durum.yenile_hedeflerini_al();
         let guncel_ayarlar = durum.ayarlar_kopya();
         let kullanici_etkin = kullanici_etkin_mi(guncel_ayarlar.servis.bosta_esik_sn);
-        kurulum
+        let okunanlar = kurulum
             .oku(&mut koordinator, simdi, kullanici_etkin, uyanma, &hedefler)
             .await;
+        koordinator.bayat_esikleri = kurulum.bayat_esikleri.clone();
+        // Yaşam döngüsü: başarıyla okunan platformun yanıtında olmayan kayıtlı havuzlar
+        // `gorulmuyor`; 7 günden eskiler düşer.
+        for dusen in durum.kova_yasam_uygula(&okunanlar, &mut koordinator.havuzlar, simdi) {
+            kurulum.yoklanan.remove(&dusen);
+            info!(havuz = %dusen, "7 gündür görülmeyen kova kaldırıldı");
+        }
+        if simdi.fark_sn(son_temizlik) >= 86_400 {
+            durum.gecmis_temizle(simdi);
+            son_temizlik = simdi;
+        }
 
         let yayin_ani = UtcZaman::simdi();
         let kalp_atisi_sn = guncel_ayarlar.servis.kalp_atisi_sn.max(10) as i64;
@@ -749,6 +898,9 @@ pub async fn servis_calistir(yollar: &CetvelYollar, tek_tur: bool) -> Result<(),
             break;
         }
 
+        // Uyanma algısı tur süresinden bağımsız: fark yalnız bekleme süresini ölçer (yavaş bir
+        // okuma turu sonraki turu "uyanma" saydırıp her havuzu yeniden okutmasın).
+        onceki_tik = UtcZaman::simdi();
         let olay = tokio::select! {
             _ = tokio::signal::ctrl_c() => Uyandiran::Kapat,
             _ = durum.kapat_iste.notified() => Uyandiran::Kapat,
@@ -819,6 +971,7 @@ mod tests {
                 kullanilan: 0.0,
                 kalan: 1.0,
                 sifirlama: None,
+                etiket: None,
             },
         );
         pencereler.insert(
@@ -830,6 +983,7 @@ mod tests {
                 sifirlama: Some(
                     UtcZaman::parse_tarih_veya_zaman("2026-11-16T07:00:00Z").expect("sifir"),
                 ),
+                etiket: None,
             },
         );
         let mut codex = HavuzAnlik {
@@ -854,6 +1008,8 @@ mod tests {
             ek: None,
             hata: None,
             notlar: Vec::new(),
+            kesif: None,
+            etkin_kalan_zincir: None,
         };
         codex.hesapla_etkin_durum();
 
@@ -948,7 +1104,10 @@ mod tests {
         ayar.codex.etkin_aralik_sn = 900;
         let mut yeni = DonguKurulumu::olustur(&ayar);
         yeni.devral(eski);
-        assert_eq!(yeni.makineler["deepseek"].evre, acik, "devre kesici korunur");
+        assert_eq!(
+            yeni.makineler["deepseek"].evre, acik,
+            "devre kesici korunur"
+        );
         assert_eq!(
             yeni.makineler["codex_plus"].evre,
             TakipEvresi::Baslangic,
@@ -962,6 +1121,55 @@ mod tests {
         let mut ucuncu = DonguKurulumu::olustur(&ayar2);
         ucuncu.devral(yeni);
         assert_eq!(ucuncu.agy_makine.evre, TakipEvresi::Baslangic);
+    }
+
+    #[test]
+    fn kayittaki_dinamik_agy_havuzu_yoklanir_ve_uyum_esigi_araliktan_gelir() {
+        let mut ayar = anahtarsiz_ayar();
+        ayar.agy.okuma = AgyOkumaIzni::Otomatik;
+        let kurulum = DonguKurulumu::olustur_tam(&ayar, None, &["agy_gemini_5_xenon".to_string()]);
+        assert!(kurulum.yoklanan.contains("agy_gemini_5_xenon"));
+        assert!(kurulum.bayat_esikleri.contains_key("agy_gemini_5_xenon"));
+        // Codex boşta 1800 sn: uyum eşiği 1800 + 300.
+        assert_eq!(kurulum.uyum_esikleri["codex_plus"], 2100);
+
+        // İstek üzerine kipte agy havuzları zamanla bayatlamaz.
+        ayar.agy.okuma = AgyOkumaIzni::IstekUzerine;
+        let elle = DonguKurulumu::olustur_tam(&ayar, None, &[]);
+        assert!(elle.bayat_esikleri["agy_gemini"] > 365 * 86_400);
+    }
+
+    #[test]
+    fn bilesik_sonuc_basarili_havuzu_secer() {
+        let ok = |id: &str, durum: Durum| BaglayiciSonucu {
+            havuz_id: id.to_string(),
+            havuz: HavuzAnlik {
+                platform: "agy".into(),
+                etiket: id.into(),
+                durum,
+                etkin_kalan: None,
+                baglayici_pencere: None,
+                kullanilabilir: None,
+                kaynak: None,
+                pencereler: BTreeMap::new(),
+                alt_sayaclar: BTreeMap::new(),
+                tahmin: BTreeMap::new(),
+                baski: None,
+                bakiye: None,
+                ek: None,
+                hata: None,
+                notlar: Vec::new(),
+                kesif: None,
+                etkin_kalan_zincir: None,
+            },
+            retry_after_sn: None,
+            gecici_hata: false,
+        };
+        let liste = vec![ok("agy_argon", Durum::Hata), ok("agy_gemini", Durum::Ok)];
+        assert_eq!(bilesik_sonuc(&liste).unwrap().havuz_id, "agy_gemini");
+        let (platform, gorulen) = basarili_okuma(&liste).unwrap();
+        assert_eq!(platform, "agy");
+        assert!(gorulen.contains("agy_gemini") && !gorulen.contains("agy_argon"));
     }
 
     #[test]
@@ -1013,6 +1221,7 @@ mod tests {
                 kullanilan: 0.15,
                 kalan: 0.85,
                 sifirlama: Some(okuma.ekle_sn(18_000)),
+                etiket: None,
             },
         );
         let mut agy = HavuzAnlik {
@@ -1037,6 +1246,8 @@ mod tests {
             ek: None,
             hata: None,
             notlar: Vec::new(),
+            kesif: None,
+            etkin_kalan_zincir: None,
         };
         agy.hesapla_etkin_durum();
 

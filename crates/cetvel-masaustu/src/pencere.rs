@@ -1246,9 +1246,17 @@ mod tests {
         }];
         assert!(geometri_ekrana_uygun_mu(&ekranlar, (200, 120), (960, 720)));
         // Sağ taraftan sökülen 2. monitör koordinatı reddedilir
-        assert!(!geometri_ekrana_uygun_mu(&ekranlar, (2100, 120), (960, 720)));
+        assert!(!geometri_ekrana_uygun_mu(
+            &ekranlar,
+            (2100, 120),
+            (960, 720)
+        ));
         // Başlık çubuğu ekranın çok üstüne taşmış pencere reddedilir
-        assert!(!geometri_ekrana_uygun_mu(&ekranlar, (200, -100), (960, 720)));
+        assert!(!geometri_ekrana_uygun_mu(
+            &ekranlar,
+            (200, -100),
+            (960, 720)
+        ));
         // Boş monitör listesinde zorlamadan kabul edilir
         assert!(geometri_ekrana_uygun_mu(&[], (2100, 120), (960, 720)));
     }

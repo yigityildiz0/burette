@@ -47,6 +47,32 @@ pub fn atomik_yaz_json<T: Serialize>(hedef: &Path, deger: &T) -> Result<(), Depo
     atomik_yaz(hedef, &bayt)
 }
 
+/// Çöken bir yazımdan kalan `.<ad>.<pid>.<n>.tmp` dosyalarını (ör. jeton içerikli) siler; yalnız
+/// `en_az_yas` süresinden eski olanlar (süren bir yazım bozulmasın). Silinen sayısını döndürür.
+pub fn eski_gecici_dosyalari_temizle(dizin: &Path, en_az_yas: std::time::Duration) -> usize {
+    let Ok(girdiler) = std::fs::read_dir(dizin) else {
+        return 0;
+    };
+    let mut silinen = 0;
+    for girdi in girdiler.flatten() {
+        let ad = girdi.file_name();
+        let Some(ad) = ad.to_str() else { continue };
+        if !(ad.starts_with('.') && ad.ends_with(".tmp")) {
+            continue;
+        }
+        let eski = girdi
+            .metadata()
+            .and_then(|m| m.modified())
+            .ok()
+            .and_then(|t| t.elapsed().ok())
+            .is_some_and(|y| y >= en_az_yas);
+        if eski && std::fs::remove_file(girdi.path()).is_ok() {
+            silinen += 1;
+        }
+    }
+    silinen
+}
+
 fn gecici_yol_uret(hedef: &Path, ebeveyn: &Path) -> PathBuf {
     let dosya_adi = hedef
         .file_name()

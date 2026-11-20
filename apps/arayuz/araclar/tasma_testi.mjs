@@ -36,7 +36,7 @@ const DILLER = ["tr", "en", "de", "fr", "es", "pt-BR", "ru", "ja", "ko", "zh-Han
 const GENISLIKLER = [340, 480, 900, 1400];
 const OLCEKLER = [1, 1.5, 2];
 const YUKSEKLIK = 900;
-const AYAR_BOLUMLERI = ["genel", "davranis", "bildirimler", "baglantilar", "teknik", "hakkinda"];
+const AYAR_BOLUMLERI = ["genel", "platformlar", "havuzlar", "bildirimler", "teknik", "hakkinda"];
 
 const argv = process.argv.slice(2);
 const arg = (ad) => argv.find((a) => a.startsWith(`--${ad}=`))?.split("=")[1];
@@ -136,6 +136,7 @@ class Cdp {
     this.sira = 0;
     this.bekleyen = new Map();
     this.olayBekleyen = [];
+    this.konsolHatalari = [];
     ws.addEventListener("message", (m) => {
       const v = JSON.parse(m.data);
       if (v.id && this.bekleyen.has(v.id)) {
@@ -143,6 +144,13 @@ class Cdp {
         this.bekleyen.delete(v.id);
         v.error ? red(new Error(v.error.message)) : ok(v.result);
       } else if (v.method) {
+        if (v.method === "Runtime.exceptionThrown") {
+          const d = v.params?.exceptionDetails;
+          this.konsolHatalari.push(d?.exception?.description || d?.text || "exceptionThrown");
+        } else if (v.method === "Runtime.consoleAPICalled" && v.params?.type === "error") {
+          const metin = (v.params.args || []).map((a) => a.value ?? a.description ?? "").join(" ");
+          this.konsolHatalari.push(metin || "console.error");
+        }
         this.olayBekleyen = this.olayBekleyen.filter((b) => !(b.ad === v.method && (b.ok(v.params), true)));
       }
     });
@@ -214,7 +222,12 @@ const OLCUM = String.raw`(() => {
     metinli.push(el);
     const s = getComputedStyle(el);
     // 1) Kırpılma: içerik kutusundan geniş (üç nokta ya da gizli taşma).
-    if (el.scrollWidth > el.clientWidth + 1 && s.overflowX !== "visible" && s.display !== "inline") {
+    // Sağlayıcıdan gelen dinamik etiketler (.kisalt-etiket + data-ipucu) bilinçli ellipsis ile kısaltılır.
+    const kasitliKisalt =
+      el.classList.contains("kisalt-etiket") &&
+      s.textOverflow === "ellipsis" &&
+      Boolean(el.dataset?.ipucu || el.closest("[data-ipucu]"));
+    if (!kasitliKisalt && el.scrollWidth > el.clientWidth + 1 && s.overflowX !== "visible" && s.display !== "inline") {
       sorunlar.push({ tur: "kirpilma", oge: kimlik(el), ayrinti: el.scrollWidth + " > " + el.clientWidth });
     }
     if (el.scrollHeight > el.clientHeight + 2 && s.overflowY === "hidden" && s.display !== "inline") {
@@ -330,33 +343,68 @@ function senaryolar() {
       dogrula: `!!document.querySelector('#acilir-havuz-listesi .kart-tutamak') && !!document.querySelector('#acilir-duzenle-cubuk:not(.gizli)')`,
       dogrulamaAdi: "acilir_duzenle_acilmadi",
     },
-    // Platform ayrıntısı: en kalabalık sekme Antigravity (3 havuz) ve Claude (alt sayaç + 30 günlük geçmiş).
+    // Platform ayrıntısı: en kalabalık sekme Antigravity (4 aktif + 1 görülmeyen havuz), Codex (48 karakterlik etiket) ve Claude (alt sayaç ağacı + 30 günlük geçmiş).
     {
       ad: "acilir-agy",
       yuzey: "acilir",
       hazirla: `document.querySelector('#acilir-platform-sekmeler [data-platform-sekme="agy"]')?.click();`,
-      dogrula: `document.querySelectorAll('#acilir-detay .detay-havuz').length >= 3`,
+      dogrula: `document.querySelectorAll('#acilir-detay .detay-havuz').length >= 3 && !!document.querySelector('#acilir-detay .alt-sekme-cubuk') && !!document.querySelector('#acilir-detay .gorulmeyen-bolum')`,
       dogrulamaAdi: "agy_ayrintisi_cizilmedi",
+    },
+    {
+      ad: "acilir-agy-alt",
+      yuzey: "acilir",
+      hazirla: `document.querySelector('#acilir-platform-sekmeler [data-platform-sekme="agy"]')?.click(); document.querySelector('#acilir-detay [data-alt-sekme="agy_claude_gpt"]')?.click(); document.querySelector('#acilir-detay [data-gorulmeyen-toggle="agy"]')?.click();`,
+      dogrula: `document.querySelectorAll('#acilir-detay .detay-havuz').length === 1 && !!document.querySelector('#acilir-detay .gorulmeyen-liste')`,
+      dogrulamaAdi: "agy_alt_sekme_cizilmedi",
+    },
+    {
+      ad: "acilir-codex",
+      yuzey: "acilir",
+      hazirla: `document.querySelector('#acilir-platform-sekmeler [data-platform-sekme="codex"]')?.click();`,
+      dogrula: `document.querySelectorAll('#acilir-detay .detay-havuz').length >= 2 && !!document.querySelector('#acilir-detay .alt-sekme-cubuk')`,
+      dogrulamaAdi: "codex_ayrintisi_cizilmedi",
     },
     {
       ad: "acilir-claude-halka",
       yuzey: "acilir",
       hazirla: `document.querySelector('[data-gosterge-sec="halka"]')?.click(); document.querySelector('#acilir-platform-sekmeler [data-platform-sekme="claude"]')?.click();`,
-      dogrula: `!!document.querySelector('#acilir-detay .gm-cubuklar') && !!document.querySelector('#acilir-detay .detay-gosterge svg')`,
+      dogrula: `!!document.querySelector('#acilir-detay .gm-cubuklar') && !!document.querySelector('#acilir-detay .alt-sayac-agac')`,
       dogrulamaAdi: "claude_ayrintisi_cizilmedi",
+    },
+    {
+      ad: "acilir-baglam",
+      yuzey: "acilir",
+      hazirla: `const k = document.querySelector('#acilir-havuz-listesi .kompakt-kart'); if (k) { const r = k.getBoundingClientRect(); k.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: r.left + 40, clientY: r.top + 20 })); }`,
+      dogrula: `!!document.querySelector('#cetvel-baglam-menu:not(.gizli) [role="menuitem"]')`,
+      dogrulamaAdi: "baglam_menusu_acilmadi",
     },
     { ad: "serit", yuzey: "serit", hazirla: "" },
     {
       ad: "simdi-claude",
       yuzey: "pencere",
       hazirla: `document.querySelector('#tab-simdi').click(); document.querySelector('#simdi-platform-sekmeler [data-platform-sekme="claude"]')?.click();`,
-      dogrula: `!!document.querySelector('#simdi-detay .gm-cubuklar')`,
+      dogrula: `!!document.querySelector('#simdi-detay .gm-cubuklar') && !!document.querySelector('#simdi-detay .alt-sayac-agac') && !!document.querySelector('#simdi-ekmek:not(.gizli)')`,
       dogrulamaAdi: "genis_ayrinti_cizilmedi",
     },
     {
       ad: "simdi-agy",
       yuzey: "pencere",
       hazirla: `document.querySelector('#tab-simdi').click(); document.querySelector('#simdi-platform-sekmeler [data-platform-sekme="agy"]')?.click();`,
+    },
+    {
+      ad: "simdi-agy-ekmek",
+      yuzey: "pencere",
+      hazirla: `document.querySelector('#tab-simdi').click(); document.querySelector('#simdi-platform-sekmeler [data-platform-sekme="agy"]')?.click(); document.querySelector('#simdi-detay [data-alt-sekme="agy_claude_gpt"]')?.click();`,
+      dogrula: `!!document.querySelector('#simdi-ekmek.uc-halka:not(.gizli)')`,
+      dogrulamaAdi: "ekmek_kirintisi_cizilmedi",
+    },
+    {
+      ad: "simdi-codex-uzun",
+      yuzey: "pencere",
+      hazirla: `document.querySelector('#tab-simdi').click(); document.querySelector('#simdi-platform-sekmeler [data-platform-sekme="codex"]')?.click(); document.querySelector('#simdi-detay [data-alt-sekme="codex_spark"]')?.click();`,
+      dogrula: `document.querySelectorAll('#simdi-detay .detay-havuz').length === 1 && !!document.querySelector('#simdi-ekmek.uc-halka:not(.gizli)')`,
+      dogrulamaAdi: "codex_uzun_etiket_cizilmedi",
     },
     { ad: "simdi", yuzey: "pencere", hazirla: `document.querySelector('#tab-simdi').click();` },
     {
@@ -375,12 +423,25 @@ function senaryolar() {
       dogrula: `!!document.querySelector('.gecmis-svg path[stroke-dasharray="5 4"][fill="none"]') && document.querySelectorAll('.gecmis-svg text').length >= 7`,
       dogrulamaAdi: "izdusum_cizilmedi",
     },
+    {
+      ad: "ayarlar-arama",
+      yuzey: "pencere",
+      hazirla: `document.querySelector('#tab-ayarlar').click(); const g = document.querySelector('#ayar-arama-girdi'); if (g) { g.value = 'Claude'; g.dispatchEvent(new Event('input', { bubbles: true })); }`,
+      dogrula: `document.querySelectorAll('#ayarlar-grid .ayar-satir, #ayarlar-grid .havuz-ayar-satir').length >= 1`,
+      dogrulamaAdi: "ayar_aramasi_calismadi",
+    },
   ];
   for (const b of AYAR_BOLUMLERI) {
     liste.push({
       ad: `ayarlar/${b}`,
       yuzey: "pencere",
       hazirla: `document.querySelector('#tab-ayarlar').click(); document.querySelector('[data-ayar-bolum="${b}"]')?.click();`,
+      ...(b === "havuzlar"
+        ? {
+            dogrula: `document.querySelectorAll('#ayarlar-grid .expander-kart').length >= 2 && document.querySelectorAll('#ayarlar-grid .havuz-ayar-satir').length >= 1`,
+            dogrulamaAdi: "havuzlar_ayari_cizilmedi",
+          }
+        : {}),
     });
   }
   return liste;
@@ -420,6 +481,7 @@ async function main() {
               deviceScaleFactor: olcek,
               mobile: false,
             });
+            cdp.konsolHatalari = [];
             const yuklendi = cdp.olay("Page.loadEventFired");
             await cdp.gonder("Page.navigate", { url: `${adres}/index.html?demo=1&yuzey=${sen.yuzey}` });
             await yuklendi;
@@ -440,6 +502,9 @@ async function main() {
             const olcum = await cdp.degerlendir(OLCUM);
             birlesim++;
             if (dilYuklu !== dil) olcum.sorunlar.push({ tur: "dil_yuklenmedi", oge: "html", ayrinti: String(dilYuklu) });
+            for (const kh of cdp.konsolHatalari) {
+              olcum.sorunlar.push({ tur: "konsol_hatasi", oge: sen.ad, ayrinti: String(kh).slice(0, 120) });
+            }
             if (sen.dogrula && !(await cdp.degerlendir(sen.dogrula))) {
               olcum.sorunlar.push({ tur: sen.dogrulamaAdi, oge: sen.ad, ayrinti: "senaryo beklenen öğeyi çizmedi" });
             }

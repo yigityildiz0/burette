@@ -43,6 +43,14 @@ pub struct UyumHavuz {
     /// İnsan ve karar mekanizması için açıklayıcı notlar.
     #[serde(default)]
     pub notlar: Vec<String>,
+    /// Havuzun platformu (`agy`, `codex`, `claude`…); dinamik keşfedilen havuzlar da buradan
+    /// tanınır. Eski okuyucular için isteğe bağlı.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub platform: Option<String>,
+    /// İç içe kota: bu havuzu kullanmak ebeveynden de düşer; ebeveyn tükenince
+    /// `kullanilabilir` false olur.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub ebeveyn_havuz: Option<String>,
 }
 
 /// Orkestra v1 durum kümesi.
@@ -88,22 +96,68 @@ pub fn uyum_uret_agy_araligi(
     simdi: UtcZaman,
     agy_aralik_sn: Option<u64>,
 ) -> OrkestraUyumV1 {
+    uyum_uret_esikli(anlik, simdi, agy_aralik_sn, &BTreeMap::new())
+}
+
+/// Havuz başına yaş eşikleriyle (sn) uyum üretir. Eşik, havuzun kendi yoklama aralığından
+/// türetilmelidir (ör. Codex boşta 1800 sn okunuyorsa 600 sn eşik havuzu her döngünün çoğunda
+/// "bilinmiyor" gösterir). Haritada olmayan havuz için varsayılan kural uygulanır.
+pub fn uyum_uret_esikli(
+    anlik: &AnlikV2,
+    simdi: UtcZaman,
+    agy_aralik_sn: Option<u64>,
+    yas_esikleri: &BTreeMap<String, u64>,
+) -> OrkestraUyumV1 {
     let mut havuzlar = BTreeMap::new();
     for (havuz_id, havuz) in &anlik.havuzlar {
         // Kullanım sayacı (OpenCode, DeepSeek Harness) kota değildir; orkestra yönlendirmesine girmez.
         if havuz.kullanim_sayaci_mi() {
             continue;
         }
-        havuzlar.insert(
-            havuz_id.clone(),
-            havuzu_uyuma_cevir(havuz_id, havuz, simdi, agy_aralik_sn),
-        );
+        let esik = |pencere: &str| {
+            pencere_yas_esigi_sn(havuz_id, havuz, pencere, agy_aralik_sn, yas_esikleri)
+        };
+        let mut uyum = havuzu_uyuma_cevir(havuz, simdi, esik);
+        uyum.platform = Some(havuz.platform.clone());
+        uyum.ebeveyn_havuz = havuz
+            .kesif
+            .as_ref()
+            .and_then(|k| k.ebeveyn_havuz.clone())
+            .filter(|e| e != havuz_id);
+        havuzlar.insert(havuz_id.clone(), uyum);
     }
+    ebeveyn_tukenmesini_uygula(&mut havuzlar);
     OrkestraUyumV1 {
         sema: 1,
         yazan: "rust-servis".to_string(),
         zaman: anlik.zaman,
         havuzlar,
+    }
+}
+
+/// Ebeveyn havuzu tükenmiş (etkin kalan %0) havuzlar da kullanılamaz: iç içe kotada çocuğu
+/// kullanmak ebeveynden düşer.
+fn ebeveyn_tukenmesini_uygula(havuzlar: &mut BTreeMap<String, UyumHavuz>) {
+    let tukenenler: BTreeMap<String, Option<UtcZaman>> = havuzlar
+        .iter()
+        .filter(|(_, h)| h.durum == UyumDurum::Ok && h.etkin_kalan.is_some_and(|e| e <= 0.0))
+        .map(|(id, h)| (id.clone(), h.soguma_bitis))
+        .collect();
+    for havuz in havuzlar.values_mut() {
+        let Some(ebeveyn) = havuz.ebeveyn_havuz.clone() else {
+            continue;
+        };
+        let Some(soguma) = tukenenler.get(&ebeveyn) else {
+            continue;
+        };
+        havuz.kullanilabilir = false;
+        if let Some(s) = soguma {
+            havuz.soguma_bitis = Some(havuz.soguma_bitis.map_or(*s, |m| m.max(*s)));
+        }
+        let not = format!("ebeveyn havuz tükendi: {ebeveyn}");
+        if !havuz.notlar.contains(&not) {
+            havuz.notlar.push(not);
+        }
     }
 }
 
@@ -125,14 +179,23 @@ fn kaynak_etiketi(havuz: &HavuzAnlik) -> &'static str {
     }
 }
 
-fn pencere_yas_esigi_sn(havuz_id: &str, pencere_adi: &str, agy_aralik_sn: Option<u64>) -> u64 {
-    if havuz_id == "claude_max" {
+fn pencere_yas_esigi_sn(
+    havuz_id: &str,
+    havuz: &HavuzAnlik,
+    pencere_adi: &str,
+    agy_aralik_sn: Option<u64>,
+    yas_esikleri: &BTreeMap<String, u64>,
+) -> u64 {
+    // Köprü (Claude) havuzları: `claude_max` ve diğer `claude_*` köprü havuzları aynı kural.
+    if havuz_id == "claude_max" || havuz.platform == "claude" {
         if pencere_adi == "5s" {
             900 // 15 dk
         } else {
             2700 // 45 dk
         }
-    } else if havuz_id.starts_with("agy_") {
+    } else if let Some(esik) = yas_esikleri.get(havuz_id) {
+        (*esik).max(600)
+    } else if havuz_id.starts_with("agy_") || havuz.platform == "agy" {
         let asgari = AGY_VARSAYILAN_ARALIK_SN + AGY_YAS_TAMPON_SN;
         agy_aralik_sn
             .unwrap_or(AGY_VARSAYILAN_ARALIK_SN)
@@ -144,10 +207,9 @@ fn pencere_yas_esigi_sn(havuz_id: &str, pencere_adi: &str, agy_aralik_sn: Option
 }
 
 fn havuzu_uyuma_cevir(
-    havuz_id: &str,
     havuz: &HavuzAnlik,
     simdi: UtcZaman,
-    agy_aralik_sn: Option<u64>,
+    pencere_esigi: impl Fn(&str) -> u64,
 ) -> UyumHavuz {
     let mut notlar = havuz.notlar.clone();
     let mut alt_sayaclar = BTreeMap::new();
@@ -174,6 +236,8 @@ fn havuzu_uyuma_cevir(
             alt_sayaclar: BTreeMap::new(),
             soguma_bitis: None,
             notlar,
+            ebeveyn_havuz: None,
+            platform: None,
         },
         Durum::Baglanmadi => {
             if notlar.is_empty() {
@@ -188,6 +252,8 @@ fn havuzu_uyuma_cevir(
                 alt_sayaclar: BTreeMap::new(),
                 soguma_bitis: None,
                 notlar,
+                ebeveyn_havuz: None,
+                platform: None,
             }
         }
         Durum::Hata => {
@@ -209,6 +275,8 @@ fn havuzu_uyuma_cevir(
                 alt_sayaclar: BTreeMap::new(),
                 soguma_bitis: None,
                 notlar,
+                ebeveyn_havuz: None,
+                platform: None,
             }
         }
         Durum::Bilinmiyor => UyumHavuz {
@@ -220,6 +288,8 @@ fn havuzu_uyuma_cevir(
             alt_sayaclar: BTreeMap::new(),
             soguma_bitis: None,
             notlar,
+            ebeveyn_havuz: None,
+            platform: None,
         },
         Durum::Ok | Durum::Bayat => {
             let yas_sn = havuz
@@ -232,7 +302,7 @@ fn havuzu_uyuma_cevir(
             let mut pencereler = BTreeMap::new();
             let mut atilan_var = false;
             for (ad, olcum) in &havuz.pencereler {
-                let esik = pencere_yas_esigi_sn(havuz_id, ad, agy_aralik_sn);
+                let esik = pencere_esigi(ad);
                 if havuz.durum == Durum::Bayat || yas_sn > esik {
                     atilan_var = true;
                     continue;
@@ -297,6 +367,8 @@ fn havuzu_uyuma_cevir(
                     alt_sayaclar,
                     soguma_bitis,
                     notlar,
+                    ebeveyn_havuz: None,
+                    platform: None,
                 }
             } else {
                 // Bakiye tabanlı ya da muaf havuzlarda pencere olmayabilir; yalnız gerçekten okunan boş pencere mi yoksa bayat mı ayır.
@@ -311,6 +383,8 @@ fn havuzu_uyuma_cevir(
                         alt_sayaclar: BTreeMap::new(),
                         soguma_bitis: None,
                         notlar,
+                        ebeveyn_havuz: None,
+                        platform: None,
                     }
                 } else {
                     let muaf = havuz.ek.as_ref().and_then(|e| e.muaf) == Some(true);
@@ -332,6 +406,8 @@ fn havuzu_uyuma_cevir(
                         alt_sayaclar,
                         soguma_bitis: None,
                         notlar,
+                        ebeveyn_havuz: None,
+                        platform: None,
                     }
                 }
             }
@@ -358,6 +434,7 @@ mod tests {
                 kullanilan: 0.0,
                 kalan: 1.0,
                 sifirlama: None,
+                etiket: None,
             },
         );
         let hafta_sifirlama = z("2026-11-20T07:00:00Z");
@@ -368,6 +445,7 @@ mod tests {
                 kullanilan: 1.0,
                 kalan: 0.0,
                 sifirlama: Some(hafta_sifirlama),
+                etiket: None,
             },
         );
 
@@ -394,6 +472,8 @@ mod tests {
             ek: None,
             hata: None,
             notlar: Vec::new(),
+            etkin_kalan_zincir: None,
+            kesif: None,
         };
         havuz.hesapla_etkin_durum();
 
@@ -426,6 +506,7 @@ mod tests {
                 kullanilan: 0.1,
                 kalan: 0.9,
                 sifirlama: Some(z("2026-11-15T22:00:00Z")),
+                etiket: None,
             },
         );
         let okuma = z("2026-11-15T18:00:00Z");
@@ -451,6 +532,8 @@ mod tests {
             ek: None,
             hata: None,
             notlar: Vec::new(),
+            etkin_kalan_zincir: None,
+            kesif: None,
         };
         havuz.hesapla_etkin_durum();
 
@@ -507,6 +590,7 @@ mod tests {
                 kullanilan: 0.1,
                 kalan: 0.9,
                 sifirlama: Some(okuma.ekle_sn(18_000)),
+                etiket: None,
             },
         );
         pencereler.insert(
@@ -516,6 +600,7 @@ mod tests {
                 kullanilan: 0.2,
                 kalan: 0.8,
                 sifirlama: Some(okuma.ekle_sn(86_400)),
+                etiket: None,
             },
         );
         let mut havuz = HavuzAnlik {
@@ -540,6 +625,8 @@ mod tests {
             ek: None,
             hata: None,
             notlar: Vec::new(),
+            etkin_kalan_zincir: None,
+            kesif: None,
         };
         havuz.hesapla_etkin_durum();
         let mut havuzlar = BTreeMap::new();
@@ -591,5 +678,73 @@ mod tests {
         let anlik_20dk = ornek_agy_anlik(okuma, 1200);
         let uyum_20dk = uyum_uret_agy_araligi(&anlik_20dk, okuma.ekle_sn(1200), Some(600));
         assert_eq!(uyum_20dk.havuzlar["agy_gemini"].durum, UyumDurum::Ok);
+    }
+
+    fn ebeveynli_anlik(gemini_kalan: f64, argon_kalan: f64, okuma: UtcZaman) -> AnlikV2 {
+        let mut havuzlar = BTreeMap::new();
+        for (id, kalan, ebeveyn) in [
+            ("agy_gemini", gemini_kalan, None),
+            ("agy_argon", argon_kalan, Some("agy_gemini")),
+        ] {
+            let mut h = ornek_agy_anlik(okuma, 0)
+                .havuzlar
+                .remove("agy_gemini")
+                .unwrap();
+            for p in h.pencereler.values_mut() {
+                p.kalan = kalan;
+                p.kullanilan = 1.0 - kalan;
+            }
+            h.kesif = ebeveyn.map(|e| crate::anlik::KesifBilgisi {
+                dinamik: false,
+                grup: None,
+                ilk_gorulme: okuma,
+                son_gorulme: okuma,
+                yasam: crate::anlik::KovaYasam::Aktif,
+                ebeveyn_havuz: Some(e.to_string()),
+                ebeveyn_guven: Some(GuvenEtiketi::Tahmini),
+            });
+            h.hesapla_etkin_durum();
+            havuzlar.insert(id.to_string(), h);
+        }
+        let mut a = AnlikV2::yeni(okuma, 1, havuzlar);
+        a.zincirleri_hesapla();
+        a
+    }
+
+    #[test]
+    fn ebeveyn_tukenince_cocuk_uyumda_kullanilamaz_ve_zincir_hesaplanir() {
+        let okuma = z("2026-11-20T10:00:00Z");
+        let a = ebeveynli_anlik(0.0, 0.9, okuma);
+        assert_eq!(a.havuzlar["agy_argon"].etkin_kalan, Some(0.9));
+        assert_eq!(a.havuzlar["agy_argon"].etkin_kalan_zincir, Some(0.0));
+        assert_eq!(a.havuzlar["agy_gemini"].etkin_kalan_zincir, None);
+        let u = uyum_uret(&a, okuma);
+        assert!(!u.havuzlar["agy_argon"].kullanilabilir);
+        assert_eq!(
+            u.havuzlar["agy_argon"].ebeveyn_havuz.as_deref(),
+            Some("agy_gemini")
+        );
+        assert_eq!(u.havuzlar["agy_argon"].platform.as_deref(), Some("agy"));
+        assert!(crate::sema::uyum_dogrula(&u).is_ok());
+
+        let b = ebeveynli_anlik(0.5, 0.9, okuma);
+        assert!(uyum_uret(&b, okuma).havuzlar["agy_argon"].kullanilabilir);
+    }
+
+    #[test]
+    fn havuz_esigi_codex_bosta_araligini_tasir() {
+        let okuma = z("2026-11-15T18:00:00Z");
+        let mut a = ornek_agy_anlik(okuma, 0);
+        let mut h = a.havuzlar.remove("agy_gemini").unwrap();
+        h.platform = "codex".into();
+        a.havuzlar.insert("codex_plus".into(), h);
+        let simdi = okuma.ekle_sn(1200); // 20 dk
+        assert_eq!(
+            uyum_uret(&a, simdi).havuzlar["codex_plus"].durum,
+            UyumDurum::Bilinmiyor
+        );
+        let esikler = BTreeMap::from([("codex_plus".to_string(), 2100u64)]);
+        let u = uyum_uret_esikli(&a, simdi, None, &esikler);
+        assert_eq!(u.havuzlar["codex_plus"].durum, UyumDurum::Ok);
     }
 }

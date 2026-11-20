@@ -164,7 +164,13 @@
     "hakkinda": "About",
     "cikis": "Quit",
     "kisayollar": "Shortcuts",
-    "kaynakBilgi": "{kaynak} · {guven} · read {yas}"
+    "kaynakBilgi": "{kaynak} · {guven} · read {yas}",
+    "baglacVe": "{a} & {b}",
+    "dahaFazlaPencere": "+{n}",
+    "dahaFazlaPencereIpucu": "Other windows: {liste}",
+    "altSayacSinirliIpucu": "{ad}: {kullanilabilir} usable (raw {ham}) — capped by overall {ebeveyn} ({ebeveynDeger})",
+    "altSayacSinirliKullanilanIpucu": "{ad}: {etkin} effective used (raw {ham}) — capped by overall {ebeveyn} ({ebeveynDeger})",
+    "altSayacOzetIpucu": "Sub-counters: {liste}"
   },
   "gorunum": {
     "gostergeEtiket": "Indicator",
@@ -208,6 +214,7 @@
   },
   "pencereAdlari": {
     "5dk": "5-minute window",
+    "1s": "1-hour window",
     "5s": "5-hour window",
     "gun": "Daily window",
     "hafta": "Weekly window",
@@ -215,6 +222,7 @@
   },
   "pencereEtiket": {
     "5dk": "5 min",
+    "1s": "1 hour",
     "5s": "5 hours",
     "gun": "Daily",
     "hafta": "Weekly",
@@ -222,6 +230,7 @@
   },
   "pencereBaslik": {
     "5dk": "5 minutes",
+    "1s": "1 hour",
     "5s": "Session (5 hours)",
     "gun": "Daily",
     "hafta": "Weekly",
@@ -229,6 +238,7 @@
   },
   "pencereKisa": {
     "5dk": "5m",
+    "1s": "1h",
     "5s": "5h",
     "gun": "day",
     "hafta": "week",
@@ -236,10 +246,43 @@
   },
   "pencereIpucu": {
     "5dk": "Short-burst request rate limit (5-minute window)",
+    "1s": "1-hour rolling quota window",
     "5s": "5-hour rolling session quota window",
     "gun": "24-hour daily token or request window",
     "hafta": "7-day cumulative weekly quota window",
     "ay": "Monthly billing quota window"
+  },
+  "pencereSure": {
+    "dk": "{n} min",
+    "saat": "{n} h",
+    "gun": "{n} d",
+    "kisaDk": "{n}m",
+    "kisaSaat": "{n}h",
+    "kisaGun": "{n}d"
+  },
+  "kesif": {
+    "yeniAlgilandiIpucu": "Newly detected · {zaman}",
+    "yeniHavuzSerit": "New pool: {ad}",
+    "cokYeniHavuz": "{n} new pools",
+    "incele": "Inspect",
+    "kapat": "Dismiss",
+    "gorulmeyenBaslik": "Unseen pools ({n})",
+    "sonGorulme": "Last seen: {zaman}",
+    "ebeveynIpucu": "Usage also counts against {ebeveyn} quota ({guven})",
+    "ebeveynIpucuGuvensiz": "Usage also counts against {ebeveyn} quota",
+    "zincirEtkin": "chained effective: {oran}",
+    "altSekmelerAria": "Pool sub-tabs",
+    "ekmekKirintisiAria": "Breadcrumb",
+    "durumAktif": "Active",
+    "durumYeni": "New",
+    "durumGorulmuyor": "Unseen"
+  },
+  "baglamMenu": {
+    "aria": "Card actions",
+    "yenile": "Refresh",
+    "ayrintiyiAc": "Open details",
+    "degerleriKopyala": "Copy values",
+    "kopyalandi": "Values copied to clipboard."
   },
   "kaynakTur": {
     "mod_koprusu": "Plugin bridge",
@@ -358,9 +401,18 @@
       "bildirimler": "Notifications",
       "baglantilar": "Connections",
       "platformlar": "Platforms",
+      "havuzlar": "Pools",
       "teknik": "Technical",
       "hakkinda": "About & Legal"
     },
+    "aramaYerTutucu": "Search settings…",
+    "aramaTemizle": "Clear search",
+    "aramaSonucYok": "No settings found for \"{sorgu}\".",
+    "havuzlarBaslik": "Discovered pools",
+    "havuzlarBos": "No pools discovered yet.",
+    "geneldeGoster": "Show in Overview",
+    "havuzSabitle": "Pin",
+    "gorulmeyenGenelIpucu": "Unseen pools are not shown in Overview.",
     "hakkindaKisa": "About",
     "grupGorunum": "Appearance & language",
     "grupDavranis": "Window & system",

@@ -154,21 +154,37 @@ pub fn ipucu_havuz(
     }
 }
 
-/// Bağlayıcı pencere kodunun (`5s`, `hafta`, `gun`, `ay`) kısa gösterimi; bilinmeyen kod olduğu gibi.
-pub fn pencere_kisa(dil: TepsiDili, kod: &str) -> &str {
-    match (dil, kod) {
-        (_, "5s") => match dil {
-            TepsiDili::Tr => "5s",
-            TepsiDili::En => "5h",
-        },
+/// Bağlayıcı pencere kodunun (`5dk`, `1s`, `5s`, `gun`, `hafta`, `ay`, `<N>dk`) kısa gösterimi;
+/// bilinmeyen kod olduğu gibi.
+pub fn pencere_kisa(dil: TepsiDili, kod: &str) -> String {
+    let sabit = match (dil, kod) {
+        (TepsiDili::Tr, "5s") => "5s",
+        (TepsiDili::En, "5s") => "5h",
+        (TepsiDili::Tr, "1s") => "1s",
+        (TepsiDili::En, "1s") => "1h",
+        (TepsiDili::Tr, "5dk") => "5dk",
+        (TepsiDili::En, "5dk") => "5m",
         (TepsiDili::Tr, "hafta") => "hafta",
         (TepsiDili::En, "hafta") => "week",
         (TepsiDili::Tr, "gun") => "gün",
         (TepsiDili::En, "gun") => "day",
         (TepsiDili::Tr, "ay") => "ay",
         (TepsiDili::En, "ay") => "month",
-        (_, diger) => diger,
+        _ => "",
+    };
+    if !sabit.is_empty() {
+        return sabit.to_string();
     }
+    // Dinamik süre anahtarı (`480dk`): saat ya da dakika olarak.
+    if let Some(dk) = kod.strip_suffix("dk").and_then(|n| n.parse::<u64>().ok()) {
+        return match (dil, dk % 60 == 0) {
+            (TepsiDili::Tr, true) => format!("{}s", dk / 60),
+            (TepsiDili::En, true) => format!("{}h", dk / 60),
+            (TepsiDili::Tr, false) => format!("{dk}dk"),
+            (TepsiDili::En, false) => format!("{dk}m"),
+        };
+    }
+    kod.to_string()
 }
 
 pub fn ipucu_havuz_sayisi(dil: TepsiDili, sayi: usize) -> String {
@@ -295,6 +311,9 @@ mod tests {
         assert_eq!(pencere_kisa(TepsiDili::Tr, "hafta"), "hafta");
         assert_eq!(pencere_kisa(TepsiDili::En, "hafta"), "week");
         assert_eq!(pencere_kisa(TepsiDili::En, "ay"), "month");
+        assert_eq!(pencere_kisa(TepsiDili::En, "480dk"), "8h");
+        assert_eq!(pencere_kisa(TepsiDili::Tr, "90dk"), "90dk");
+        assert_eq!(pencere_kisa(TepsiDili::En, "1s"), "1h");
         assert_eq!(pencere_kisa(TepsiDili::En, "30d"), "30d");
     }
 }

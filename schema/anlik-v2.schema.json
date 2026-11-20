@@ -177,6 +177,25 @@
             "type": "string"
           },
           "default": []
+        },
+        "kesif": {
+          "description": "Çalışma anında keşif ve yaşam döngüsü bilgisi (dinamik kova, ilk/son görülme, iç içe\nebeveyn havuz). Eski okuyucular için isteğe bağlı.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/KesifBilgisi"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "etkin_kalan_zincir": {
+          "description": "`min(etkin_kalan, ebeveyn_havuz.etkin_kalan)`; yalnız ebeveyn havuzu varsa doldurulur.\n`etkin_kalan` anlamı değişmez (kendi pencerelerinin en darı).",
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
         }
       },
       "required": [
@@ -292,6 +311,13 @@
               "type": "null"
             }
           ]
+        },
+        "etiket": {
+          "description": "Sağlayıcının ham pencere etiketi (ör. `\"Weekly\"`, `\"5h\"`).",
+          "type": [
+            "string",
+            "null"
+          ]
         }
       },
       "required": [
@@ -324,6 +350,31 @@
           "minimum": 0
         },
         "sifirlama": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UtcZaman"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "etiket": {
+          "description": "Ham etiket (ör. `\"Weekly · Fable\"`).",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ebeveyn": {
+          "description": "Aynı havuzda bu sayaçla birlikte düşen üst pencere anahtarı (ör. `\"hafta\"`). Arayüzdeki\nkullanılabilir pay `min(alt.kalan, pencereler[ebeveyn].kalan)` (\"tavan çentiği\").",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ilk_gorulme": {
+          "description": "Sayacın ilk görüldüğü an (`kovalar.json` kaydından).",
           "anyOf": [
             {
               "$ref": "#/$defs/UtcZaman"
@@ -670,6 +721,73 @@
       },
       "required": [
         "tur"
+      ]
+    },
+    "KesifBilgisi": {
+      "description": "Havuzun keşif ve yaşam döngüsü bilgisi (`kovalar.json` kaydından beslenir).",
+      "type": "object",
+      "properties": {
+        "dinamik": {
+          "description": "Bilinen sabit eşlemeden değil, çalışma anında keşfedildi.",
+          "type": "boolean"
+        },
+        "grup": {
+          "description": "Sağlayıcının ham grup/kova kimliği ya da adı.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ilk_gorulme": {
+          "$ref": "#/$defs/UtcZaman"
+        },
+        "son_gorulme": {
+          "$ref": "#/$defs/UtcZaman"
+        },
+        "yasam": {
+          "$ref": "#/$defs/KovaYasam"
+        },
+        "ebeveyn_havuz": {
+          "description": "İç içe: bu havuzu kullanmak ayrıca ebeveyn havuzdan da düşer (`agy_argon` -> `agy_gemini`).",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ebeveyn_guven": {
+          "description": "Ebeveyn ilişkisinin güveni (kanıt çelişkiliyse `tahmini`).",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GuvenEtiketi"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "dinamik",
+        "ilk_gorulme",
+        "son_gorulme",
+        "yasam"
+      ]
+    },
+    "KovaYasam": {
+      "description": "Kovanın yaşam evresi: sağlayıcı yanıtında görülüyor mu?",
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "aktif",
+            "bilinmiyor"
+          ]
+        },
+        {
+          "description": "Platform başarıyla okunduğu hâlde yanıtta yok (7 gün son değerleriyle gösterilir).",
+          "type": "string",
+          "const": "gorulmuyor"
+        }
       ]
     }
   }

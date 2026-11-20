@@ -273,6 +273,8 @@ pub fn deepseek_yanit_ayristir(govde: &[u8], simdi: UtcZaman) -> HavuzAnlik {
             ek: None,
             hata: None,
             notlar: vec!["bakiye bilgisi boş".into()],
+            kesif: None,
+            etkin_kalan_zincir: None,
         };
         havuz.hesapla_etkin_durum();
         return havuz;
@@ -320,6 +322,8 @@ pub fn deepseek_yanit_ayristir(govde: &[u8], simdi: UtcZaman) -> HavuzAnlik {
         ek: None,
         hata: None,
         notlar: vec![format!("bakiye: {:.2} {}", toplam, info.currency)],
+        kesif: None,
+        etkin_kalan_zincir: None,
     };
     havuz.hesapla_etkin_durum();
     havuz
@@ -383,6 +387,8 @@ fn deepseek_durum_havuzu(
         ek: None,
         hata,
         notlar,
+        kesif: None,
+        etkin_kalan_zincir: None,
     }
 }
 

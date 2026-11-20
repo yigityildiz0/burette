@@ -164,7 +164,13 @@
     "hakkinda": "について",
     "cikis": "終了",
     "kisayollar": "ショートカット",
-    "kaynakBilgi": "{kaynak} · {guven} · {yas} 前に読み取り"
+    "kaynakBilgi": "{kaynak} · {guven} · {yas} 前に読み取り",
+    "baglacVe": "{a}・{b}",
+    "dahaFazlaPencere": "+{n}",
+    "dahaFazlaPencereIpucu": "その他の枠: {liste}",
+    "altSayacSinirliIpucu": "{ad}: 実効 {kullanilabilir}（元の値 {ham}）— 全体の{ebeveyn}により上限（{ebeveynDeger}）",
+    "altSayacSinirliKullanilanIpucu": "{ad}: 実効使用 {etkin}（元の値 {ham}）— 全体の{ebeveyn}により上限（{ebeveynDeger}）",
+    "altSayacOzetIpucu": "サブカウンター: {liste}"
   },
   "gorunum": {
     "gostergeEtiket": "インジケーター",
@@ -208,6 +214,7 @@
   },
   "pencereAdlari": {
     "5dk": "5分ウィンドウ",
+    "1s": "1時間ウィンドウ",
     "5s": "5時間ウィンドウ",
     "gun": "日次ウィンドウ",
     "hafta": "週次ウィンドウ",
@@ -215,6 +222,7 @@
   },
   "pencereEtiket": {
     "5dk": "5分",
+    "1s": "1時間",
     "5s": "5時間",
     "gun": "日次",
     "hafta": "週次",
@@ -222,6 +230,7 @@
   },
   "pencereBaslik": {
     "5dk": "5分",
+    "1s": "1時間",
     "5s": "セッション（5時間）",
     "gun": "日次",
     "hafta": "週次",
@@ -229,6 +238,7 @@
   },
   "pencereKisa": {
     "5dk": "5分",
+    "1s": "1時間",
     "5s": "5時間",
     "gun": "日",
     "hafta": "週",
@@ -236,10 +246,43 @@
   },
   "pencereIpucu": {
     "5dk": "短時間バーストのリクエストレート制限（5分ウィンドウ）",
+    "1s": "1時間ローリングのクォータ枠",
     "5s": "5時間ローリングのセッションクォータ枠",
     "gun": "24時間の日次トークン/リクエスト枠",
     "hafta": "7日間累積の週次クォータ枠",
     "ay": "月次請求クォータ枠"
+  },
+  "pencereSure": {
+    "dk": "{n}分",
+    "saat": "{n}時間",
+    "gun": "{n}日",
+    "kisaDk": "{n}分",
+    "kisaSaat": "{n}h",
+    "kisaGun": "{n}日"
+  },
+  "kesif": {
+    "yeniAlgilandiIpucu": "新規検出 · {zaman}",
+    "yeniHavuzSerit": "新しいプール: {ad}",
+    "cokYeniHavuz": "{n} 件の新しいプール",
+    "incele": "確認",
+    "kapat": "閉じる",
+    "gorulmeyenBaslik": "未確認のプール（{n}）",
+    "sonGorulme": "最終確認: {zaman}",
+    "ebeveynIpucu": "使用量は {ebeveyn} の枠からも消費されます（{guven}）",
+    "ebeveynIpucuGuvensiz": "使用量は {ebeveyn} の枠からも消費されます",
+    "zincirEtkin": "連動実効: {oran}",
+    "altSekmelerAria": "プールサブタブ",
+    "ekmekKirintisiAria": "パンくずリスト",
+    "durumAktif": "有効",
+    "durumYeni": "新規",
+    "durumGorulmuyor": "未検出"
+  },
+  "baglamMenu": {
+    "aria": "カード操作",
+    "yenile": "更新",
+    "ayrintiyiAc": "詳細を開く",
+    "degerleriKopyala": "値をコピー",
+    "kopyalandi": "値をクリップボードにコピーしました。"
   },
   "kaynakTur": {
     "mod_koprusu": "プラグインブリッジ",
@@ -358,9 +401,18 @@
       "bildirimler": "通知",
       "baglantilar": "接続",
       "platformlar": "プラットフォーム",
+      "havuzlar": "プール",
       "teknik": "技術",
       "hakkinda": "概要と法的情報"
     },
+    "aramaYerTutucu": "設定を検索…",
+    "aramaTemizle": "検索をクリア",
+    "aramaSonucYok": "「{sorgu}」に一致する設定がありません。",
+    "havuzlarBaslik": "検出されたプール",
+    "havuzlarBos": "検出されたプールはまだありません。",
+    "geneldeGoster": "概要に表示",
+    "havuzSabitle": "固定",
+    "gorulmeyenGenelIpucu": "未検出のプールは概要に表示されません。",
     "hakkindaKisa": "情報",
     "grupGorunum": "外観と言語",
     "grupDavranis": "ウィンドウとシステム",

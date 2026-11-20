@@ -99,6 +99,9 @@ pub fn platform_normalize(platform: &str) -> Option<&'static str> {
         "deepseek" => Some("deepseek"),
         "opencode" => Some("opencode"),
         "dsh" | "deepseek_harness" | "harness" => Some("dsh"),
+        // Dinamik havuz kimlikleri platformlarına iner (`agy_gemini_5_xenon`, `claude_pro`).
+        diger if diger.starts_with("agy_") => Some("agy"),
+        diger if diger.starts_with("claude_") => Some("claude"),
         _ => None,
     }
 }

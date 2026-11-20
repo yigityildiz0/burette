@@ -97,6 +97,20 @@
             "type": "string"
           },
           "default": []
+        },
+        "platform": {
+          "description": "Havuzun platformu (`agy`, `codex`, `claude`…); dinamik keşfedilen havuzlar da buradan\ntanınır. Eski okuyucular için isteğe bağlı.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ebeveyn_havuz": {
+          "description": "İç içe kota: bu havuzu kullanmak ebeveynden de düşer; ebeveyn tükenince\n`kullanilabilir` false olur.",
+          "type": [
+            "string",
+            "null"
+          ]
         }
       },
       "required": [

@@ -698,6 +698,7 @@ mod tests {
                     kullanilan: 0.25,
                     kalan: 0.75,
                     sifirlama: Some(simdi.ekle_sn(3600)),
+                    etiket: None,
                 },
             )]),
             alt_sayaclar: BTreeMap::new(),
@@ -707,6 +708,8 @@ mod tests {
             ek: None,
             hata: None,
             notlar: Vec::new(),
+            kesif: None,
+            etkin_kalan_zincir: None,
         };
         codex.hesapla_etkin_durum();
         let mut havuzlar = BTreeMap::new();

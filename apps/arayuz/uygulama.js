@@ -179,10 +179,14 @@
       cikis: "Çıkış",
       kisayollar: "Kısayollar",
       kaynakBilgi: "{kaynak} · {guven} · okuma {yas}",
+      baglacVe: "{a} ve {b}",
+      dahaFazlaPencere: "+{n}",
+      dahaFazlaPencereIpucu: "Diğer pencereler: {liste}",
+      altSayacSinirliIpucu: "{ad}: {kullanilabilir} kullanılabilir (ham {ham}) — genel {ebeveyn} sınırlıyor ({ebeveynDeger})",
+      altSayacSinirliKullanilanIpucu: "{ad}: {etkin} etkin kullanım (ham {ham}) — genel {ebeveyn} sınırlıyor ({ebeveynDeger})",
+      altSayacOzetIpucu: "Alt sayaçlar: {liste}",
     },
     gorunum: {
-      genel: "Genel",
-      platformlarAria: "Platformlar",
       gostergeEtiket: "Gösterge",
       gostergeTurleri: {
         halka: "Halka",
@@ -209,6 +213,8 @@
       segmentHalkaAlt: "Her dilim ilgili havuzun etkin kalan payını gösterir; havuzlar birbirine toplanmaz.",
       segmentSeciliIpucu: "Vurgulamak için bir dilime veya etikete odaklan",
       kompaktRozet: "Kompakt",
+      genel: "Genel",
+      platformlarAria: "Platformlar",
     },
     baski: {
       rahat: "Rahat",
@@ -222,6 +228,7 @@
     },
     pencereAdlari: {
       "5dk": "5 dakikalık pencere",
+      "1s": "1 saatlik pencere",
       "5s": "5 saatlik pencere",
       gun: "Günlük pencere",
       hafta: "Haftalık pencere",
@@ -229,6 +236,7 @@
     },
     pencereEtiket: {
       "5dk": "5 dk",
+      "1s": "1 saat",
       "5s": "5 saat",
       gun: "Günlük",
       hafta: "Haftalık",
@@ -236,6 +244,7 @@
     },
     pencereBaslik: {
       "5dk": "5 dakika",
+      "1s": "1 saat",
       "5s": "Oturum (5 saat)",
       gun: "Günlük",
       hafta: "Haftalık",
@@ -243,6 +252,7 @@
     },
     pencereKisa: {
       "5dk": "5dk",
+      "1s": "1s",
       "5s": "5s",
       gun: "gün",
       hafta: "hafta",
@@ -250,10 +260,43 @@
     },
     pencereIpucu: {
       "5dk": "Kısa süreli istek hızı limiti (5 dakikalık kayan pencere)",
+      "1s": "1 saatlik kota penceresi",
       "5s": "5 saatlik oturum/kota penceresi",
       gun: "24 saatlik günlük token veya istek penceresi",
       hafta: "7 günlük haftalık toplam limit penceresi",
       ay: "Aylık kota penceresi",
+    },
+    pencereSure: {
+      dk: "{n} dk",
+      saat: "{n} saat",
+      gun: "{n} gün",
+      kisaDk: "{n}dk",
+      kisaSaat: "{n}s",
+      kisaGun: "{n}g",
+    },
+    kesif: {
+      yeniAlgilandiIpucu: "Yeni algılandı · {zaman}",
+      yeniHavuzSerit: "Yeni havuz: {ad}",
+      cokYeniHavuz: "{n} yeni havuz",
+      incele: "İncele",
+      kapat: "Kapat",
+      gorulmeyenBaslik: "Görülmeyen havuzlar ({n})",
+      sonGorulme: "Son görülme: {zaman}",
+      ebeveynIpucu: "Kullanımı {ebeveyn} kotasından da düşer ({guven})",
+      ebeveynIpucuGuvensiz: "Kullanımı {ebeveyn} kotasından da düşer",
+      zincirEtkin: "etkin zincir: {oran}",
+      altSekmelerAria: "Havuz alt sekmeleri",
+      ekmekKirintisiAria: "Gezinme yolu",
+      durumAktif: "Aktif",
+      durumYeni: "Yeni",
+      durumGorulmuyor: "Görülmüyor",
+    },
+    baglamMenu: {
+      aria: "Kart işlemleri",
+      yenile: "Yenile",
+      ayrintiyiAc: "Ayrıntıyı aç",
+      degerleriKopyala: "Değerleri kopyala",
+      kopyalandi: "Değerler panoya kopyalandı.",
     },
     kaynakTur: {
       mod_koprusu: "Eklenti köprüsü",
@@ -372,9 +415,18 @@
         bildirimler: "Bildirimler",
         baglantilar: "Bağlantılar",
         platformlar: "Platformlar",
+        havuzlar: "Havuzlar",
         teknik: "Teknik",
         hakkinda: "Hakkında ve Yasal",
       },
+      aramaYerTutucu: "Ayarlarda ara…",
+      aramaTemizle: "Aramayı temizle",
+      aramaSonucYok: "\"{sorgu}\" için ayar bulunamadı.",
+      havuzlarBaslik: "Keşfedilen havuzlar",
+      havuzlarBos: "Henüz keşfedilmiş havuz yok.",
+      geneldeGoster: "Genel'de göster",
+      havuzSabitle: "Sabitle",
+      gorulmeyenGenelIpucu: "Görülmeyen havuzlar Genel'de gösterilmez.",
       hakkindaKisa: "Hakkında",
       grupGorunum: "Görünüm ve dil",
       grupDavranis: "Pencere ve sistem",
@@ -662,13 +714,48 @@
         etkin_kalan: 0.15,
         baglayici_pencere: "5s",
         kullanilabilir: true,
-        kaynak: { tur: "mod_koprusu", guven: "resmi_arayuz", okuma: "2026-11-15T19:49:19Z", yas_sn: 41, hassasiyet: 0.1 },
+        kaynak: {
+          tur: "mod_koprusu",
+          guven: "resmi_arayuz",
+          okuma: "2026-11-15T19:49:19Z",
+          yas_sn: 41,
+          hassasiyet: 0.1,
+        },
         pencereler: {
-          "5s": { uzunluk_dk: 300, kullanilan: 0.85, kalan: 0.15, sifirlama: "2026-11-15T21:10:00Z" },
-          hafta: { uzunluk_dk: 10080, kullanilan: 0.39, kalan: 0.61, sifirlama: "2026-11-20T07:00:00Z" },
+          "5s": {
+            uzunluk_dk: 300,
+            kullanilan: 0.85,
+            kalan: 0.15,
+            sifirlama: "2026-11-15T21:10:00Z",
+            etiket: "5-hour limit",
+          },
+          hafta: {
+            uzunluk_dk: 10080,
+            kullanilan: 0.39,
+            kalan: 0.61,
+            sifirlama: "2026-11-20T07:00:00Z",
+            etiket: "Weekly · all models",
+          },
         },
         alt_sayaclar: {
-          fable_hafta: { kullanilan: 0.12, kalan: 0.88, uzunluk_dk: 10080, sifirlama: "2026-11-20T07:00:00Z" },
+          fable: {
+            etiket: "Weekly · Fable",
+            ebeveyn: "hafta",
+            kullanilan: 0.12,
+            kalan: 0.88,
+            uzunluk_dk: 10080,
+            sifirlama: "2026-11-20T07:00:00Z",
+            ilk_gorulme: "2026-10-02T09:00:00Z",
+          },
+          nova: {
+            etiket: "Weekly · Nova",
+            ebeveyn: "hafta",
+            kullanilan: 0.47,
+            kalan: 0.53,
+            uzunluk_dk: 10080,
+            sifirlama: "2026-11-20T07:00:00Z",
+            ilk_gorulme: "2026-11-15T12:30:00Z",
+          },
         },
         tahmin: {
           "5s": {
@@ -680,7 +767,12 @@
             saatlik_hiz: 0.281,
             sifirlanmadan_biter: true,
           },
-          hafta: { durum: "deneysel", etiket: "deneysel", gunluk_butce: 0.136, sifirlanmadan_biter: false },
+          hafta: {
+            durum: "deneysel",
+            etiket: "deneysel",
+            gunluk_butce: 0.136,
+            sifirlanmadan_biter: false,
+          },
         },
         baski: "kacin",
         hata: null,
@@ -690,31 +782,108 @@
         platform: "codex",
         etiket: "Codex",
         durum: "ok",
-        etkin_kalan: 0.0,
+        etkin_kalan: 0,
         baglayici_pencere: "hafta",
         kullanilabilir: false,
-        kaynak: { tur: "codex_app_server", guven: "resmi_arayuz", okuma: "2026-11-15T19:48:00Z", yas_sn: 120 },
+        kaynak: {
+          tur: "codex_app_server",
+          guven: "resmi_arayuz",
+          okuma: "2026-11-15T19:48:00Z",
+          yas_sn: 120,
+        },
         pencereler: {
-          "5s": { uzunluk_dk: 300, kullanilan: 0.0, kalan: 1.0, sifirlama: "2026-11-16T00:50:00Z" },
-          hafta: { uzunluk_dk: 10080, kullanilan: 1.0, kalan: 0.0, sifirlama: "2026-11-18T10:28:00Z" },
+          "5s": {
+            uzunluk_dk: 300,
+            kullanilan: 0,
+            kalan: 1,
+            sifirlama: "2026-11-16T00:50:00Z",
+          },
+          hafta: {
+            uzunluk_dk: 10080,
+            kullanilan: 1,
+            kalan: 0,
+            sifirlama: "2026-11-18T10:28:00Z",
+          },
         },
         tahmin: {},
         baski: "kacin",
-        ek: { sifirlama_kredisi: { adet: 1, son: "2026-11-22T00:00:00Z" }, olagan_kullanim: false, plan_turu: "Plus" },
+        ek: {
+          sifirlama_kredisi: {
+            adet: 1,
+            son: "2026-11-22T00:00:00Z",
+          },
+          olagan_kullanim: false,
+          plan_turu: "Plus",
+        },
         hata: null,
         notlar: ["haftalık bitti, 5s dolu görünse de kullanılamaz"],
       },
+      codex_spark: {
+        platform: "codex",
+        etiket: "Codex GPT5.3 Spark Research Preview Long Context",
+        durum: "ok",
+        etkin_kalan: 0.58,
+        baglayici_pencere: "480dk",
+        kullanilabilir: true,
+        kaynak: {
+          tur: "codex_app_server",
+          guven: "resmi_arayuz",
+          okuma: "2026-11-15T19:48:00Z",
+          yas_sn: 120,
+        },
+        pencereler: {
+          "480dk": {
+            uzunluk_dk: 480,
+            kullanilan: 0.42,
+            kalan: 0.58,
+            sifirlama: "2026-11-15T23:10:00Z",
+            etiket: "8h",
+          },
+          hafta: {
+            uzunluk_dk: 10080,
+            kullanilan: 0.2,
+            kalan: 0.8,
+            sifirlama: "2026-11-18T10:28:00Z",
+          },
+        },
+        tahmin: {},
+        baski: "rahat",
+        hata: null,
+        notlar: [],
+        kesif: {
+          dinamik: true,
+          grup: "gpt-5.3-spark",
+          ilk_gorulme: "2026-11-10T08:00:00Z",
+          son_gorulme: "2026-11-15T19:48:00Z",
+          yasam: "aktif",
+        },
+      },
       agy_gemini: {
         platform: "agy",
-        etiket: "Antigravity Gemini",
+        etiket: "Antigravity Gemini Models",
         durum: "ok",
         etkin_kalan: 0.46,
         baglayici_pencere: "5s",
         kullanilabilir: true,
-        kaynak: { tur: "agy_usage", guven: "tahmini", okuma: "2026-11-15T19:41:20Z", yas_sn: 520 },
+        kaynak: {
+          tur: "agy_usage",
+          guven: "tahmini",
+          okuma: "2026-11-15T19:41:20Z",
+          yas_sn: 520,
+        },
         pencereler: {
-          "5s": { uzunluk_dk: 300, kullanilan: 0.54, kalan: 0.46, sifirlama: "2026-11-15T22:40:00Z" },
-          hafta: { uzunluk_dk: 10080, kullanilan: 0.34, kalan: 0.66, sifirlama: "2026-11-21T07:00:00Z" },
+          "5s": {
+            uzunluk_dk: 300,
+            kullanilan: 0.54,
+            kalan: 0.46,
+            sifirlama: "2026-11-15T22:40:00Z",
+          },
+          hafta: {
+            uzunluk_dk: 10080,
+            kullanilan: 0.34,
+            kalan: 0.66,
+            sifirlama: "2026-11-21T07:00:00Z",
+          },
         },
         tahmin: {
           "5s": {
@@ -730,37 +899,168 @@
         baski: "rahat",
         hata: null,
         notlar: ["tek okuma (±%1 oynak)"],
+        kesif: {
+          dinamik: false,
+          grup: "Gemini Models",
+          ilk_gorulme: "2026-08-01T09:00:00Z",
+          son_gorulme: "2026-11-15T19:41:20Z",
+          yasam: "aktif",
+        },
       },
       agy_claude_gpt: {
         platform: "agy",
-        etiket: "Antigravity Claude-GPT",
+        etiket: "Antigravity Claude and GPT models",
         durum: "ok",
-        etkin_kalan: 0.0,
+        etkin_kalan: 0,
         baglayici_pencere: "5s",
         kullanilabilir: false,
-        kaynak: { tur: "agy_usage", guven: "tahmini", okuma: "2026-11-15T19:41:20Z", yas_sn: 520 },
+        kaynak: {
+          tur: "agy_usage",
+          guven: "tahmini",
+          okuma: "2026-11-15T19:41:20Z",
+          yas_sn: 520,
+        },
         pencereler: {
-          "5s": { uzunluk_dk: 300, kullanilan: 1.0, kalan: 0.0, sifirlama: "2026-11-15T21:55:00Z" },
-          hafta: { uzunluk_dk: 10080, kullanilan: 0.72, kalan: 0.28, sifirlama: "2026-11-21T07:00:00Z" },
+          "5s": {
+            uzunluk_dk: 300,
+            kullanilan: 1,
+            kalan: 0,
+            sifirlama: "2026-11-15T21:55:00Z",
+          },
+          hafta: {
+            uzunluk_dk: 10080,
+            kullanilan: 0.72,
+            kalan: 0.28,
+            sifirlama: "2026-11-21T07:00:00Z",
+          },
         },
         tahmin: {},
         baski: "kacin",
         hata: null,
         notlar: ["5s penceresi %0 kalan"],
+        kesif: {
+          dinamik: false,
+          grup: "Claude and GPT models",
+          ilk_gorulme: "2026-08-01T09:00:00Z",
+          son_gorulme: "2026-11-15T19:41:20Z",
+          yasam: "aktif",
+        },
       },
       agy_argon: {
         platform: "agy",
-        etiket: "Antigravity Argon",
+        etiket: "Antigravity Gemini 4 Argon",
         durum: "bayat",
         etkin_kalan: 0.62,
         baglayici_pencere: "hafta",
         kullanilabilir: false,
-        kaynak: { tur: "agy_usage", guven: "bayat", okuma: "2026-11-15T19:11:00Z", yas_sn: 2340 },
-        pencereler: { hafta: { uzunluk_dk: 10080, kullanilan: 0.38, kalan: 0.62, sifirlama: "2026-11-22T07:00:00Z" } },
+        kaynak: {
+          tur: "agy_usage",
+          guven: "bayat",
+          okuma: "2026-11-15T19:11:00Z",
+          yas_sn: 2340,
+        },
+        pencereler: {
+          hafta: {
+            uzunluk_dk: 10080,
+            kullanilan: 0.38,
+            kalan: 0.62,
+            sifirlama: "2026-11-22T07:00:00Z",
+          },
+        },
         tahmin: {},
         baski: "rahat",
-        hata: { tur: "zaman_asimi" },
+        hata: {
+          tur: "zaman_asimi",
+        },
         notlar: ["son okuma 39 dk önce · veri bayat"],
+        kesif: {
+          dinamik: false,
+          grup: "Gemini 4 Argon",
+          ilk_gorulme: "2026-09-01T09:00:00Z",
+          son_gorulme: "2026-11-15T19:11:00Z",
+          yasam: "aktif",
+          ebeveyn_havuz: "agy_gemini",
+          ebeveyn_guven: "tahmini",
+        },
+        etkin_kalan_zincir: 0.46,
+      },
+      agy_gemini_5_xenon: {
+        platform: "agy",
+        etiket: "Antigravity Gemini 5 Xenon",
+        durum: "ok",
+        etkin_kalan: 0.71,
+        baglayici_pencere: "5s",
+        kullanilabilir: true,
+        kaynak: {
+          tur: "agy_usage",
+          guven: "tahmini",
+          okuma: "2026-11-15T19:41:20Z",
+          yas_sn: 520,
+        },
+        pencereler: {
+          "5s": {
+            uzunluk_dk: 300,
+            kullanilan: 0.29,
+            kalan: 0.71,
+            sifirlama: "2026-11-15T23:30:00Z",
+            etiket: "5h",
+          },
+          hafta: {
+            uzunluk_dk: 10080,
+            kullanilan: 0.08,
+            kalan: 0.92,
+            sifirlama: "2026-11-21T07:00:00Z",
+            etiket: "weekly",
+          },
+        },
+        tahmin: {},
+        baski: "rahat",
+        hata: null,
+        notlar: [],
+        kesif: {
+          dinamik: true,
+          grup: "Gemini 5 Xenon",
+          ilk_gorulme: "2026-11-15T16:05:00Z",
+          son_gorulme: "2026-11-15T19:41:20Z",
+          yasam: "aktif",
+          ebeveyn_havuz: "agy_gemini",
+          ebeveyn_guven: "tahmini",
+        },
+        etkin_kalan_zincir: 0.46,
+      },
+      agy_gemini_3_flash: {
+        platform: "agy",
+        etiket: "Antigravity Gemini 3 Flash",
+        durum: "bayat",
+        etkin_kalan: 0.4,
+        baglayici_pencere: "5s",
+        kullanilabilir: false,
+        kaynak: {
+          tur: "agy_usage",
+          guven: "bayat",
+          okuma: "2026-11-13T15:00:00Z",
+          yas_sn: 190200,
+        },
+        pencereler: {
+          "5s": {
+            uzunluk_dk: 300,
+            kullanilan: 0.6,
+            kalan: 0.4,
+            sifirlama: "2026-11-13T18:00:00Z",
+            etiket: "5h",
+          },
+        },
+        tahmin: {},
+        baski: "rahat",
+        hata: null,
+        notlar: [],
+        kesif: {
+          dinamik: true,
+          grup: "Gemini 3 Flash",
+          ilk_gorulme: "2026-10-20T08:00:00Z",
+          son_gorulme: "2026-11-13T15:00:00Z",
+          yasam: "gorulmuyor",
+        },
       },
       deepseek: {
         platform: "deepseek",
@@ -776,7 +1076,12 @@
         etiket: "OpenCode",
         durum: "ok",
         kullanilabilir: true,
-        kaynak: { tur: "yerel_gunluk", guven: "yerel_kayit", okuma: "2026-11-15T19:50:00Z", yas_sn: 0 },
+        kaynak: {
+          tur: "yerel_gunluk",
+          guven: "yerel_kayit",
+          okuma: "2026-11-15T19:50:00Z",
+          yas_sn: 0,
+        },
         ek: {
           kullanim: {
             kota_yok: true,
@@ -906,7 +1211,37 @@
       gorunumModu: "birlesik",
       degerYonu: "kalan",
       ayarBolum: "genel",
+      altSekmeler: {},
     };
+  }
+
+  // Platform alt sekmesi seçimi (platform → havuz kimliği ya da "tumu"); bozuk kayıt sessizce atılır.
+  function altSekmeTemizle(ham) {
+    const sonuc = {};
+    if (!ham || typeof ham !== "object") return sonuc;
+    for (const [p, v] of Object.entries(ham).slice(0, 32)) {
+      if (/^[a-z0-9_]{1,40}$/.test(p) && typeof v === "string" && /^[a-z0-9_]{1,40}$/.test(v)) sonuc[p] = v;
+    }
+    return sonuc;
+  }
+
+  // Keşif sinyali: kullanıcının gördüğü yeni havuzlar (kimlik → ilk görülme). Yalnız bu tarayıcıda tutulur.
+  const GORULEN_ANAHTARI = "cetvel.ui.gorulenHavuzlar.v1";
+  function gorulenleriOku() {
+    try {
+      const ham = JSON.parse(window.localStorage.getItem(GORULEN_ANAHTARI) || "{}");
+      return ham && typeof ham === "object" && !Array.isArray(ham) ? ham : {};
+    } catch (_) {
+      return {};
+    }
+  }
+  function gorulenleriYaz(kayit) {
+    try {
+      const girdiler = Object.entries(kayit).filter(([k, v]) => /^[a-z0-9_]{1,40}$/.test(k) && typeof v === "string");
+      window.localStorage.setItem(GORULEN_ANAHTARI, JSON.stringify(Object.fromEntries(girdiler.slice(-200))));
+    } catch (_) {
+      // Depolama yoksa yalnız bu oturumda hatırlanır
+    }
   }
 
   function tercihleriOku() {
@@ -999,7 +1334,7 @@
   function ayarBolumuNormalizeEt(bolum) {
     if (bolum === "davranis") return "genel";
     if (bolum === "baglantilar") return "platformlar";
-    const gecerli = ["genel", "platformlar", "bildirimler", "teknik", "hakkinda"];
+    const gecerli = ["genel", "platformlar", "havuzlar", "bildirimler", "teknik", "hakkinda"];
     return gecerli.includes(bolum) ? bolum : "genel";
   }
 
@@ -1023,6 +1358,12 @@
     platformSekme: "genel",
     degerYonu: baslangicTercih.degerYonu,
     ayarBolum: ayarBolumuNormalizeEt(baslangicTercih.ayarBolum),
+    altSekmeler: altSekmeTemizle(baslangicTercih.altSekmeler),
+    gorulenHavuzlar: gorulenleriOku(),
+    ayarArama: "",
+    acikGenisleticiler: new Set(),
+    genisleticiBaslatildi: false,
+    acikGorulmeyenler: new Set(),
     vurguluSegmentId: null,
     tema: "murekkep",
     yuzey: baslangicYuzey,
@@ -1033,7 +1374,7 @@
     seciliHavuzId: demoMuBaslangic ? "claude" : null,
     acikPlatformlar: new Set(),
     ayarSifirlaOnay: false,
-    gecmisHavuzId: "claude_max",
+    gecmisHavuzId: demoMuBaslangic ? "claude_max" : null,
     gecmisCanli: {},
     gunlukGecmis: {},
     acilirKapali: false,
@@ -1109,6 +1450,7 @@
       gorunumModu: durum.gorunumModu,
       degerYonu: durum.degerYonu,
       ayarBolum: durum.ayarBolum,
+      altSekmeler: durum.altSekmeler,
     });
   }
 
@@ -1427,7 +1769,37 @@
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  // Sağlayıcıdan gelen etiketler artık dinamik: kontrol karakteri ve yön işaretleri ayıklanır,
+  // boşluk sadeleşir, uzunluk sınırlanır. HTML'e yine yalnız escHtml ile girer.
+  function etiketTemizle(metin, enFazla = 80) {
+    if (typeof metin !== "string") return "";
+    const temiz = metin
+      .replace(/[\u0000-\u001f\u007f-\u009f​-‏‪-‮⁦-⁩﻿]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    return temiz.length > enFazla ? `${temiz.slice(0, enFazla - 1).trimEnd()}…` : temiz;
+  }
+
+  // Stil niteliğine yalnız güvenli CSS token veya hex renk girer (denetim #27).
+  function guvenliRenk(renk) {
+    const s = typeof renk === "string" ? renk.trim() : "";
+    if (/^var\(--[a-z0-9-]+\)$/.test(s) || /^#[0-9a-fA-F]{3,8}$/.test(s)) return s;
+    return "var(--vurgu)";
+  }
+
+  // Simgesi olmayan platform için iki harfli monogram ("Gemini Hub" → "GH", "mistral" → "MI").
+  function monogramHarfleri(platform) {
+    const ad = etiketTemizle(platformAdi(platform), 40) || String(platform || "");
+    const sozcukler = ad.split(/[\s_\-·.]+/).filter((s) => /[\p{L}\p{N}]/u.test(s));
+    const harfler =
+      sozcukler.length >= 2
+        ? `${[...sozcukler[0]][0]}${[...sozcukler[1]][0]}`
+        : [...(sozcukler[0] || "?")].filter((c) => /[\p{L}\p{N}]/u.test(c)).slice(0, 2).join("");
+    return harfler.toLocaleUpperCase(durum.dil) || "?";
   }
 
   // --------------------------------------------------------------------------
@@ -1443,8 +1815,12 @@
       ic = '<ellipse cx="9" cy="9" rx="6.2" ry="3.2" transform="rotate(-28 9 9)" stroke="currentColor" stroke-width="1.5"/><circle cx="9" cy="9" r="2" fill="currentColor"/>';
     } else if (platform === "deepseek") {
       ic = '<path d="M3 7.2c2-1.8 4-1.8 6 0s4 1.8 6 0M3 11.4c2-1.8 4-1.8 6 0s4 1.8 6 0" stroke="currentColor" stroke-width="1.65" stroke-linecap="round"/>';
-    } else {
+    } else if (PLATFORM_AD[platform]) {
+      // Kotasız yerel araçlar (OpenCode, DeepSeek Harness): kod simgesi.
       ic = '<path d="M6.8 5.2L3.5 9l3.3 3.8M11.2 5.2L14.5 9l-3.3 3.8" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/>';
+    } else {
+      const harf = monogramHarfleri(platform);
+      ic = `<rect x="1.5" y="1.5" width="15" height="15" rx="4" stroke="currentColor" stroke-width="1.3"/><text x="9" y="12.2" text-anchor="middle" font-size="${[...harf].length > 1 ? 7.2 : 8.5}" font-weight="700" fill="currentColor">${escHtml(harf)}</text>`;
     }
     return `<svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true">${ic}</svg>`;
   }
@@ -1494,7 +1870,31 @@
   function anlikSadelestir(anlik) {
     if (anlik && anlik.havuzlar) {
       for (const h of Object.values(anlik.havuzlar)) {
-        if (h && typeof h.etiket === "string") h.etiket = sadeEtiket(h.etiket);
+        if (!h || typeof h !== "object") continue;
+        if (typeof h.etiket === "string") {
+          h.hamEtiket = etiketTemizle(h.etiket, 120);
+          h.etiket = sadeEtiket(etiketTemizle(h.etiket));
+        }
+        if (h.kesif && typeof h.kesif.grup === "string") {
+          h.kesif.grup = etiketTemizle(h.kesif.grup, 120);
+        }
+        if (h.pencereler && typeof h.pencereler === "object") {
+          for (const ol of Object.values(h.pencereler)) {
+            if (ol && typeof ol.etiket === "string") ol.etiket = etiketTemizle(ol.etiket, 60);
+          }
+        }
+        if (h.alt_sayaclar && typeof h.alt_sayaclar === "object") {
+          for (const alt of Object.values(h.alt_sayaclar)) {
+            if (alt && typeof alt.etiket === "string") alt.etiket = etiketTemizle(alt.etiket, 80);
+          }
+        }
+        if (Array.isArray(h.notlar)) {
+          h.notlar = h.notlar.map((n) => (typeof n === "string" ? etiketTemizle(n, 200) : "")).filter(Boolean);
+        }
+        if (h.ek && typeof h.ek.seviye === "string") h.ek.seviye = etiketTemizle(h.ek.seviye, 24);
+        if (h.bakiye && typeof h.bakiye.para_birimi === "string") {
+          h.bakiye.para_birimi = etiketTemizle(h.bakiye.para_birimi, 12);
+        }
       }
     }
     return anlik;
@@ -1515,8 +1915,12 @@
   }
 
   function kartDuzenleKontrollerHtml(id, h) {
-    const sabitMi = durum.kartTercihler.sabitKartlar.includes(id);
-    const gizliMi = durum.kartTercihler.gizliKartlar.includes(id);
+    const sinifT = kartTercihSiniflandir(durum.anlik.havuzlar);
+    const pHavuzlar = platformHavuzlari(id);
+    const sabitMi =
+      sinifT.sabitPlatform.has(id) || pHavuzlar.some(([hid]) => sinifT.sabitHavuz.has(hid));
+    const gizliMi =
+      sinifT.gizliPlatform.has(id) || (pHavuzlar.length > 0 && pHavuzlar.every(([hid]) => sinifT.gizliHavuz.has(hid)));
     return `
       <div class="kart-duzenle-arac">
         <button type="button" class="kart-eylem-btn kart-sabit-btn${sabitMi ? " aktif" : ""}" data-kart-sabit="${escHtml(id)}" aria-pressed="${sabitMi ? "true" : "false"}" aria-label="${escHtml(sabitMi ? t("kartlar.sabitiKaldir") : t("kartlar.sabitle"))}" data-ipucu="${escHtml(sabitMi ? t("kartlar.sabitiKaldir") : t("kartlar.sabitle"))}">
@@ -1587,29 +1991,141 @@
     return (a.etiket || "").localeCompare(b.etiket || "", durum.dil);
   }
 
+  function havuzGorulmuyorMu(h) {
+    return h?.kesif?.yasam === "gorulmuyor";
+  }
+
+  function havuzYeniMi(id, h) {
+    if (!id || !h || !h.kesif?.dinamik || havuzGorulmuyorMu(h) || !bagliMi(h)) return false;
+    if (durum.gorulenHavuzlar?.[id]) return false;
+    const ilkMs = Date.parse(h.kesif.ilk_gorulme || "");
+    const simdiMs = Date.parse(simdiIso());
+    if (!Number.isFinite(ilkMs) || !Number.isFinite(simdiMs)) return false;
+    const farkMs = simdiMs - ilkMs;
+    return farkMs >= -60000 && farkMs <= 48 * 3600 * 1000;
+  }
+
+  function yeniHavuzlariBul() {
+    return Object.entries(durum.anlik.havuzlar || {}).filter(([id, h]) => havuzYeniMi(id, h));
+  }
+
+  function havuzuGorulduIsaretle(idler) {
+    let degisti = false;
+    const simdi = simdiIso();
+    for (const id of idler || []) {
+      if (typeof id === "string" && id && !durum.gorulenHavuzlar[id]) {
+        durum.gorulenHavuzlar[id] = simdi;
+        degisti = true;
+      }
+    }
+    if (degisti) gorulenleriYaz(durum.gorulenHavuzlar);
+    return degisti;
+  }
+
+  function kartTercihSiniflandir(havuzlar) {
+    const hMap = havuzlar || {};
+    const gizliPlatform = new Set();
+    const gizliHavuz = new Set();
+    const sabitPlatform = new Set();
+    const sabitHavuz = new Set();
+    const sabitSiraMap = new Map();
+
+    const cokluHavuzMu = (id) => Boolean(hMap[id] && hMap[id].platform && hMap[id].platform !== id);
+
+    for (const k of durum.kartTercihler.gizliKartlar || []) {
+      if (cokluHavuzMu(k)) {
+        gizliHavuz.add(k);
+      } else {
+        gizliPlatform.add(k);
+        if (hMap[k]) gizliHavuz.add(k);
+      }
+    }
+
+    (durum.kartTercihler.sabitKartlar || []).forEach((k, idx) => {
+      let p = k;
+      if (cokluHavuzMu(k)) {
+        sabitHavuz.add(k);
+        p = hMap[k].platform;
+      } else {
+        sabitPlatform.add(k);
+        if (hMap[k]) sabitHavuz.add(k);
+        p = hMap[k]?.platform || k;
+      }
+      if (p && !sabitSiraMap.has(p)) sabitSiraMap.set(p, idx);
+    });
+
+    return {
+      gizliPlatform,
+      gizliHavuz,
+      sabitPlatform,
+      sabitHavuz,
+      platformSabitSira: (p) => (sabitSiraMap.has(p) ? sabitSiraMap.get(p) : null),
+    };
+  }
+
+  function havuzGizliMi(id, h, sinif) {
+    const s = sinif || kartTercihSiniflandir(durum.anlik.havuzlar);
+    const p = h?.platform || id;
+    return s.gizliHavuz.has(id) || s.gizliPlatform.has(p);
+  }
+
+  function havuzSabitMi(id, h, sinif) {
+    const s = sinif || kartTercihSiniflandir(durum.anlik.havuzlar);
+    const p = h?.platform || id;
+    return s.sabitHavuz.has(id) || s.sabitPlatform.has(p);
+  }
+
+  function havuzGenelGorunurMu(id, h, sinif, gizlileriDahilEt = false) {
+    if (!h || !bagliMi(h) || havuzGorulmuyorMu(h)) return false;
+    return gizlileriDahilEt || !havuzGizliMi(id, h, sinif);
+  }
+
+  function platformHavuzlari(platform, { gorulmeyenleriDahilEt = false } = {}) {
+    return Object.entries(durum.anlik.havuzlar || {}).filter(
+      ([, h]) => h && h.platform === platform && (gorulmeyenleriDahilEt || !havuzGorulmuyorMu(h))
+    );
+  }
+
+  function platformEnTazeHavuz(platform) {
+    const adaylar = platformHavuzlari(platform)
+      .map(([, h]) => h)
+      .sort((a, b) => {
+        const okA = a.durum === "ok" ? 0 : 1;
+        const okB = b.durum === "ok" ? 0 : 1;
+        if (okA !== okB) return okA - okB;
+        return (kaynakYasSn(a.kaynak) ?? 1e9) - (kaynakYasSn(b.kaynak) ?? 1e9);
+      });
+    return adaylar[0] || null;
+  }
+
+  function platformSonHata(platform) {
+    for (const [, h] of platformHavuzlari(platform)) {
+      if (h?.hata?.tur) return h.hata.tur;
+    }
+    return null;
+  }
+
   function havuzSirala(havuzlar, secenekler = {}) {
-    const { gizlileriDahilEt = false } = secenekler;
+    const { gizlileriDahilEt = false, gorulmeyenleriDahilEt = false } = secenekler;
+    const sinif = kartTercihSiniflandir(havuzlar);
     const siraPref = kartListesiniPlatformaEsle(durum.kartTercihler.kartSirasi, havuzlar);
-    const gizliSet = new Set(kartListesiniPlatformaEsle(durum.kartTercihler.gizliKartlar, havuzlar));
-    const sabitList = kartListesiniPlatformaEsle(durum.kartTercihler.sabitKartlar, havuzlar);
-    const sabitSet = new Set(sabitList);
     const siraMap = new Map(siraPref.map((id, idx) => [id, idx]));
-    const sabitMap = new Map(sabitList.map((id, idx) => [id, idx]));
 
     return Object.entries(havuzlar || {})
       .filter(([id, h]) => {
         if (!bagliMi(h)) return false;
+        if (!gorulmeyenleriDahilEt && havuzGorulmuyorMu(h)) return false;
         const p = h.platform || id;
-        return gizlileriDahilEt || !gizliSet.has(p);
+        return gizlileriDahilEt || !sinif.gizliPlatform.has(p);
       })
       .sort((entA, entB) => {
         const [idA, hA] = entA;
         const [idB, hB] = entB;
         const pA = hA.platform || idA;
         const pB = hB.platform || idB;
-        const sabA = sabitSet.has(pA);
-        const sabB = sabitSet.has(pB);
-        if (sabA !== sabB) return sabA ? -1 : 1;
+        const sabA = sinif.platformSabitSira(pA);
+        const sabB = sinif.platformSabitSira(pB);
+        if ((sabA === null) !== (sabB === null)) return sabA !== null ? -1 : 1;
 
         const idxA = siraMap.get(pA);
         const idxB = siraMap.get(pB);
@@ -1617,28 +2133,33 @@
         if (idxA !== undefined && idxB === undefined) return -1;
         if (idxB !== undefined && idxA === undefined) return 1;
 
-        if (sabA && sabB && siraMap.size === 0) {
-          const siA = sabitMap.get(pA);
-          const siB = sabitMap.get(pB);
-          if (siA !== undefined && siB !== undefined && siA !== siB) return siA - siB;
+        if (sabA !== null && sabB !== null && siraMap.size === 0 && sabA !== sabB) return sabA - sabB;
+        // Aynı platform içinde sabitlenen havuz önde, sonra varsayılan (en dar önce) sıra.
+        if (pA === pB) {
+          const hsA = sinif.sabitHavuz.has(idA);
+          const hsB = sinif.sabitHavuz.has(idB);
+          if (hsA !== hsB) return hsA ? -1 : 1;
         }
         return havuzVarsayilanKarsilastir(entA, entB);
       });
   }
 
   function genelBaskiHesapla() {
-    const havuzlar = Object.values(durum.anlik.havuzlar || {}).filter((h) => bagliMi(h));
+    const tumHavuzlar = durum.anlik.havuzlar || {};
+    const sinifT = kartTercihSiniflandir(tumHavuzlar);
+    const havuzlar = Object.entries(tumHavuzlar)
+      .filter(([id, h]) => havuzGenelGorunurMu(id, h, sinifT))
+      .map(([, h]) => h);
     const uygunlar = havuzlar
       .filter((h) => h.durum === "ok" && h.kullanilabilir && typeof h.etkin_kalan === "number")
       .sort((a, b) => a.etkin_kalan - b.etkin_kalan);
 
     if (uygunlar.length > 0) {
       const enDar = uygunlar[0];
-      const kisaAd = platformAdi(enDar.platform) || (enDar.etiket || "").split(" ")[0];
-      const pencereKisa = enDar.baglayici_pencere
-        ? sozlukEslesmeBul("pencereKisa", enDar.baglayici_pencere) || anahtarAdiOkunurYap(enDar.baglayici_pencere)
-        : "";
-      const { olcum } = baglayiciBul(enDar);
+      const { bp, olcum } = baglayiciBul(enDar);
+      const ayniPlatformda = havuzlar.filter((h) => h.platform === enDar.platform).length;
+      const kisaAd = `${platformAdi(enDar.platform) || (enDar.etiket || "").split(" ")[0]}${ayniPlatformda > 1 ? ` ${havuzKisaAd(enDar)}` : ""}`;
+      const pencereKisa = bp ? pencereMetni(bp, olcum, "kisa") : "";
       return {
         metin: fmt("genel.enDar", { ad: `${kisaAd} ${pencereKisa}`.trim() }),
         adPencere: `${kisaAd} ${pencereKisa}`.trim(),
@@ -1704,7 +2225,11 @@
     if (pNorm && typeof a.platformEsikleri?.[pNorm] === "number" && Number.isFinite(a.platformEsikleri[pNorm])) {
       return clamp(Math.round(a.platformEsikleri[pNorm]), 1, 99);
     }
-    if (havuzId === "claude_max" || pNorm === "claude") return pencere === "hafta" ? a.claudeHaftaEsik : a.claude5sEsik;
+    if (pNorm === "claude") {
+      if (pencere === "hafta") return a.claudeHaftaEsik;
+      if (!pencere || pencere === "5s") return a.claude5sEsik;
+      return a.digerEsik;
+    }
     return a.digerEsik;
   }
 
@@ -1873,7 +2398,7 @@
         const dolguYay = Math.max(2, dilimYay * clamp(oran, 0.04, 1));
         const aci = -90 + idx * (360 / aktifler.length);
         const sinif = dolguSinifiBul(h, olcum, id);
-        const renk = PLATFORM_RENK[h.platform] || gostergeRenkKodu(sinif);
+        const renk = guvenliRenk(PLATFORM_RENK[h.platform] || gostergeRenkKodu(sinif));
         const vurgulu = durum.vurguluSegmentId === id || (!durum.vurguluSegmentId && durum.seciliHavuzId === id);
         const pctMetin = yuzdeBicimle(oran || 0);
         const ipucu = `${h.etiket}: ${pctMetin} ${durum.degerYonu === "kullanilan" ? t("genel.kullanildi") : t("genel.kalan")}`;
@@ -1904,7 +2429,7 @@
       <svg width="${boyut}" height="${boyut}" viewBox="0 0 ${boyut} ${boyut}" class="gosterge-svg-kutu" aria-label="${escHtml(t("gorunum.segmentHalkaBaslik"))}">
         ${yaylar}
         <text x="${c}" y="${c + 2}" text-anchor="middle" class="halka-merkez-metin" font-size="${merkezYaziBoyut}">${escHtml(merkezMetin)}</text>
-        <text x="${c}" y="${c + (kucukMu ? 14 : 17)}" text-anchor="middle" class="halka-merkez-alt">${escHtml(PLATFORM_KISA[merkezHavuz.platform] || merkezHavuz.etiket.slice(0, 6))}</text>
+        <text x="${c}" y="${c + (kucukMu ? 14 : 17)}" text-anchor="middle" class="halka-merkez-alt">${escHtml(PLATFORM_KISA[merkezHavuz.platform] || monogramHarfleri(merkezHavuz.platform))}</text>
       </svg>
     `;
 
@@ -1925,7 +2450,7 @@
         const { olcum, etkinKalan } = baglayiciBul(h);
         const oran = durum.degerYonu === "kullanilan" ? 1 - (etkinKalan ?? 0) : etkinKalan ?? 0;
         const pctMetin = yuzdeBicimle(oran || 0);
-        const renk = PLATFORM_RENK[h.platform] || gostergeRenkKodu(dolguSinifiBul(h, olcum));
+        const renk = guvenliRenk(PLATFORM_RENK[h.platform] || gostergeRenkKodu(dolguSinifiBul(h, olcum)));
         const vurgulu = seciliId === id;
         return `
           <button type="button" class="pasta-lejan-chip${vurgulu ? " vurgulu" : ""}" data-segment-havuz="${escHtml(id)}"
@@ -1961,7 +2486,7 @@
     if (!olcum) {
       return fmt("aria.satirBilgisiz", { ad: havuz.etiket, durumMetin, kaynakMetin });
     }
-    const pAd = sozlukEslesmeBul("pencereAdlari", bp) || anahtarAdiOkunurYap(bp);
+    const pAd = pencereMetni(bp, olcum, "ad");
     const sifirlamaMetin = olcum.sifirlama ? `${kalanSureMetni(olcum.sifirlama, simdiIso())} (${saatBicimle(olcum.sifirlama)})` : t("genel.bilinmiyor");
     return fmt("aria.satirDurumlu", {
       ad: havuz.etiket,
@@ -1992,22 +2517,73 @@
     return PLATFORM_AD[p] || anahtarAdiOkunurYap(p);
   }
 
-  // "Antigravity Gemini" → "Gemini" (platform sekmesinin içinde ad tekrarı olmasın).
+  // Kurallı kısa ad: baştaki platform adı atılır; "{A} and {B} models" → "{A} ve {B}" (yerel bağlaç),
+  // "{X} Models" → "{X}".
   function havuzKisaAd(h) {
-    const ad = String(h?.etiket || "");
-    const pAd = PLATFORM_AD[h?.platform];
-    if (pAd && ad.length > pAd.length + 1 && ad.toLowerCase().startsWith(`${pAd.toLowerCase()} `)) {
-      return ad.slice(pAd.length + 1);
+    let ad = etiketTemizle(h?.etiket || h?.kesif?.grup || "", 80);
+    if (!ad) return "";
+    const adayOnEkler = [platformAdi(h?.platform), PLATFORM_AD[h?.platform], h?.platform].filter(Boolean);
+    for (const onEk of adayOnEkler) {
+      const k = onEk.toLowerCase();
+      if (ad.toLowerCase().startsWith(k) && ad.length > onEk.length) {
+        const kalan = ad.slice(onEk.length).replace(/^[\s\-·:]+/, "").trim();
+        if (kalan) {
+          ad = kalan;
+          break;
+        }
+      }
     }
+    const ciftEslesme = ad.match(/^(.+?)\s+(?:and|&)\s+(.+?)\s+models$/i);
+    if (ciftEslesme) {
+      return fmt("genel.baglacVe", { a: ciftEslesme[1].trim(), b: ciftEslesme[2].trim() });
+    }
+    const tekEslesme = ad.match(/^(.+?)\s+models$/i);
+    if (tekEslesme) return tekEslesme[1].trim();
     return ad;
   }
 
-  function pencereEtiketi(pAd) {
-    return sozlukEslesmeBul("pencereEtiket", pAd) || anahtarAdiOkunurYap(pAd);
+  // Pencere adını anahtar + uzunluk_dk'dan yerelleştirir (5dk, 1s, 5s, gun, hafta, ay, "<N>dk"; 0 → ham etiket).
+  function pencereMetni(pAd, olcum, bicim = "etiket") {
+    const bolumler = {
+      etiket: "pencereEtiket",
+      baslik: "pencereBaslik",
+      kisa: "pencereKisa",
+      ad: "pencereAdlari",
+    };
+    const bolum = bolumler[bicim] || "pencereEtiket";
+    const dogrudan = sozlukEslesmeBul(bolum, pAd);
+    if (dogrudan) return dogrudan;
+
+    let uzunluk =
+      typeof olcum?.uzunluk_dk === "number" && Number.isFinite(olcum.uzunluk_dk) ? olcum.uzunluk_dk : null;
+    if (uzunluk === null && typeof pAd === "string") {
+      const m = pAd.match(/^(\d+)dk$/i);
+      if (m) uzunluk = Number(m[1]);
+    }
+    if (uzunluk === 0 || uzunluk === null) {
+      return olcum?.etiket ? etiketTemizle(olcum.etiket, 40) : anahtarAdiOkunurYap(pAd);
+    }
+    const standart = { 5: "5dk", 60: "1s", 300: "5s", 1440: "gun", 10080: "hafta", 43200: "ay" }[uzunluk];
+    if (standart) {
+      const stdMetin = sozlukEslesmeBul(bolum, standart);
+      if (stdMetin) return stdMetin;
+    }
+    const kisaMi = bicim === "kisa";
+    if (uzunluk % 1440 === 0) {
+      return fmt(kisaMi ? "pencereSure.kisaGun" : "pencereSure.gun", { n: sayiBicimle(uzunluk / 1440) });
+    }
+    if (uzunluk % 60 === 0) {
+      return fmt(kisaMi ? "pencereSure.kisaSaat" : "pencereSure.saat", { n: sayiBicimle(uzunluk / 60) });
+    }
+    return fmt(kisaMi ? "pencereSure.kisaDk" : "pencereSure.dk", { n: sayiBicimle(uzunluk) });
   }
 
-  function pencereBasligi(pAd) {
-    return sozlukEslesmeBul("pencereBaslik", pAd) || pencereEtiketi(pAd);
+  function pencereEtiketi(pAd, olcum) {
+    return pencereMetni(pAd, olcum, "etiket");
+  }
+
+  function pencereBasligi(pAd, olcum) {
+    return pencereMetni(pAd, olcum, "baslik");
   }
 
   function kalanModuMu() {
@@ -2025,17 +2601,97 @@
 
   function pencereSirali(h) {
     const p = h?.pencereler || {};
-    return Object.keys(p).sort((a, b) => (p[a]?.uzunluk_dk ?? 0) - (p[b]?.uzunluk_dk ?? 0));
+    return Object.keys(p).sort((a, b) => {
+      const ua = typeof p[a]?.uzunluk_dk === "number" && p[a].uzunluk_dk > 0 ? p[a].uzunluk_dk : Number.MAX_SAFE_INTEGER;
+      const ub = typeof p[b]?.uzunluk_dk === "number" && p[b].uzunluk_dk > 0 ? p[b].uzunluk_dk : Number.MAX_SAFE_INTEGER;
+      if (ua !== ub) return ua - ub;
+      return a.localeCompare(b);
+    });
   }
 
-  // Genel kartındaki iki satır: 5 saat + haftalık (Antigravity Argon'da 5 saat "—");
-  // bu ikisi yoksa en kısa iki pencere.
+  // Şema-bağımsız kompakt pencere seçimi: en çok 2 çubuk (bağlayıcı + diğer en dar), süreye göre kısadan uzuna.
   function kompaktPencereler(h) {
     const p = h?.pencereler || {};
-    const adlar = Object.keys(p);
-    if (adlar.length === 0) return [];
-    if (h.platform === "agy" || "5s" in p || "hafta" in p) return ["5s", "hafta"];
-    return pencereSirali(h).slice(0, 2);
+    const sirali = pencereSirali(h);
+    if (sirali.length <= 2) return { secilen: sirali, fazla: [] };
+    const { bp } = baglayiciBul(h);
+    const ilk = bp && p[bp] ? bp : sirali[0];
+    const digerleri = sirali.filter((k) => k !== ilk);
+    digerleri.sort((a, b) => {
+      const ka = typeof p[a]?.kalan === "number" ? p[a].kalan : 2;
+      const kb = typeof p[b]?.kalan === "number" ? p[b].kalan : 2;
+      if (Math.abs(ka - kb) > 1e-6) return ka - kb;
+      const ua = p[a]?.uzunluk_dk || 0;
+      const ub = p[b]?.uzunluk_dk || 0;
+      return ub - ua;
+    });
+    const ikinci = digerleri[0];
+    const secilenSet = new Set([ilk, ikinci].filter(Boolean));
+    return {
+      secilen: sirali.filter((k) => secilenSet.has(k)),
+      fazla: sirali.filter((k) => !secilenSet.has(k)),
+    };
+  }
+
+  function altSayacEbeveynBul(h, altVal) {
+    const p = h?.pencereler || {};
+    if (altVal?.ebeveyn && p[altVal.ebeveyn]) return altVal.ebeveyn;
+    if (typeof altVal?.uzunluk_dk === "number" && altVal.uzunluk_dk > 0) {
+      const eslesen = pencereSirali(h).find((k) => p[k]?.uzunluk_dk === altVal.uzunluk_dk);
+      if (eslesen) return eslesen;
+    }
+    return null;
+  }
+
+  function altSayacAdTemizle(altAd, altVal, ebeveynVar) {
+    if (altVal?.etiket) {
+      const ham = etiketTemizle(altVal.etiket, 60);
+      if (ebeveynVar) {
+        const sade = ham
+          .replace(/^(?:weekly|daily|monthly|hourly|5-?hour|haftal[ıi]k|g[üu]nl[üu]k|ayl[ıi]k)\s*[·:\-]\s*/i, "")
+          .trim();
+        if (sade) return sade;
+      }
+      return ham;
+    }
+    return altSayacAdiBicimle(altAd);
+  }
+
+  function altSayacHesapla(h, altAd, altVal) {
+    const hamKalan = clamp(altVal.kalan ?? 1 - (altVal.kullanilan ?? 0), 0, 1);
+    const hamKullanilan = clamp(altVal.kullanilan ?? 1 - hamKalan, 0, 1);
+    const ebeveynAd = altSayacEbeveynBul(h, altVal);
+    const ebeveynOlcum = ebeveynAd ? h?.pencereler?.[ebeveynAd] : null;
+    const ebeveynKalan =
+      typeof ebeveynOlcum?.kalan === "number" && Number.isFinite(ebeveynOlcum.kalan)
+        ? clamp(ebeveynOlcum.kalan, 0, 1)
+        : null;
+    const kullanilabilirKalan = ebeveynKalan !== null ? Math.min(hamKalan, ebeveynKalan) : hamKalan;
+    const sinirliMi = ebeveynKalan !== null && hamKalan > ebeveynKalan + 0.005;
+    const hamEtiket = altVal.etiket ? etiketTemizle(altVal.etiket, 60) : altSayacAdiBicimle(altAd);
+    const kisaAd = altSayacAdTemizle(altAd, altVal, Boolean(ebeveynAd));
+    return {
+      altAd,
+      kisaAd,
+      hamEtiket,
+      ebeveynAd,
+      ebeveynOlcum,
+      ebeveynKalan,
+      hamKalan,
+      hamKullanilan,
+      kullanilabilirKalan,
+      sinirliMi,
+      olcum: { ...altVal, kalan: kullanilabilirKalan, kullanilan: clamp(1 - kullanilabilirKalan, 0, 1) },
+    };
+  }
+
+  function havuzAltSayaclari(h) {
+    const liste = [];
+    for (const [altAd, altVal] of Object.entries(h?.alt_sayaclar || {})) {
+      if (!altVal || typeof altVal !== "object") continue;
+      liste.push(altSayacHesapla(h, altAd, altVal));
+    }
+    return liste;
   }
 
   function pencereKilitliMi(h, olcum) {
@@ -2048,24 +2704,45 @@
     if (!olcum) return "";
     if (pencereKilitliMi(h, olcum)) return "kilitli";
     const kalan = clamp(Number(olcum.kalan) || 0, 0, 1);
-    if (kalan * 100 <= (Number(esikYuzdesi(id, pAd)) || 20)) return "kacin";
+    if (kalan * 100 <= (Number(esikYuzdesi(id, pAd, h.platform)) || 20)) return "kacin";
     return "";
   }
 
   function havuzKritikMi(id, h) {
     const { bp, etkinKalan } = baglayiciBul(h);
     if (h.durum !== "ok" || typeof etkinKalan !== "number") return false;
-    return h.kullanilabilir === false || etkinKalan * 100 <= (Number(esikYuzdesi(id, bp)) || 20);
+    return h.kullanilabilir === false || etkinKalan * 100 <= (Number(esikYuzdesi(id, bp, h.platform)) || 20);
   }
 
-  function inceCubukHtml({ oran = 0, sinif = "", ipucu = "", tempoOran = null, kalin = false, bos = false } = {}) {
+  function inceCubukHtml({
+    oran = 0,
+    sinif = "",
+    ipucu = "",
+    tempoOran = null,
+    kalin = false,
+    bos = false,
+    kilitliBas = null,
+    kilitliGenislik = 0,
+    tavanOran = null,
+  } = {}) {
     const pct = bos ? 0 : clamp(Number(oran) || 0, 0, 1) * 100;
+    const kBas = kilitliBas !== null && !bos ? clamp(Number(kilitliBas) || 0, 0, 1) * 100 : null;
+    const kGen = !bos && kilitliGenislik > 0.005 ? clamp(Number(kilitliGenislik) || 0, 0, 1) * 100 : 0;
+    const kilitliHtml =
+      kBas !== null && kGen > 0.4
+        ? `<span class="ince-dolgu-kilitli${kBas <= 0.1 ? " tam-yuvarlak" : ""}" style="left:${kBas.toFixed(1)}%;width:${Math.min(100 - kBas, kGen).toFixed(1)}%" aria-hidden="true"></span>`
+        : "";
+    const tavanHtml =
+      tavanOran !== null && !bos
+        ? `<span class="ince-tavan-centik" style="left:${(clamp(tavanOran, 0, 1) * 100).toFixed(1)}%" aria-hidden="true"></span>`
+        : "";
     const tempo =
       tempoOran !== null && !bos
         ? `<span class="ince-tempo" style="left:${(clamp(tempoOran, 0, 1) * 100).toFixed(1)}%" aria-hidden="true"></span>`
         : "";
     const ipucuNit = ipucu ? ` aria-label="${escHtml(ipucu)}" data-ipucu="${escHtml(ipucu)}"` : ' aria-hidden="true"';
-    return `<div class="ince-cubuk${kalin ? " kalin" : ""}${bos ? " bos" : ""}" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(pct)}"${ipucuNit}><span class="ince-dolgu ${escHtml(sinif)}" style="width:${pct.toFixed(1)}%"></span>${tempo}</div>`;
+    const kesikSinif = kilitliHtml && pct > 0.1 ? " tavan-kesik" : "";
+    return `<div class="ince-cubuk${kalin ? " kalin" : ""}${bos ? " bos" : ""}" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(pct)}"${ipucuNit}><span class="ince-dolgu ${escHtml(sinif)}${kesikSinif}" style="width:${pct.toFixed(1)}%"></span>${kilitliHtml}${tavanHtml}${tempo}</div>`;
   }
 
   // Tempo satırı: "Sıfırlamaya kadar yeter", "Pzt 20:22 civarı biter", "%5 yedekte" ya da "Sıfırlanınca açılır".
@@ -2135,6 +2812,10 @@
       "data-platform-ac",
       "data-platform-sekme",
       "data-platform-git",
+      "data-alt-sekme",
+      "data-expander-toggle",
+      "data-havuz-goster",
+      "data-havuz-sabitle",
       "data-ayar-bolum",
       "data-ayar-anahtar",
       "data-platform-esik",
@@ -2231,24 +2912,26 @@
 
   function platformGruplariOlustur(havuzlar, secenekler = {}) {
     const { gizlileriDahilEt = false } = secenekler;
+    const sinif = kartTercihSiniflandir(havuzlar);
     const siraPref = kartListesiniPlatformaEsle(durum.kartTercihler.kartSirasi, havuzlar);
-    const gizliSet = new Set(kartListesiniPlatformaEsle(durum.kartTercihler.gizliKartlar, havuzlar));
-    const sabitList = kartListesiniPlatformaEsle(durum.kartTercihler.sabitKartlar, havuzlar);
-    const sabitSet = new Set(sabitList);
     const siraMap = new Map(siraPref.map((p, idx) => [p, idx]));
-    const sabitMap = new Map(sabitList.map((p, idx) => [p, idx]));
 
     const gruplarMap = new Map();
     for (const [id, h] of Object.entries(havuzlar || {})) {
-      if (!bagliMi(h) || !h.platform) continue;
+      if (!havuzGenelGorunurMu(id, h, sinif, gizlileriDahilEt) || !h.platform) continue;
       if (!gruplarMap.has(h.platform)) gruplarMap.set(h.platform, []);
       gruplarMap.get(h.platform).push([id, h]);
     }
 
     const gruplar = [];
     for (const [platform, havuzListesi] of gruplarMap.entries()) {
-      if (!gizlileriDahilEt && gizliSet.has(platform)) continue;
-      havuzListesi.sort(havuzVarsayilanKarsilastir);
+      if (!gizlileriDahilEt && sinif.gizliPlatform.has(platform)) continue;
+      havuzListesi.sort((a, b) => {
+        const sA = sinif.sabitHavuz.has(a[0]);
+        const sB = sinif.sabitHavuz.has(b[0]);
+        if (sA !== sB) return sA ? -1 : 1;
+        return havuzVarsayilanKarsilastir(a, b);
+      });
       const [repId, repH] = havuzListesi[0];
       gruplar.push({
         platform,
@@ -2260,21 +2943,17 @@
     }
 
     return gruplar.sort((a, b) => {
-      const sabA = sabitSet.has(a.platform);
-      const sabB = sabitSet.has(b.platform);
-      if (sabA !== sabB) return sabA ? -1 : 1;
+      const sabA = sinif.platformSabitSira(a.platform);
+      const sabB = sinif.platformSabitSira(b.platform);
+      if ((sabA === null) !== (sabB === null)) return sabA !== null ? -1 : 1;
 
       const idxA = siraMap.get(a.platform);
       const idxB = siraMap.get(b.platform);
-      if (idxA !== undefined && idxB !== undefined) return idxA - idxB;
-      if (idxA !== undefined) return -1;
-      if (idxB !== undefined) return 1;
+      if (idxA !== undefined && idxB !== undefined && idxA !== idxB) return idxA - idxB;
+      if (idxA !== undefined && idxB === undefined) return -1;
+      if (idxB !== undefined && idxA === undefined) return 1;
 
-      if (sabA && sabB && siraMap.size === 0) {
-        const siA = sabitMap.get(a.platform);
-        const siB = sabitMap.get(b.platform);
-        if (siA !== undefined && siB !== undefined && siA !== siB) return siA - siB;
-      }
+      if (sabA !== null && sabB !== null && siraMap.size === 0 && sabA !== sabB) return sabA - sabB;
       return havuzVarsayilanKarsilastir([a.repId, a.repH], [b.repId, b.repH]);
     });
   }
@@ -2365,10 +3044,170 @@
     el.innerHTML = `<span class="ozet-sol ${escHtml(ozet.seviye)}">${svgDurumSimge(ozet.seviye)}<span>${escHtml(ozet.metin)}</span></span>`;
   }
 
+  function yeniNoktaHtml(h) {
+    if (!h?.kesif?.ilk_gorulme) return "";
+    const ipucu = fmt("kesif.yeniAlgilandiIpucu", { zaman: gunVeSaatBicimle(h.kesif.ilk_gorulme) });
+    return `<span class="yeni-nokta" data-ipucu="${escHtml(ipucu)}" aria-label="${escHtml(ipucu)}"></span>`;
+  }
+
+  function ebeveynHavuzEtiketiHtml(h) {
+    const ebId = h?.kesif?.ebeveyn_havuz;
+    if (!ebId) return "";
+    const ebHavuz = durum.anlik.havuzlar?.[ebId];
+    const ebAd = ebHavuz ? havuzKisaAd(ebHavuz) : anahtarAdiOkunurYap(ebId);
+    const guven = h.kesif.ebeveyn_guven
+      ? sozlukEslesmeBul("guvenEtiketi", h.kesif.ebeveyn_guven) || anahtarAdiOkunurYap(h.kesif.ebeveyn_guven)
+      : "";
+    let ipucu = guven
+      ? fmt("kesif.ebeveynIpucu", { ebeveyn: ebAd, guven })
+      : fmt("kesif.ebeveynIpucuGuvensiz", { ebeveyn: ebAd });
+    if (typeof h.etkin_kalan_zincir === "number" && Number.isFinite(h.etkin_kalan_zincir)) {
+      const zOran = kalanModuMu() ? h.etkin_kalan_zincir : 1 - h.etkin_kalan_zincir;
+      ipucu += ` · ${fmt("kesif.zincirEtkin", { oran: yuzdeBicimle(zOran) })}`;
+    }
+    return `<span class="ebeveyn-ipucu-etiket" tabindex="0" data-ipucu="${escHtml(ipucu)}" aria-label="${escHtml(ipucu)}">↳ ${escHtml(ebAd)}</span>`;
+  }
+
+  function kesifSeritCiz(hedefId) {
+    const el = document.getElementById(hedefId);
+    if (!el) return;
+    const yeniler = yeniHavuzlariBul();
+    if (yeniler.length === 0 || durum.duzenleModu) {
+      el.classList.add("gizli");
+      el.innerHTML = "";
+      return;
+    }
+    el.classList.remove("gizli");
+    const metin =
+      yeniler.length === 1
+        ? fmt("kesif.yeniHavuzSerit", { ad: havuzKisaAd(yeniler[0][1]) || yeniler[0][1].etiket })
+        : fmt("kesif.cokYeniHavuz", { n: sayiBicimle(yeniler.length) });
+    const tamIpucu = yeniler.map(([, h]) => h.hamEtiket || h.etiket).join(", ");
+    el.innerHTML = `
+      <span class="yeni-nokta" aria-hidden="true"></span>
+      <span class="kesif-serit-metin kisalt-etiket" data-ipucu="${escHtml(tamIpucu)}">${escHtml(metin)}</span>
+      <button type="button" class="kesif-incele-btn" data-kesif-incele="1">${escHtml(t("kesif.incele"))}</button>
+      <button type="button" class="kesif-kapat-btn" data-kesif-kapat="1" aria-label="${escHtml(t("kesif.kapat"))}" data-ipucu="${escHtml(t("kesif.kapat"))}">×</button>
+    `;
+  }
+
+  function ekmekKirintisiCiz(sirali) {
+    const el = document.getElementById("simdi-ekmek");
+    if (!el) return;
+    if (durum.platformSekme === "genel" || durum.duzenleModu) {
+      el.classList.add("gizli");
+      el.classList.remove("uc-halka");
+      el.innerHTML = "";
+      return;
+    }
+    const p = durum.platformSekme;
+    const pAd = platformAdi(p);
+    const aktifHavuzlar = sirali.filter(([, h]) => h.platform === p && !havuzGorulmuyorMu(h));
+    const seciliAlt = aktifHavuzlar.length >= 2 ? durum.altSekmeler?.[p] || "tumu" : "tumu";
+    const seciliGirdi = seciliAlt !== "tumu" ? aktifHavuzlar.find(([id]) => id === seciliAlt) : null;
+
+    el.classList.remove("gizli");
+    el.classList.toggle("uc-halka", Boolean(seciliGirdi));
+    if (seciliGirdi) {
+      const [, h] = seciliGirdi;
+      const kisaAd = havuzKisaAd(h) || h.etiket;
+      const tamAd = h.hamEtiket || h.etiket;
+      el.innerHTML = `
+        <button type="button" class="ekmek-btn" data-ekmek-genel="1">${escHtml(t("gorunum.genel"))}</button>
+        <span class="ekmek-ayrac" aria-hidden="true">›</span>
+        <button type="button" class="ekmek-btn ekmek-ara-tam" data-ekmek-platform="${escHtml(p)}">${escHtml(pAd)}</button>
+        <button type="button" class="ekmek-btn ekmek-ara-kisalt" data-ekmek-platform="${escHtml(p)}" data-ipucu="${escHtml(pAd)}" aria-label="${escHtml(pAd)}">…</button>
+        <span class="ekmek-ayrac" aria-hidden="true">›</span>
+        <span class="ekmek-mevcut kisalt-etiket" aria-current="page" data-ipucu="${escHtml(tamAd)}">${escHtml(kisaAd)}</span>
+      `;
+    } else {
+      el.innerHTML = `
+        <button type="button" class="ekmek-btn" data-ekmek-genel="1">${escHtml(t("gorunum.genel"))}</button>
+        <span class="ekmek-ayrac" aria-hidden="true">›</span>
+        <span class="ekmek-mevcut kisalt-etiket" aria-current="page" data-ipucu="${escHtml(pAd)}">${escHtml(pAd)}</span>
+      `;
+    }
+  }
+
+  function altSayacCubukAyarlari(id, h, alt) {
+    const kalanMod = kalanModuMu();
+    const gosterilenOran = kalanMod ? alt.kullanilabilirKalan : clamp(1 - alt.kullanilabilirKalan, 0, 1);
+    const sinif = cubukSinifi(id, h, alt.ebeveynAd || alt.altAd, alt.olcum);
+    let cubukOpts;
+    let ipucu;
+
+    if (alt.sinirliMi && alt.ebeveynKalan !== null) {
+      const ebAd = pencereEtiketi(alt.ebeveynAd, alt.ebeveynOlcum).toLocaleLowerCase(durum.dil);
+      if (kalanMod) {
+        cubukOpts = {
+          oran: alt.kullanilabilirKalan,
+          sinif,
+          kilitliBas: alt.kullanilabilirKalan,
+          kilitliGenislik: Math.max(0, alt.hamKalan - alt.kullanilabilirKalan),
+          tavanOran: alt.ebeveynKalan,
+        };
+        ipucu = fmt("genel.altSayacSinirliIpucu", {
+          ad: alt.hamEtiket,
+          kullanilabilir: yuzdeBicimle(alt.kullanilabilirKalan),
+          ham: yuzdeBicimle(alt.hamKalan),
+          ebeveyn: ebAd,
+          ebeveynDeger: yuzdeBicimle(alt.ebeveynKalan),
+        });
+      } else {
+        const etkinKul = clamp(1 - alt.kullanilabilirKalan, 0, 1);
+        cubukOpts = {
+          oran: alt.hamKullanilan,
+          sinif,
+          kilitliBas: alt.hamKullanilan,
+          kilitliGenislik: Math.max(0, etkinKul - alt.hamKullanilan),
+          tavanOran: clamp(1 - alt.ebeveynKalan, 0, 1),
+        };
+        ipucu = fmt("genel.altSayacSinirliKullanilanIpucu", {
+          ad: alt.hamEtiket,
+          etkin: yuzdeBicimle(etkinKul),
+          ham: yuzdeBicimle(alt.hamKullanilan),
+          ebeveyn: ebAd,
+          ebeveynDeger: yuzdeBicimle(1 - alt.ebeveynKalan),
+        });
+      }
+    } else {
+      cubukOpts = { oran: gosterilenOran, sinif };
+      ipucu = `${alt.hamEtiket}: ${yuzdeBicimle(alt.hamKalan)} ${t("genel.kalan")} · ${yuzdeBicimle(alt.hamKullanilan)} ${t("genel.kullanildi")}`;
+    }
+    return { gosterilenOran, sinif, cubukOpts, ipucu };
+  }
+
+  function altSayacDetayHtml(id, h, alt, kalin = true) {
+    const { gosterilenOran, sinif, cubukOpts, ipucu } = altSayacCubukAyarlari(id, h, alt);
+    const sure = alt.olcum.sifirlama ? fmt("genel.sonraSifirlanir", { sure: sureKisa(alt.olcum.sifirlama) }) : "";
+    const sureIpucu = alt.olcum.sifirlama ? gunVeSaatBicimle(alt.olcum.sifirlama) : "";
+    return `
+      <div class="detay-pencere alt-sayac-satir">
+        <div class="dp-baslik kisalt-etiket" data-ipucu="${escHtml(ipucu)}">${escHtml(alt.kisaAd)}</div>
+        ${inceCubukHtml({ ...cubukOpts, ipucu, kalin })}
+        <div class="dp-alt">
+          <span class="dp-oran rakam${sinif === "kacin" ? " kritik" : ""}" tabindex="0" data-ipucu="${escHtml(ipucu)}">${escHtml(oranMetni(gosterilenOran))}</span>
+          ${sure ? `<span class="dp-sure rakam" data-ipucu="${escHtml(sureIpucu)}">${escHtml(sure)}</span>` : ""}
+        </div>
+      </div>`;
+  }
+
   function platformDetayAcikIcerikHtml(grup) {
     const bloklar = grup.havuzlar.map(([id, h]) => {
       const pencereler = h.pencereler || {};
       const pencereListesi = pencereSirali(h);
+      const altlar = havuzAltSayaclari(h);
+      const altHarita = new Map();
+      const bagimsizAltlar = [];
+      for (const alt of altlar) {
+        if (alt.ebeveynAd && pencereler[alt.ebeveynAd]) {
+          if (!altHarita.has(alt.ebeveynAd)) altHarita.set(alt.ebeveynAd, []);
+          altHarita.get(alt.ebeveynAd).push(alt);
+        } else {
+          bagimsizAltlar.push(alt);
+        }
+      }
+
       const satirlar = pencereListesi.map((pAd) => {
         const olcum = pencereler[pAd];
         const oran = anaDegerOrani(olcum);
@@ -2378,17 +3217,25 @@
         const tempo = tempoBilgisi(h, pAd, olcum);
         const sure = olcum.sifirlama ? fmt("genel.sonraSifirlanir", { sure: sureKisa(olcum.sifirlama) }) : t("genel.kalanSureYok");
         const sureIpucu = olcum.sifirlama ? gunVeSaatBicimle(olcum.sifirlama) : "";
+        const cocuklar = altHarita.get(pAd) || [];
         return `
-          <div class="kp-satir-bilgi">
-            <div class="kp-satir-ust">
-              <span class="kp-ad">${escHtml(pencereBasligi(pAd))} · <span class="rakam">${escHtml(oranMetni(oran))}</span></span>
-              <span class="kp-sure rakam"${sureIpucu ? ` data-ipucu="${escHtml(sureIpucu)}"` : ""}>${escHtml(sure)}</span>
+          <div class="detay-pencere-grup">
+            <div class="kp-satir-bilgi">
+              <div class="kp-satir-ust">
+                <span class="kp-ad">${escHtml(pencereBasligi(pAd, olcum))} · <span class="rakam">${escHtml(oranMetni(oran))}</span></span>
+                <span class="kp-sure rakam"${sureIpucu ? ` data-ipucu="${escHtml(sureIpucu)}"` : ""}>${escHtml(sure)}</span>
+              </div>
+              ${inceCubukHtml({ oran, sinif, tempoOran })}
+              ${tempo ? `<div class="dp-tempo${tempo.ton ? ` ${tempo.ton}` : ""}">${escHtml(tempo.metin)}</div>` : ""}
             </div>
-            ${inceCubukHtml({ oran, sinif, tempoOran })}
-            ${tempo ? `<div class="dp-tempo${tempo.ton ? ` ${tempo.ton}` : ""}">${escHtml(tempo.metin)}</div>` : ""}
+            ${cocuklar.length ? `<div class="alt-sayac-agac">${cocuklar.map((alt) => altSayacDetayHtml(id, h, alt, false)).join("")}</div>` : ""}
           </div>
         `;
       });
+
+      for (const alt of bagimsizAltlar) {
+        satirlar.push(altSayacDetayHtml(id, h, alt, false));
+      }
 
       if (satirlar.length === 0) {
         if (h.ek?.kullanim) {
@@ -2404,10 +3251,23 @@
       const ekler = havuzEkleriMetni(h);
       const notlar = havuzNotuYerel(id, h);
       const dipNot = [ekler, ...notlar].filter(Boolean).join(" · ");
+      const yeniMi = havuzYeniMi(id, h);
+      const kisaAd = havuzKisaAd(h) || h.etiket;
+      const tamAd = h.hamEtiket || h.etiket;
 
       return `
         <div class="kart-detay-havuz">
-          ${grup.havuzlar.length > 1 ? `<div class="kart-detay-havuz-ad">${escHtml(havuzKisaAd(h))}</div>` : ""}
+          ${
+            grup.havuzlar.length > 1
+              ? `<div class="detay-havuz-ust">
+                   <span class="detay-havuz-baslik-grup">
+                     <span class="kart-detay-havuz-ad kisalt-etiket" data-ipucu="${escHtml(tamAd)}">${escHtml(kisaAd)}</span>
+                     ${yeniMi ? yeniNoktaHtml(h) : ""}
+                   </span>
+                   ${ebeveynHavuzEtiketiHtml(h)}
+                 </div>`
+              : ""
+          }
           ${satirlar.join("")}
           ${dipNot ? `<div class="kart-not">${escHtml(dipNot)}</div>` : ""}
         </div>
@@ -2431,18 +3291,21 @@
     `;
   }
 
-  // Genel görünümünde platform başına tek sade satır/kart (ikincil bilgi tıklanınca açılır).
+  // Genel görünümünde platform başına kompakt kart (en çok 2 çubuk + fazlası "+N", alt sayaç özeti, keşif noktası).
   function platformKartHtml(grup, genis) {
     const p = grup.platform;
     const h = grup.repH;
     const id = grup.repId;
     const secili = durum.seciliHavuzId === p;
     const acik = !durum.duzenleModu && durum.acikPlatformlar.has(p);
-    const sabitList = kartListesiniPlatformaEsle(durum.kartTercihler.sabitKartlar, durum.anlik.havuzlar);
-    const gizliList = kartListesiniPlatformaEsle(durum.kartTercihler.gizliKartlar, durum.anlik.havuzlar);
-    const sabitMi = durum.duzenleModu && sabitList.includes(p);
-    const gizliMi = durum.duzenleModu && gizliList.includes(p);
+    const sinifT = kartTercihSiniflandir(durum.anlik.havuzlar);
+    const sabitMi =
+      durum.duzenleModu && (sinifT.sabitPlatform.has(p) || grup.havuzlar.some(([hid]) => sinifT.sabitHavuz.has(hid)));
+    const gizliMi =
+      durum.duzenleModu &&
+      (sinifT.gizliPlatform.has(p) || (grup.havuzlar.length > 0 && grup.havuzlar.every(([hid]) => sinifT.gizliHavuz.has(hid))));
     const tumBayat = grup.havuzlar.every(([, x]) => x.durum === "bayat");
+    const yeniGirdi = grup.havuzlar.find(([hid, x]) => havuzYeniMi(hid, x));
 
     const siniflar = [
       genis ? "detay-kart" : "havuz-satir",
@@ -2459,30 +3322,96 @@
 
     const { bp, olcum, etkinKalan } = baglayiciBul(h);
     let degerHtml = "";
-    let sureHtml = "";
-    let cubukHtml = "";
+    let cubuklarHtml = "";
+    let cokluMetaHtml = "";
+    let altOzetHtml = "";
 
     if (olcum && typeof etkinKalan === "number") {
       const oran = kalanModuMu() ? etkinKalan : 1 - etkinKalan;
       const kritik = havuzKritikMi(id, h);
-      const pencereKisaEtiket = bp ? sozlukEslesmeBul("pencereKisa", bp) || "" : "";
-      const adEtiket = grup.havuzlar.length > 1 && h.etiket ? ` · ${havuzKisaAd(h)}` : "";
-      const sure = olcum.sifirlama ? sureKisa(olcum.sifirlama) : "";
-      const cSinif = cubukSinifi(id, h, bp, olcum);
+      degerHtml = `<span class="kart-deger rakam${kritik ? " kritik" : ""}" data-ipucu="${escHtml(fmt(kalanModuMu() ? "genel.enDarIpucu" : "genel.enDarKullanilanIpucu", { pencere: pencereBasligi(bp, olcum) }))}">${escHtml(oranMetni(oran))}</span>`;
 
-      degerHtml = `<span class="kart-deger rakam${kritik ? " kritik" : ""}" data-ipucu="${escHtml(fmt(kalanModuMu() ? "genel.enDarIpucu" : "genel.enDarKullanilanIpucu", { pencere: pencereBasligi(bp) }))}">${escHtml(oranMetni(oran))}</span>`;
-      sureHtml = sure ? `<span class="kart-sure rakam">${escHtml(pencereKisaEtiket ? `${pencereKisaEtiket}${adEtiket} · ${sure}` : sure)}</span>` : "";
-      cubukHtml = inceCubukHtml({ oran, sinif: cSinif });
+      const { secilen, fazla } = kompaktPencereler(h);
+      const satirlar = secilen
+        .map((pAd) => {
+          const pOl = h.pencereler?.[pAd];
+          if (!pOl) return "";
+          const pOran = anaDegerOrani(pOl);
+          const pSinif = cubukSinifi(id, h, pAd, pOl);
+          const pEtiket = pencereEtiketi(pAd, pOl);
+          const hamMi = !(pOl.uzunluk_dk > 0) && Boolean(pOl.etiket);
+          const sure = pOl.sifirlama ? sureKisa(pOl.sifirlama) : "—";
+          return `
+            <span class="kp-ad${hamMi ? " kisalt-etiket" : ""}"${hamMi ? ` data-ipucu="${escHtml(pEtiket)}"` : ""}>${escHtml(pEtiket)}</span>
+            ${inceCubukHtml({ oran: pOran, sinif: pSinif })}
+            <span class="kp-sure rakam">${escHtml(sure)}</span>
+          `;
+        })
+        .join("");
+
+      const fazlaIpucu = fazla
+        .map((pAd) => {
+          const pOl = h.pencereler?.[pAd];
+          return `${pencereEtiketi(pAd, pOl)}: ${oranMetni(anaDegerOrani(pOl))}`;
+        })
+        .join(" · ");
+      const fazlaHtml =
+        fazla.length > 0
+          ? `<span class="kart-alt-havuz-meta"><span></span><span class="kart-fazla-cip rakam" data-ipucu="${escHtml(fmt("genel.dahaFazlaPencereIpucu", { liste: fazlaIpucu }))}">${escHtml(fmt("genel.dahaFazlaPencere", { n: sayiBicimle(fazla.length) }))}</span></span>`
+          : "";
+      cubuklarHtml = `<span class="kart-pencereler-sarici"><span class="kart-pencereler">${satirlar}</span>${fazlaHtml}</span>`;
     } else if (h.ek?.kullanim) {
+      // Dar kartta sağ sütuna sığmayan sayaç özeti başlığın altına, sarılabilen satıra iner (kırpılmaz).
       const sm = sayacMetinleri(h.ek.kullanim);
-      degerHtml = `<span class="kart-deger soluk rakam">${escHtml(sm.s24)}</span>`;
+      cubuklarHtml = `<span class="kart-sayac-ozet rakam">${escHtml(sm.s24)}</span>`;
     } else if (h.bakiye && typeof h.bakiye.toplam === "number") {
       degerHtml = `<span class="kart-deger rakam">${escHtml(sayiBicimle(h.bakiye.toplam, { minimumFractionDigits: 2, maximumFractionDigits: 2 }))} ${escHtml(h.bakiye.para_birimi || "")}</span>`;
     } else {
       degerHtml = `<span class="kart-deger soluk">${escHtml(t(`baski.${h.durum}`, h.durum))}</span>`;
     }
 
+    if (grup.havuzlar.length > 1) {
+      const repKisa = havuzKisaAd(h) || h.etiket;
+      const repTam = h.hamEtiket || h.etiket;
+      const havuzOzeti = grup.havuzlar
+        .map(([, x]) => {
+          const { etkinKalan: ek } = baglayiciBul(x);
+          const dgr = typeof ek === "number" ? oranMetni(kalanModuMu() ? ek : 1 - ek) : t(`baski.${x.durum}`, x.durum);
+          return `${havuzKisaAd(x) || x.etiket}: ${dgr}`;
+        })
+        .join(" · ");
+      cokluMetaHtml = `
+        <span class="kart-alt-havuz-meta">
+          <span class="kart-alt-havuz-ad kisalt-etiket" data-ipucu="${escHtml(repTam)}">${escHtml(repKisa)}</span>
+          <span class="kart-fazla-cip rakam" data-ipucu="${escHtml(havuzOzeti)}">+${escHtml(sayiBicimle(grup.havuzlar.length - 1))}</span>
+        </span>`;
+    }
+
+    const altSayaclar = havuzAltSayaclari(h).sort((a, b) => a.kullanilabilirKalan - b.kullanilabilirKalan);
+    if (altSayaclar.length > 0) {
+      const enDarAlt = altSayaclar[0];
+      const enDarOran = kalanModuMu() ? enDarAlt.kullanilabilirKalan : clamp(1 - enDarAlt.kullanilabilirKalan, 0, 1);
+      const altListeIpucu = altSayaclar
+        .map((a) => {
+          const dgr = oranMetni(kalanModuMu() ? a.kullanilabilirKalan : clamp(1 - a.kullanilabilirKalan, 0, 1));
+          return a.sinirliMi ? `${a.hamEtiket}: ${dgr} (${yuzdeBicimle(kalanModuMu() ? a.hamKalan : a.hamKullanilan)})` : `${a.hamEtiket}: ${dgr}`;
+        })
+        .join(" · ");
+      const tumAltIpucu = fmt("genel.altSayacOzetIpucu", { liste: altListeIpucu });
+      altOzetHtml = `
+        <span class="kart-alt-ozet" data-ipucu="${escHtml(tumAltIpucu)}">
+          <span class="kart-alt-sol">
+            <span class="kisalt-etiket" data-ipucu="${escHtml(enDarAlt.hamEtiket)}">${escHtml(enDarAlt.kisaAd)}</span>
+          </span>
+          <span class="kart-alt-sag">
+            <span class="rakam">${escHtml(oranMetni(enDarOran))}</span>
+            ${altSayaclar.length > 1 ? `<span class="kart-fazla-cip rakam">+${escHtml(sayiBicimle(altSayaclar.length - 1))}</span>` : ""}
+          </span>
+        </span>`;
+    }
+
     const etiket = genis ? "article" : "div";
+    const baslikTam = grup.havuzlar.length === 1 && h.hamEtiket ? h.hamEtiket : grup.ad;
     const aciklamaAria = `${grup.ad}${olcum && typeof etkinKalan === "number" ? `: ${oranMetni(kalanModuMu() ? etkinKalan : 1 - etkinKalan)}${olcum.sifirlama ? `, ${sureKisa(olcum.sifirlama)}` : ""}` : ""}`;
 
     return `
@@ -2492,18 +3421,22 @@
             ? `<div class="kart-ust">
                  ${kartTutamakHtml(p, { etiket: grup.ad })}
                  <span class="kart-ikon">${svgMonogram(p)}</span>
-                 <span class="kart-ad">${escHtml(grup.ad)}</span>
-                 <span class="kart-ozet-sag">${degerHtml}${sureHtml}</span>
+                 <span class="kart-ad kisalt-etiket" data-ipucu="${escHtml(baslikTam)}">${escHtml(grup.ad)}</span>
+                 ${yeniGirdi ? yeniNoktaHtml(yeniGirdi[1]) : ""}
+                 <span class="kart-ozet-sag">${degerHtml}</span>
                </div>
                ${kartDuzenleKontrollerHtml(p, { etiket: grup.ad })}
-               ${cubukHtml}`
+               ${cubuklarHtml}`
             : `<button type="button" class="kart-ac-btn" data-platform-ac="${escHtml(p)}" aria-expanded="${acik ? "true" : "false"}" aria-label="${escHtml(aciklamaAria)}">
                  <span class="kart-ust">
                    <span class="kart-ikon">${svgMonogram(p)}</span>
-                   <span class="kart-ad">${escHtml(grup.ad)}</span>
-                   <span class="kart-ozet-sag">${degerHtml}${sureHtml}<span class="kart-ok">${svgChevron()}</span></span>
+                   <span class="kart-ad kisalt-etiket" data-ipucu="${escHtml(baslikTam)}">${escHtml(grup.ad)}</span>
+                   ${yeniGirdi ? yeniNoktaHtml(yeniGirdi[1]) : ""}
+                   <span class="kart-ozet-sag">${degerHtml}<span class="kart-ok">${svgChevron()}</span></span>
                  </span>
-                 ${cubukHtml}
+                 ${cokluMetaHtml}
+                 ${cubuklarHtml}
+                 ${altOzetHtml}
                </button>
                ${acik ? platformDetayAcikIcerikHtml(grup) : ""}`
         }
@@ -2563,11 +3496,19 @@
     const pencereler = h.pencereler || {};
     const notlar = havuzNotuYerel(id, h);
     const parcalar = [];
+    const kisaAd = havuzKisaAd(h) || h.etiket;
+    const tamAd = h.hamEtiket || h.etiket;
+    const yeniMi = havuzYeniMi(id, h);
+    const ebeveynHtml = ebeveynHavuzEtiketiHtml(h);
 
-    if (cokluMu) {
+    if (cokluMu || yeniMi || ebeveynHtml) {
       parcalar.push(`
         <div class="detay-havuz-ust">
-          <span class="detay-havuz-ad">${escHtml(havuzKisaAd(h))}</span>
+          <span class="detay-havuz-baslik-grup">
+            <span class="detay-havuz-ad kisalt-etiket" data-ipucu="${escHtml(tamAd)}">${escHtml(kisaAd)}</span>
+            ${yeniMi ? yeniNoktaHtml(h) : ""}
+          </span>
+          ${ebeveynHtml}
           ${h.durum === "bayat" ? `<span class="kart-durum" tabindex="0" data-ipucu="${escHtml(kaynakIpucu(h))}">${escHtml(t("baski.bayat"))}</span>` : ""}
         </div>`);
     }
@@ -2581,17 +3522,32 @@
           ${halka}
           <div class="detay-gosterge-metin">
             <span>${escHtml(kalanModuMu() ? t("genel.etkinKalan") : t("genel.kullanildi"))}</span>
-            <span class="soluk">${escHtml(pencereBasligi(bp))}</span>
+            <span class="soluk">${escHtml(pencereBasligi(bp, anaOlcum))}</span>
           </div>
         </div>`);
     }
 
-    const pencereHtml = pencereSirali(h).map((pAd) => detayPencereHtml(id, h, pAd, pencereler[pAd], pencereBasligi(pAd)));
-    for (const [altAd, altVal] of Object.entries(h.alt_sayaclar || {})) {
-      if (!altVal || typeof altVal !== "object") continue;
-      const kalan = clamp(altVal.kalan ?? 1 - (altVal.kullanilan ?? 0), 0, 1);
-      const olcum = { ...altVal, kalan, kullanilan: clamp(altVal.kullanilan ?? 1 - kalan, 0, 1) };
-      pencereHtml.push(detayPencereHtml(id, { ...h, tahmin: {} }, altAd, olcum, altSayacAdiBicimle(altAd)));
+    const altlar = havuzAltSayaclari(h);
+    const altHarita = new Map();
+    const bagimsizAltlar = [];
+    for (const alt of altlar) {
+      if (alt.ebeveynAd && pencereler[alt.ebeveynAd]) {
+        if (!altHarita.has(alt.ebeveynAd)) altHarita.set(alt.ebeveynAd, []);
+        altHarita.get(alt.ebeveynAd).push(alt);
+      } else {
+        bagimsizAltlar.push(alt);
+      }
+    }
+
+    const pencereHtml = pencereSirali(h).map((pAd) => {
+      const pOl = pencereler[pAd];
+      const ana = detayPencereHtml(id, h, pAd, pOl, pencereBasligi(pAd, pOl));
+      const cocuklar = altHarita.get(pAd) || [];
+      if (cocuklar.length === 0) return ana;
+      return `<div class="detay-pencere-grup">${ana}<div class="alt-sayac-agac">${cocuklar.map((alt) => altSayacDetayHtml(id, h, alt, true)).join("")}</div></div>`;
+    });
+    for (const alt of bagimsizAltlar) {
+      pencereHtml.push(altSayacDetayHtml(id, h, alt, true));
     }
     if (pencereHtml.length > 0) parcalar.push(`<div class="detay-pencereler">${pencereHtml.join("")}</div>`);
 
@@ -2625,7 +3581,6 @@
   // --- 30 günlük geçmiş (günlük tepe kullanım) ---
   function gecmisPenceresi(h) {
     const p = h?.pencereler || {};
-    if (p["5s"]) return "5s";
     if (h?.baglayici_pencere && p[h.baglayici_pencere]) return h.baglayici_pencere;
     return pencereSirali(h)[0] || null;
   }
@@ -2701,7 +3656,7 @@
     const ustHtml = `
       <div class="gm-ust">
         <span class="gm-baslik">${escHtml(t("genel.gecmisBaslik"))}</span>
-        <span class="soluk">${escHtml(`${havuzKisaAd(h)} · ${pencereEtiketi(pencere)}`)}</span>
+        <span class="soluk kisalt-etiket" data-ipucu="${escHtml(h.hamEtiket || h.etiket)}">${escHtml(`${havuzKisaAd(h)} · ${pencereEtiketi(pencere, h?.pencereler?.[pencere])}`)}</span>
       </div>`;
     const degerler = kayit.degerler;
     if (!Array.isArray(degerler) || degerler.length === 0 || degerler.every((d) => d.deger === null)) {
@@ -2734,18 +3689,69 @@
   }
 
   function platformDetayHtml(platform, sirali) {
-    const havuzlar = sirali.filter(([, h]) => h.platform === platform);
-    if (havuzlar.length === 0) return "";
-    const kaynakli = havuzlar
+    const aktifHavuzlar = sirali.filter(([, h]) => h.platform === platform && !havuzGorulmuyorMu(h));
+    const gorulmeyenHavuzlar = Object.entries(durum.anlik.havuzlar || {}).filter(
+      ([, h]) => h && h.platform === platform && havuzGorulmuyorMu(h) && platformEtkinMi(h.platform)
+    );
+    if (aktifHavuzlar.length === 0 && gorulmeyenHavuzlar.length === 0) return "";
+
+    const kaynakli = aktifHavuzlar
       .map(([, h]) => h)
       .filter((h) => h.kaynak)
       .sort((a, b) => (kaynakYasSn(a.kaynak) ?? 1e9) - (kaynakYasSn(b.kaynak) ?? 1e9));
     const enTaze = kaynakli[0] || null;
     const zaman = enTaze ? guncellikMetni(enTaze.kaynak) : "";
-    const notlar = havuzlar.flatMap(([id, h]) => (havuzlar.length > 1 ? [] : havuzNotuYerel(id, h)));
+    const notlar = aktifHavuzlar.flatMap(([id, h]) => (aktifHavuzlar.length > 1 ? [] : havuzNotuYerel(id, h)));
     const zamanIpucu = [enTaze ? kaynakIpucu(enTaze) : "", ...notlar].filter(Boolean).join(" · ");
-    const cokluMu = havuzlar.length > 1;
-    const gecmisHavuz = havuzlar.find(([, h]) => h.pencereler && Object.keys(h.pencereler).length > 0);
+
+    let seciliAlt = durum.altSekmeler?.[platform] || "tumu";
+    if (seciliAlt !== "tumu" && !aktifHavuzlar.some(([id]) => id === seciliAlt)) {
+      seciliAlt = "tumu";
+    }
+
+    let altSekmeHtml = "";
+    if (aktifHavuzlar.length >= 2) {
+      const dugmeler = [
+        `<button type="button" class="alt-sekme-btn${seciliAlt === "tumu" ? " aktif" : ""}" role="tab" aria-selected="${seciliAlt === "tumu" ? "true" : "false"}" tabindex="${seciliAlt === "tumu" ? "0" : "-1"}" data-alt-sekme="tumu" data-alt-platform="${escHtml(platform)}">${escHtml(t("gorunum.tumuPlatform"))}</button>`,
+        ...aktifHavuzlar.map(([id, h]) => {
+          const aktif = seciliAlt === id;
+          const kisa = havuzKisaAd(h) || h.etiket;
+          const tam = h.hamEtiket || h.etiket;
+          const yeniMi = havuzYeniMi(id, h);
+          return `<button type="button" class="alt-sekme-btn${aktif ? " aktif" : ""}" role="tab" aria-selected="${aktif ? "true" : "false"}" tabindex="${aktif ? "0" : "-1"}" data-alt-sekme="${escHtml(id)}" data-alt-platform="${escHtml(platform)}" data-ipucu="${escHtml(tam)}"><span class="alt-sekme-ad kisalt-etiket" data-ipucu="${escHtml(tam)}">${escHtml(kisa)}</span>${yeniMi ? `<span class="yeni-nokta" aria-hidden="true"></span>` : ""}</button>`;
+        }),
+      ].join("");
+      altSekmeHtml = `<div class="alt-sekme-cubuk" role="tablist" aria-label="${escHtml(t("kesif.altSekmelerAria"))}" data-alt-sekme-platform="${escHtml(platform)}">${dugmeler}</div>`;
+    }
+
+    const gosterilenler = seciliAlt === "tumu" ? aktifHavuzlar : aktifHavuzlar.filter(([id]) => id === seciliAlt);
+    const cokluMu = aktifHavuzlar.length > 1;
+    const gecmisHavuz = gosterilenler.find(([, h]) => h.pencereler && Object.keys(h.pencereler).length > 0);
+
+    let gorulmeyenHtml = "";
+    if (gorulmeyenHavuzlar.length > 0) {
+      const acik = durum.acikGorulmeyenler.has(platform);
+      const satirlar = gorulmeyenHavuzlar
+        .map(([, h]) => {
+          const kisa = havuzKisaAd(h) || h.etiket;
+          const tam = h.hamEtiket || h.etiket;
+          const sonZaman = h.kesif?.son_gorulme ? gunVeSaatBicimle(h.kesif.son_gorulme) : t("genel.bilinmiyor");
+          return `
+            <div class="gorulmeyen-satir">
+              <span class="gorulmeyen-ad kisalt-etiket" data-ipucu="${escHtml(tam)}">${escHtml(kisa)}</span>
+              <span class="gorulmeyen-zaman rakam">${escHtml(fmt("kesif.sonGorulme", { zaman: sonZaman }))}</span>
+            </div>`;
+        })
+        .join("");
+      gorulmeyenHtml = `
+        <div class="gorulmeyen-bolum">
+          <button type="button" class="gorulmeyen-ozet" data-gorulmeyen-toggle="${escHtml(platform)}" aria-expanded="${acik ? "true" : "false"}">
+            <span>${escHtml(fmt("kesif.gorulmeyenBaslik", { n: sayiBicimle(gorulmeyenHavuzlar.length) }))}</span>
+            <span class="expander-ok">${svgChevron()}</span>
+          </button>
+          ${acik ? `<div class="gorulmeyen-liste">${satirlar}</div>` : ""}
+        </div>`;
+    }
 
     return `
       <div class="detay-ust">
@@ -2753,10 +3759,12 @@
         <span class="detay-ad">${escHtml(platformAdi(platform))}</span>
         ${zaman ? `<span class="detay-zaman soluk" tabindex="0"${zamanIpucu ? ` data-ipucu="${escHtml(zamanIpucu)}"` : ""}>${escHtml(zaman)}</span>` : ""}
       </div>
+      ${altSekmeHtml}
       <div class="detay-havuzlar">
-        ${havuzlar.map(([id, h]) => detayHavuzHtml(id, h, cokluMu)).join("")}
+        ${gosterilenler.map(([id, h]) => detayHavuzHtml(id, h, cokluMu)).join("")}
       </div>
       ${gecmisHavuz ? gecmisCubuklariHtml(gecmisHavuz[0], gecmisHavuz[1]) : ""}
+      ${gorulmeyenHtml}
     `;
   }
 
@@ -2773,6 +3781,7 @@
     kapaliKart.classList.toggle("gizli", !durum.acilirKapali);
 
     duzenleCubuguCiz("acilir-duzenle-cubuk");
+    kesifSeritCiz("acilir-kesif-serit");
 
     const sirali = havuzSirala(durum.anlik.havuzlar, { gizlileriDahilEt: durum.duzenleModu });
     const gruplar = platformGruplariOlustur(durum.anlik.havuzlar, { gizlileriDahilEt: durum.duzenleModu });
@@ -2816,8 +3825,10 @@
         detayEl.innerHTML = "";
         odakKimligiYukle(listeEl, listeOdak);
       } else {
+        const detayOdak = odakKimligiAl(detayEl);
         listeEl.innerHTML = "";
         detayEl.innerHTML = platformDetayHtml(durum.platformSekme, sirali);
+        odakKimligiYukle(detayEl, detayOdak);
       }
     }
 
@@ -2835,32 +3846,47 @@
   }
 
   function tepsiIkonGuncelle() {
-    let enDar5s = null;
-    let enDarHafta = null;
-    for (const h of Object.values(durum.anlik.havuzlar || {})) {
-      if (!bagliMi(h) || h.ek?.kullanim) continue;
-      if (h.durum !== "ok" && h.durum !== "bayat") continue;
-      const p5 = h.pencereler?.["5s"];
-      if (p5 && typeof p5.kalan === "number") {
-        const k = clamp(p5.kalan, 0, 1);
-        const u = clamp(p5.kullanilan ?? 1 - k, 0, 1);
-        if (!enDar5s || k < enDar5s.kalan) enDar5s = { kalan: k, kullanilan: u };
-      }
-      const ph = h.pencereler?.hafta;
-      if (ph && typeof ph.kalan === "number") {
-        const k = clamp(ph.kalan, 0, 1);
-        const u = clamp(ph.kullanilan ?? 1 - k, 0, 1);
-        if (!enDarHafta || k < enDarHafta.kalan) enDarHafta = { kalan: k, kullanilan: u };
+    const sinifT = kartTercihSiniflandir(durum.anlik.havuzlar);
+    const gorunurler = Object.entries(durum.anlik.havuzlar || {}).filter(
+      ([id, h]) => havuzGenelGorunurMu(id, h, sinifT) && !h.ek?.kullanim && (h.durum === "ok" || h.durum === "bayat")
+    );
+    const okHavuzlar = gorunurler.filter(([, h]) => h.durum === "ok");
+    const kaynakListe = okHavuzlar.length > 0 ? okHavuzlar : gorunurler;
+    const tumuBayat = okHavuzlar.length === 0 && gorunurler.length > 0;
+
+    let enDarKisa = null;
+    let enDarUzun = null;
+    for (const [, h] of kaynakListe) {
+      const pencereler = Object.entries(h.pencereler || {}).filter(
+        ([, ol]) => typeof ol?.kalan === "number" && Number.isFinite(ol.kalan)
+      );
+      if (pencereler.length === 0) continue;
+      for (const [, ol] of pencereler) {
+        const k = clamp(ol.kalan, 0, 1);
+        const u = clamp(ol.kullanilan ?? 1 - k, 0, 1);
+        const uzunMu = typeof ol.uzunluk_dk === "number" && ol.uzunluk_dk > 1440;
+        if (uzunMu) {
+          if (!enDarUzun || k < enDarUzun.kalan) enDarUzun = { kalan: k, kullanilan: u };
+        } else {
+          if (!enDarKisa || k < enDarKisa.kalan) enDarKisa = { kalan: k, kullanilan: u };
+        }
       }
     }
+    if (!enDarKisa && enDarUzun) enDarKisa = enDarUzun;
 
     const kalanMod = durum.degerYonu !== "kullanilan";
-    const oran5s = enDar5s ? (kalanMod ? enDar5s.kalan : enDar5s.kullanilan) : null;
-    const oranHft = enDarHafta ? (kalanMod ? enDarHafta.kalan : enDarHafta.kullanilan) : null;
+    const oranKisa = enDarKisa ? (kalanMod ? enDarKisa.kalan : enDarKisa.kullanilan) : null;
+    const oranUzun = enDarUzun ? (kalanMod ? enDarUzun.kalan : enDarUzun.kullanilan) : null;
     const b5 = document.getElementById("tepsi-bar-5s");
     const bH = document.getElementById("tepsi-bar-hafta");
-    if (b5) b5.setAttribute("width", oran5s === null ? "0" : String(Math.max(1.5, Math.round(clamp(oran5s, 0, 1) * 14))));
-    if (bH) bH.setAttribute("width", oranHft === null ? "0" : String(Math.max(1.5, Math.round(clamp(oranHft, 0, 1) * 14))));
+    if (b5) {
+      b5.setAttribute("width", oranKisa === null ? "0" : String(Math.max(1.5, Math.round(clamp(oranKisa, 0, 1) * 14))));
+      b5.classList.toggle("bayat", tumuBayat);
+    }
+    if (bH) {
+      bH.setAttribute("width", oranUzun === null ? "0" : String(Math.max(1.5, Math.round(clamp(oranUzun, 0, 1) * 14))));
+      bH.classList.toggle("bayat", tumuBayat);
+    }
 
     const ipucuEl = document.getElementById("tepsi-ipucu-metin");
     const ikonBtn = document.getElementById("btn-tepsi-ikon");
@@ -2868,7 +3894,7 @@
     if (clockEl) clockEl.textContent = saatBicimle(simdiIso());
 
     let ozetMetin = t("genel.veriYok");
-    if (oran5s !== null || oranHft !== null) {
+    if (oranKisa !== null || oranUzun !== null) {
       const genel = genelBaskiHesapla();
       if (genel.enDar) {
         const oran = kalanMod
@@ -2890,12 +3916,15 @@
   function simdiSekmesiCiz() {
     if (suruklemeKonteynerAktifMi("simdi-havuz-grid")) return;
     duzenleCubuguCiz("simdi-duzenle-cubuk");
+    kesifSeritCiz("simdi-kesif-serit");
 
     const sirali = havuzSirala(durum.anlik.havuzlar, { gizlileriDahilEt: durum.duzenleModu });
     const gruplar = platformGruplariOlustur(durum.anlik.havuzlar, { gizlileriDahilEt: durum.duzenleModu });
     if (durum.duzenleModu) durum.platformSekme = "genel";
     platformSekmesiDogrula(sirali);
     const genelMi = durum.platformSekme === "genel";
+
+    ekmekKirintisiCiz(sirali);
 
     const sekmeEl = document.getElementById("simdi-platform-sekmeler");
     if (sekmeEl) {
@@ -2925,8 +3954,10 @@
     gridEl.classList.toggle("gizli", !genelMi);
     detayEl.classList.toggle("gizli", genelMi);
     if (!genelMi) {
+      const detayOdak = odakKimligiAl(detayEl);
       gridEl.innerHTML = "";
       detayEl.innerHTML = platformDetayHtml(durum.platformSekme, sirali);
+      odakKimligiYukle(detayEl, detayOdak);
       return;
     }
     detayEl.innerHTML = "";
@@ -2959,8 +3990,8 @@
       : havuzSirala(durum.anlik.havuzlar, { gizlileriDahilEt: true })
           .filter(([, h]) => h.pencereler && Object.keys(h.pencereler).length > 0)
           .map(([id, h]) => {
-            const pAd = h.baglayici_pencere || Object.keys(h.pencereler)[0];
-            return { id, etiket: `${h.etiket} · ${pencereEtiketi(pAd)}`, pencere: pAd };
+            const pAd = h.baglayici_pencere || pencereSirali(h)[0];
+            return { id, etiket: `${h.etiket} · ${pencereEtiketi(pAd, h.pencereler?.[pAd])}`, pencere: pAd };
           });
 
     if (adayHavuzlar.length > 0 && !adayHavuzlar.some((a) => a.id === durum.gecmisHavuzId)) {
@@ -3017,7 +4048,7 @@
 
     const pts = seri.noktalar;
     const zamanlar = seri.zamanlar || null;
-    const renk = PLATFORM_RENK[seri.platform] || "var(--vurgu)";
+    const renk = guvenliRenk(PLATFORM_RENK[seri.platform] || "var(--vurgu)");
 
     // Bu hızla sıfırlamaya kadar izdüşüm (kesikli çizgi): servis tahmini (saatlik hız) varsa
     // grafiğin sağına "şimdi → sıfırlama" dilimi eklenir.
@@ -3220,10 +4251,14 @@
         : t("bagla.taranmadi");
     }
 
-    const cl = durum.anlik.havuzlar?.claude_max;
-    const cx = durum.anlik.havuzlar?.codex_plus;
-    const ag = durum.anlik.havuzlar?.agy_gemini;
-    const ds = durum.anlik.havuzlar?.deepseek;
+    const cl = platformEnTazeHavuz("claude");
+    const cx = platformEnTazeHavuz("codex");
+    const ag = platformEnTazeHavuz("agy");
+    const ds = platformEnTazeHavuz("deepseek");
+    const clHata = platformSonHata("claude");
+    const cxHata = platformSonHata("codex");
+    const agHata = platformSonHata("agy");
+    const dsHata = platformSonHata("deepseek");
     const agyIzin = durum.ayarlar.agyOkuma;
     const cxEtkin = durum.ayarlar.codexEtkin !== false;
     const dsEtkin = Boolean(durum.ayarlar.deepseekEtkin);
@@ -3254,7 +4289,7 @@
           tur: cl?.kaynak ? sozlukEslesmeBul("kaynakTur", cl.kaynak.tur) || anahtarAdiOkunurYap(cl.kaynak.tur) : t("kaynakTur.mod_koprusu"),
           sonOkuma: cl?.kaynak ? saatBicimle(cl.kaynak.okuma) : "—",
           sonrakiOkuma: t("bagla.olayGudumlu"),
-          sonHata: cl?.hata ? hataTuruBicimle(cl.hata.tur) : t("bagla.hataYok"),
+          sonHata: clHata ? hataTuruBicimle(clHata) : t("bagla.hataYok"),
           guven: cl?.kaynak ? sozlukEslesmeBul("guvenEtiketi", cl.kaynak.guven) || anahtarAdiOkunurYap(cl.kaynak.guven) : t("guvenEtiketi.resmi_arayuz"),
         },
       },
@@ -3271,7 +4306,7 @@
           tur: t("kaynakTur.codex_app_server"),
           sonOkuma: cx?.kaynak ? saatBicimle(cx.kaynak.okuma) : "—",
           sonrakiOkuma: cxEtkin ? fmt("bagla.dakikaCift", { etkin: sayiBicimle(durum.ayarlar.codexEtkinDk), bosta: sayiBicimle(durum.ayarlar.codexBostaDk) }) : t("baski.kapali"),
-          sonHata: cx?.hata ? hataTuruBicimle(cx.hata.tur) : t("bagla.hataYok"),
+          sonHata: cxHata ? hataTuruBicimle(cxHata) : t("bagla.hataYok"),
           guven: t("guvenEtiketi.resmi_arayuz"),
         },
       },
@@ -3296,7 +4331,7 @@
           tur: t("kaynakTur.agy_usage"),
           sonOkuma: ag?.kaynak ? saatBicimle(ag.kaynak.okuma) : "—",
           sonrakiOkuma: agyIzin === "kapali" ? t("bagla.agySecenekler.kapali") : t(`bagla.agySecenekler.${agyIzin}`),
-          sonHata: durum.anlik.havuzlar?.agy_argon?.hata?.tur ? hataTuruBicimle(durum.anlik.havuzlar.agy_argon.hata.tur) : t("bagla.hataYok"),
+          sonHata: agHata ? hataTuruBicimle(agHata) : t("bagla.hataYok"),
           guven: t("guvenEtiketi.tahmini"),
         },
       },
@@ -3321,7 +4356,7 @@
           tur: t("kaynakTur.bakiye_api"),
           sonOkuma: ds?.kaynak ? saatBicimle(ds.kaynak.okuma) : "—",
           sonrakiOkuma: dsEtkin && durum.baglaDurum.deepseekAnahtarVar ? fmt("bagla.dakikaKisa", { n: sayiBicimle(15) }) : t("baski.kapali"),
-          sonHata: ds?.hata ? hataTuruBicimle(ds.hata.tur) : t("bagla.hataYok"),
+          sonHata: dsHata ? hataTuruBicimle(dsHata) : t("bagla.hataYok"),
           guven: t("guvenEtiketi.resmi_api"),
         },
       },
@@ -3332,7 +4367,7 @@
     const kartlar = canliMi() ? demoKartlar.map(canliKartUyarla) : demoKartlar;
     const kartHtml = kartlar
       .map((k) => {
-        const renk = PLATFORM_RENK[k.platform] || "var(--cizgi-guclu)";
+        const renk = guvenliRenk(PLATFORM_RENK[k.platform] || "var(--cizgi-guclu)");
         return `
           <article class="bagla-kart" style="--platform-renk:${renk};">
             <div class="bagla-kart-ust">
@@ -3410,6 +4445,9 @@
     if (bolum === "platformlar") {
       return '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="2.2" y="2.2" width="4.8" height="4.8" rx="1.2" stroke="currentColor" stroke-width="1.4"/><rect x="9" y="2.2" width="4.8" height="4.8" rx="1.2" stroke="currentColor" stroke-width="1.4"/><rect x="2.2" y="9" width="4.8" height="4.8" rx="1.2" stroke="currentColor" stroke-width="1.4"/><rect x="9" y="9" width="4.8" height="4.8" rx="1.2" stroke="currentColor" stroke-width="1.4"/></svg>';
     }
+    if (bolum === "havuzlar") {
+      return '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2.2L14 5.4L8 8.6L2 5.4L8 2.2Z" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/><path d="M2 8.2L8 11.4L14 8.2" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 10.9L8 14.1L14 10.9" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    }
     if (bolum === "bildirimler") {
       return '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M12 6.4a4 4 0 1 0-8 0c0 3.4-1.4 4.5-1.4 4.5h10.8S12 9.8 12 6.4z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M6.6 13.2a1.6 1.6 0 0 0 2.8 0" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
     }
@@ -3419,26 +4457,44 @@
     return '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="5.8" stroke="currentColor" stroke-width="1.4"/><path d="M8 7.2v3.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="4.9" r="0.9" fill="currentColor"/></svg>';
   }
 
-  function ayarAnahtarHtml({ id = "", checked = false, label = "", attr = "", val = "" }) {
+  function aramaNormalize(metin, dil) {
+    return String(metin || "")
+      .toLocaleLowerCase(dil || durum.dil || "tr")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/ı/g, "i");
+  }
+
+  function ayarAnahtarHtml({ id = "", checked = false, label = "", attr = "", val = "", disabled = false, ipucu = "" }) {
     const idNit = id ? ` id="${escHtml(id)}"` : "";
     const attrNit = attr ? ` ${attr}="${escHtml(val)}"` : "";
     const labelNit = label ? ` aria-label="${escHtml(label)}"` : "";
-    return `<button type="button" role="switch" class="ayar-anahtar"${idNit}${attrNit}${labelNit} aria-checked="${checked ? "true" : "false"}"><span class="ayar-anahtar-top" aria-hidden="true"></span></button>`;
+    const disNit = disabled ? " disabled" : "";
+    const ipucuNit = ipucu ? ` data-ipucu="${escHtml(ipucu)}"` : "";
+    return `<button type="button" role="switch" class="ayar-anahtar"${idNit}${attrNit}${labelNit}${disNit}${ipucuNit} aria-checked="${checked ? "true" : "false"}"><span class="ayar-anahtar-top" aria-hidden="true"></span></button>`;
   }
 
-  function ayarSatirHtml({ id = "", baslik, not = "", denetimHtml }) {
+  function ayarSatirHtml({ id = "", baslik, not = "", denetimHtml, aramaMetin = "" }) {
     const etiketEl = id
       ? `<label for="${escHtml(id)}" class="ayar-satir-baslik">${escHtml(baslik)}</label>`
       : `<span class="ayar-satir-baslik">${escHtml(baslik)}</span>`;
-    return `
-      <div class="ayar-satir">
-        <div class="ayar-satir-bilgi">
-          ${etiketEl}
-          ${not ? `<span class="ayar-satir-not">${escHtml(not)}</span>` : ""}
+    return {
+      arama: `${baslik || ""} ${not || ""} ${aramaMetin || ""}`,
+      html: `
+        <div class="ayar-satir">
+          <div class="ayar-satir-bilgi">
+            ${etiketEl}
+            ${not ? `<span class="ayar-satir-not">${escHtml(not)}</span>` : ""}
+          </div>
+          <div class="ayar-denetim">${denetimHtml}</div>
         </div>
-        <div class="ayar-denetim">${denetimHtml}</div>
-      </div>
-    `;
+      `,
+    };
+  }
+
+  function ayarGrupObj(baslik, satirlar) {
+    const liste = Array.isArray(satirlar) ? satirlar : [satirlar];
+    return { tur: "grup", baslik, satirlar: liste.filter(Boolean) };
   }
 
   function ayarGrupHtml(baslik, satirlarHtml) {
@@ -3448,6 +4504,135 @@
         <div class="ayar-kart">${satirlarHtml}</div>
       </section>
     `;
+  }
+
+  function havuzlarAyarBolumuOlustur(aramaNorm) {
+    const havuzMap = durum.anlik.havuzlar || {};
+    const sinif = kartTercihSiniflandir(havuzMap);
+    const gruplarMap = new Map();
+    for (const [id, h] of Object.entries(havuzMap)) {
+      if (!h || !h.platform || !bagliMi(h)) continue;
+      if (!gruplarMap.has(h.platform)) gruplarMap.set(h.platform, []);
+      gruplarMap.get(h.platform).push([id, h]);
+    }
+    const platformlar = [...gruplarMap.keys()].sort((a, b) => {
+      const ca = gruplarMap.get(a).length;
+      const cb = gruplarMap.get(b).length;
+      if (ca !== cb) return cb - ca;
+      return platformAdi(a).localeCompare(platformAdi(b), durum.dil);
+    });
+
+    if (!durum.genisleticiBaslatildi && platformlar.length > 0) {
+      durum.genisleticiBaslatildi = true;
+      durum.acikGenisleticiler.add(platformlar[0]);
+    }
+
+    const kartlar = [];
+    for (const p of platformlar) {
+      const liste = gruplarMap.get(p).sort((a, b) => {
+        const ga = havuzGorulmuyorMu(a[1]) ? 1 : 0;
+        const gb = havuzGorulmuyorMu(b[1]) ? 1 : 0;
+        if (ga !== gb) return ga - gb;
+        return havuzVarsayilanKarsilastir(a, b);
+      });
+      const pAd = platformAdi(p);
+      const pEslesir = Boolean(aramaNorm) && aramaNormalize(pAd).includes(aramaNorm);
+      const eslesenler = aramaNorm
+        ? pEslesir
+          ? liste
+          : liste.filter(([id, h]) => {
+              const kisa = havuzKisaAd(h) || h.etiket;
+              const ham = h.hamEtiket || h.etiket;
+              const durumEtiket = havuzGorulmuyorMu(h)
+                ? t("kesif.durumGorulmuyor")
+                : havuzYeniMi(id, h)
+                ? t("kesif.durumYeni")
+                : t("kesif.durumAktif");
+              return aramaNormalize(`${pAd} ${kisa} ${ham} ${durumEtiket} ${id}`).includes(aramaNorm);
+            })
+        : liste;
+      if (eslesenler.length === 0) continue;
+
+      const acik = Boolean(aramaNorm) || durum.acikGenisleticiler.has(p);
+      const satirlarHtml = eslesenler
+        .map(([id, h]) => {
+          const kisa = havuzKisaAd(h) || h.etiket;
+          const ham = h.hamEtiket || h.etiket;
+          const gorulmuyor = havuzGorulmuyorMu(h);
+          const yeni = !gorulmuyor && havuzYeniMi(id, h);
+          const durumSinif = gorulmuyor ? "gorulmuyor" : yeni ? "yeni" : "aktif";
+          const durumAd = gorulmuyor
+            ? t("kesif.durumGorulmuyor")
+            : yeni
+            ? t("kesif.durumYeni")
+            : t("kesif.durumAktif");
+          const goster = !gorulmuyor && !havuzGizliMi(id, h, sinif);
+          const sabit = !gorulmuyor && havuzSabitMi(id, h, sinif);
+          const hamAlt = ham && ham !== kisa ? `<span class="havuz-satir-ham kisalt-etiket" data-ipucu="${escHtml(ham)}">${escHtml(ham)}</span>` : "";
+          const sonZamanAlt =
+            gorulmuyor && h.kesif?.son_gorulme
+              ? `<span class="havuz-satir-ham">${escHtml(fmt("kesif.sonGorulme", { zaman: gunVeSaatBicimle(h.kesif.son_gorulme) }))}</span>`
+              : "";
+          return `
+            <div class="havuz-ayar-satir">
+              <div class="havuz-ayar-bilgi">
+                <div class="havuz-ayar-ust">
+                  <span class="havuz-satir-ad kisalt-etiket" data-ipucu="${escHtml(ham)}">${escHtml(kisa)}</span>
+                  <span class="havuz-durum-etiket ${durumSinif}"><span class="havuz-durum-nokta" aria-hidden="true"></span><span>${escHtml(durumAd)}</span></span>
+                </div>
+                ${hamAlt}
+                ${sonZamanAlt}
+              </div>
+              <div class="havuz-ayar-kontroller">
+                <span class="havuz-anahtar-grup">
+                  <span>${escHtml(t("ayarlar.geneldeGoster"))}</span>
+                  ${ayarAnahtarHtml({
+                    checked: goster,
+                    label: `${kisa}: ${t("ayarlar.geneldeGoster")}`,
+                    attr: "data-havuz-goster",
+                    val: id,
+                    disabled: gorulmuyor,
+                    ipucu: gorulmuyor ? t("ayarlar.gorulmeyenGenelIpucu") : "",
+                  })}
+                </span>
+                <span class="havuz-anahtar-grup">
+                  <span>${escHtml(t("ayarlar.havuzSabitle"))}</span>
+                  ${ayarAnahtarHtml({
+                    checked: sabit,
+                    label: `${kisa}: ${t("ayarlar.havuzSabitle")}`,
+                    attr: "data-havuz-sabitle",
+                    val: id,
+                    disabled: gorulmuyor,
+                    ipucu: gorulmuyor ? t("ayarlar.gorulmeyenGenelIpucu") : "",
+                  })}
+                </span>
+              </div>
+            </div>`;
+        })
+        .join("");
+
+      kartlar.push(`
+        <div class="expander-kart">
+          <button type="button" class="expander-baslik" data-expander-toggle="${escHtml(p)}" aria-expanded="${acik ? "true" : "false"}">
+            <span class="kart-ikon">${svgMonogram(p)}</span>
+            <span class="expander-ad">${escHtml(pAd)}</span>
+            <span class="expander-sayi soluk">· ${escHtml(fmt("genel.platformSayi", { n: sayiBicimle(eslesenler.length) }))}</span>
+            <span class="expander-ok">${svgChevron()}</span>
+          </button>
+          ${acik ? `<div class="expander-icerik">${satirlarHtml}</div>` : ""}
+        </div>`);
+    }
+
+    if (kartlar.length === 0) {
+      return {
+        eslesmeSayisi: 0,
+        html: aramaNorm ? "" : `<div class="bos-durum"><p>${escHtml(t("ayarlar.havuzlarBos"))}</p></div>`,
+      };
+    }
+    return {
+      eslesmeSayisi: kartlar.length,
+      html: `<section class="ayar-bolum-grup"><div class="ayar-grup-baslik">${escHtml(t("ayarlar.havuzlarBaslik"))}</div>${kartlar.join("")}</section>`,
+    };
   }
 
   async function lisansBelgesiAc(tur) {
@@ -3493,321 +4678,287 @@
     return sirali;
   }
 
-  function ayarlarSekmesiCiz() {
-    const bolumler = ["genel", "platformlar", "bildirimler", "teknik", "hakkinda"];
-    durum.ayarBolum = ayarBolumuNormalizeEt(durum.ayarBolum);
-
-    const yanMenuEl = document.getElementById("ayarlar-bolum-menu");
-    if (yanMenuEl) {
-      const mOdak = odakKimligiAl(yanMenuEl);
-      yanMenuEl.innerHTML = bolumler
-        .map((b) => {
-          const ad = b === "hakkinda" ? t("ayarlar.hakkindaKisa") : t(`ayarlar.bolumler.${b}`);
-          return `
-            <button type="button" class="ayar-bolum-btn${durum.ayarBolum === b ? " aktif" : ""}" data-ayar-bolum="${b}" aria-current="${durum.ayarBolum === b ? "page" : "false"}">
-              ${svgAyarBolumIkon(b)}
-              <span>${escHtml(ad)}</span>
-            </button>`;
-        })
-        .join("");
-      odakKimligiYukle(yanMenuEl, mOdak);
+  function ayarBolumIcerigiUret(bolumId, aramaNorm) {
+    const a = durum.ayarlar;
+    if (bolumId === "havuzlar") {
+      return havuzlarAyarBolumuOlustur(aramaNorm);
     }
 
-    const a = durum.ayarlar;
-    const b = durum.ayarBolum;
-    let html = "";
+    let gruplar = [];
+    let ekHtml = "";
 
-    if (b === "genel") {
-      html =
-        ayarGrupHtml(
-          t("ayarlar.grupGorunum"),
-          [
-            ayarSatirHtml({
-              id: "ayar-dil-secim",
-              baslik: t("ayarlar.dilEtiket"),
-              not: !durum.dilTamMi ? t("ayarlar.dilCeviriNotu") : t("ayarlar.dilAciklama"),
-              denetimHtml: `<select id="ayar-dil-secim" class="ayar-select">${DESTEKLENEN_DILLER.map((d) => `<option value="${escHtml(d.kod)}"${durum.dil === d.kod ? " selected" : ""}>${escHtml(d.etiket)} (${escHtml(d.kod)})</option>`).join("")}</select>`,
-            }),
-            ayarSatirHtml({
-              id: "ayar-kip-secim",
-              baslik: t("ayarlar.temaKipEtiket"),
-              not: t("ayarlar.temaKipAciklama"),
-              denetimHtml: `<select id="ayar-kip-secim" class="ayar-select">${["sistem", "acik", "koyu"].map((kip) => `<option value="${kip}"${durum.gorunumKipi === kip ? " selected" : ""}>${escHtml(t(`ayarlar.temaKipleri.${kip}`))}</option>`).join("")}</select>`,
-            }),
-            ayarSatirHtml({
-              id: "ayar-renk-secim",
-              baslik: t("ayarlar.renkTemasiEtiket"),
-              not: t("ayarlar.renkTemasiAciklama"),
-              denetimHtml: `<select id="ayar-renk-secim" class="ayar-select">${RENK_TEMALARI.map((rt) => `<option value="${rt.id}"${durum.renkTemasi === rt.id ? " selected" : ""}>${escHtml(t(`ayarlar.renkTemalari.${rt.id}`))}</option>`).join("")}</select>`,
-            }),
-            ayarSatirHtml({
-              id: "ayar-yon-secim",
-              baslik: t("ayarlar.degerYonuEtiket"),
-              not: t("ayarlar.degerYonuAciklama"),
-              denetimHtml: `<select id="ayar-yon-secim" class="ayar-select">${["kalan", "kullanilan"].map((y) => `<option value="${y}"${durum.degerYonu === y ? " selected" : ""}>${escHtml(t(`gorunum.yonler.${y}`))}</option>`).join("")}</select>`,
-            }),
-          ].join("")
-        ) +
-        ayarGrupHtml(
-          t("ayarlar.grupDavranis"),
-          [
-            ayarSatirHtml({
+    if (bolumId === "genel") {
+      gruplar = [
+        ayarGrupObj(t("ayarlar.grupGorunum"), [
+          ayarSatirHtml({
+            id: "ayar-dil-secim",
+            baslik: t("ayarlar.dilEtiket"),
+            not: !durum.dilTamMi ? t("ayarlar.dilCeviriNotu") : t("ayarlar.dilAciklama"),
+            denetimHtml: `<select id="ayar-dil-secim" class="ayar-select">${DESTEKLENEN_DILLER.map((d) => `<option value="${escHtml(d.kod)}"${durum.dil === d.kod ? " selected" : ""}>${escHtml(d.etiket)} (${escHtml(d.kod)})</option>`).join("")}</select>`,
+          }),
+          ayarSatirHtml({
+            id: "ayar-kip-secim",
+            baslik: t("ayarlar.temaKipEtiket"),
+            not: t("ayarlar.temaKipAciklama"),
+            denetimHtml: `<select id="ayar-kip-secim" class="ayar-select">${["sistem", "acik", "koyu"].map((kip) => `<option value="${kip}"${durum.gorunumKipi === kip ? " selected" : ""}>${escHtml(t(`ayarlar.temaKipleri.${kip}`))}</option>`).join("")}</select>`,
+          }),
+          ayarSatirHtml({
+            id: "ayar-renk-secim",
+            baslik: t("ayarlar.renkTemasiEtiket"),
+            not: t("ayarlar.renkTemasiAciklama"),
+            denetimHtml: `<select id="ayar-renk-secim" class="ayar-select">${RENK_TEMALARI.map((rt) => `<option value="${rt.id}"${durum.renkTemasi === rt.id ? " selected" : ""}>${escHtml(t(`ayarlar.renkTemalari.${rt.id}`))}</option>`).join("")}</select>`,
+          }),
+          ayarSatirHtml({
+            id: "ayar-yon-secim",
+            baslik: t("ayarlar.degerYonuEtiket"),
+            not: t("ayarlar.degerYonuAciklama"),
+            denetimHtml: `<select id="ayar-yon-secim" class="ayar-select">${["kalan", "kullanilan"].map((y) => `<option value="${y}"${durum.degerYonu === y ? " selected" : ""}>${escHtml(t(`gorunum.yonler.${y}`))}</option>`).join("")}</select>`,
+          }),
+        ]),
+        ayarGrupObj(t("ayarlar.grupDavranis"), [
+          ayarSatirHtml({
+            id: "ayar-windows-baslat",
+            baslik: t("ayarlar.windowsIleBaslat"),
+            not: t("ayarlar.windowsIleBaslatNot"),
+            denetimHtml: ayarAnahtarHtml({
               id: "ayar-windows-baslat",
-              baslik: t("ayarlar.windowsIleBaslat"),
-              not: t("ayarlar.windowsIleBaslatNot"),
-              denetimHtml: ayarAnahtarHtml({
-                id: "ayar-windows-baslat",
-                checked: Boolean(a.windowsIleBaslat),
-                label: t("ayarlar.windowsIleBaslat"),
-                attr: "data-ayar-anahtar",
-                val: "windowsIleBaslat",
-              }),
+              checked: Boolean(a.windowsIleBaslat),
+              label: t("ayarlar.windowsIleBaslat"),
+              attr: "data-ayar-anahtar",
+              val: "windowsIleBaslat",
             }),
-            ayarSatirHtml({
+          }),
+          ayarSatirHtml({
+            id: "ayar-tepsiye-kucult",
+            baslik: t("ayarlar.tepsiyeKucult"),
+            not: t("ayarlar.tepsiyeKucultNot"),
+            denetimHtml: ayarAnahtarHtml({
               id: "ayar-tepsiye-kucult",
-              baslik: t("ayarlar.tepsiyeKucult"),
-              not: t("ayarlar.tepsiyeKucultNot"),
-              denetimHtml: ayarAnahtarHtml({
-                id: "ayar-tepsiye-kucult",
-                checked: Boolean(a.tepsiyeKucult),
-                label: t("ayarlar.tepsiyeKucult"),
-                attr: "data-ayar-anahtar",
-                val: "tepsiyeKucult",
-              }),
+              checked: Boolean(a.tepsiyeKucult),
+              label: t("ayarlar.tepsiyeKucult"),
+              attr: "data-ayar-anahtar",
+              val: "tepsiyeKucult",
             }),
-            ayarSatirHtml({
-              baslik: t("ayarlar.seritBolum"),
-              not: t("ayarlar.seritAciklama"),
-              denetimHtml: `<div class="ayar-secim-grup"><button type="button" class="ikincil-btn" data-ayar-serit="ac">${escHtml(t("ayarlar.seritAcBtn"))}</button><button type="button" class="ikincil-btn" data-ayar-serit="gizle">${escHtml(t("ayarlar.seritGizleBtn"))}</button></div>`,
-            }),
-            ayarSatirHtml({
+          }),
+          ayarSatirHtml({
+            baslik: t("ayarlar.seritBolum"),
+            not: t("ayarlar.seritAciklama"),
+            denetimHtml: `<div class="ayar-secim-grup"><button type="button" class="ikincil-btn" data-ayar-serit="ac">${escHtml(t("ayarlar.seritAcBtn"))}</button><button type="button" class="ikincil-btn" data-ayar-serit="gizle">${escHtml(t("ayarlar.seritGizleBtn"))}</button></div>`,
+          }),
+          ayarSatirHtml({
+            id: "ayar-serit-ustte",
+            baslik: t("ayarlar.seritUstte"),
+            denetimHtml: ayarAnahtarHtml({
               id: "ayar-serit-ustte",
-              baslik: t("ayarlar.seritUstte"),
-              denetimHtml: ayarAnahtarHtml({
-                id: "ayar-serit-ustte",
-                checked: Boolean(a.seritUstte),
-                label: t("ayarlar.seritUstte"),
-                attr: "data-ayar-anahtar",
-                val: "seritUstte",
-              }),
+              checked: Boolean(a.seritUstte),
+              label: t("ayarlar.seritUstte"),
+              attr: "data-ayar-anahtar",
+              val: "seritUstte",
             }),
-            ayarSatirHtml({
+          }),
+          ayarSatirHtml({
+            id: "ayar-serit-gecirgen",
+            baslik: t("ayarlar.seritGecirgen"),
+            denetimHtml: ayarAnahtarHtml({
               id: "ayar-serit-gecirgen",
-              baslik: t("ayarlar.seritGecirgen"),
-              denetimHtml: ayarAnahtarHtml({
-                id: "ayar-serit-gecirgen",
-                checked: Boolean(durum.tiklamaGecirgen),
-                label: t("ayarlar.seritGecirgen"),
-                attr: "data-ayar-anahtar",
-                val: "seritGecirgen",
-              }),
+              checked: Boolean(durum.tiklamaGecirgen),
+              label: t("ayarlar.seritGecirgen"),
+              attr: "data-ayar-anahtar",
+              val: "seritGecirgen",
             }),
-          ].join("")
-        ) +
-        ayarGrupHtml(
-          t("ayarlar.grupSifirla"),
+          }),
+        ]),
+        ayarGrupObj(t("ayarlar.grupSifirla"), [
           ayarSatirHtml({
             baslik: t("ayarlar.varsayilanaDonBtn"),
             not: t("ayarlar.varsayilanaDonNot"),
             denetimHtml: durum.ayarSifirlaOnay
               ? `<div class="ayar-secim-grup"><button type="button" class="tehlike-btn" data-ayar-sifirla="onayla">${escHtml(t("ayarlar.varsayilanaDonOnay"))}</button><button type="button" class="ikincil-btn" data-ayar-sifirla="iptal">${escHtml(t("ayarlar.vazgecBtn"))}</button></div>`
               : `<button type="button" class="ikincil-btn" data-ayar-sifirla="iste">${escHtml(t("ayarlar.varsayilanaDonBtn"))}</button>`,
-          })
-        );
-    } else if (b === "platformlar") {
-      html =
-        ayarGrupHtml(
-          t("ayarlar.grupPlatformAnahtarlari"),
-          [
-            ayarSatirHtml({
+          }),
+        ]),
+      ];
+    } else if (bolumId === "platformlar") {
+      gruplar = [
+        ayarGrupObj(t("ayarlar.grupPlatformAnahtarlari"), [
+          ayarSatirHtml({
+            id: "ayar-codex-etkin",
+            baslik: t("ayarlar.codexEtkin"),
+            not: t("ayarlar.codexEtkinNot"),
+            denetimHtml: ayarAnahtarHtml({
               id: "ayar-codex-etkin",
-              baslik: t("ayarlar.codexEtkin"),
-              not: t("ayarlar.codexEtkinNot"),
-              denetimHtml: ayarAnahtarHtml({
-                id: "ayar-codex-etkin",
-                checked: a.codexEtkin !== false,
-                label: t("ayarlar.codexEtkin"),
-                attr: "data-ayar-anahtar",
-                val: "codexEtkin",
-              }),
+              checked: a.codexEtkin !== false,
+              label: t("ayarlar.codexEtkin"),
+              attr: "data-ayar-anahtar",
+              val: "codexEtkin",
             }),
-            ayarSatirHtml({
-              id: "ayar-agy-secim",
-              baslik: t("ayarlar.agyOkumaEtiket"),
-              not: t("ayarlar.agyOkumaNot"),
-              denetimHtml: `<select id="ayar-agy-secim" class="ayar-select">${["kapali", "istek_uzerine", "otomatik"].map((m) => `<option value="${m}"${a.agyOkuma === m ? " selected" : ""}>${escHtml(t(`bagla.agySecenekler.${m}`))}</option>`).join("")}</select>`,
-            }),
-            ayarSatirHtml({
+          }),
+          ayarSatirHtml({
+            id: "ayar-agy-secim",
+            baslik: t("ayarlar.agyOkumaEtiket"),
+            not: t("ayarlar.agyOkumaNot"),
+            denetimHtml: `<select id="ayar-agy-secim" class="ayar-select">${["kapali", "istek_uzerine", "otomatik"].map((m) => `<option value="${m}"${a.agyOkuma === m ? " selected" : ""}>${escHtml(t(`bagla.agySecenekler.${m}`))}</option>`).join("")}</select>`,
+          }),
+          ayarSatirHtml({
+            id: "ayar-deepseek-etkin",
+            baslik: t("ayarlar.deepseekEtkin"),
+            not: t("ayarlar.deepseekEtkinNot"),
+            denetimHtml: ayarAnahtarHtml({
               id: "ayar-deepseek-etkin",
-              baslik: t("ayarlar.deepseekEtkin"),
-              not: t("ayarlar.deepseekEtkinNot"),
-              denetimHtml: ayarAnahtarHtml({
-                id: "ayar-deepseek-etkin",
-                checked: Boolean(a.deepseekEtkin),
-                label: t("ayarlar.deepseekEtkin"),
-                attr: "data-ayar-anahtar",
-                val: "deepseekEtkin",
-              }),
+              checked: Boolean(a.deepseekEtkin),
+              label: t("ayarlar.deepseekEtkin"),
+              attr: "data-ayar-anahtar",
+              val: "deepseekEtkin",
             }),
-            ayarSatirHtml({
+          }),
+          ayarSatirHtml({
+            id: "ayar-opencode-etkin",
+            baslik: t("ayarlar.opencodeEtkin"),
+            not: t("ayarlar.opencodeEtkinNot"),
+            denetimHtml: ayarAnahtarHtml({
               id: "ayar-opencode-etkin",
-              baslik: t("ayarlar.opencodeEtkin"),
-              not: t("ayarlar.opencodeEtkinNot"),
-              denetimHtml: ayarAnahtarHtml({
-                id: "ayar-opencode-etkin",
-                checked: Boolean(a.opencodeEtkin),
-                label: t("ayarlar.opencodeEtkin"),
-                attr: "data-ayar-anahtar",
-                val: "opencodeEtkin",
-              }),
+              checked: Boolean(a.opencodeEtkin),
+              label: t("ayarlar.opencodeEtkin"),
+              attr: "data-ayar-anahtar",
+              val: "opencodeEtkin",
             }),
-            ayarSatirHtml({
+          }),
+          ayarSatirHtml({
+            id: "ayar-dsh-etkin",
+            baslik: t("ayarlar.dshEtkin"),
+            not: t("ayarlar.dshEtkinNot"),
+            denetimHtml: ayarAnahtarHtml({
               id: "ayar-dsh-etkin",
-              baslik: t("ayarlar.dshEtkin"),
-              not: t("ayarlar.dshEtkinNot"),
-              denetimHtml: ayarAnahtarHtml({
-                id: "ayar-dsh-etkin",
-                checked: Boolean(a.dshEtkin),
-                label: t("ayarlar.dshEtkin"),
-                attr: "data-ayar-anahtar",
-                val: "dshEtkin",
-              }),
+              checked: Boolean(a.dshEtkin),
+              label: t("ayarlar.dshEtkin"),
+              attr: "data-ayar-anahtar",
+              val: "dshEtkin",
             }),
-          ].join("")
-        ) +
-        ayarGrupHtml(
-          t("ayarlar.baglantilarBaslik"),
+          }),
+        ]),
+        ayarGrupObj(t("ayarlar.baglantilarBaslik"), [
           ayarSatirHtml({
             baslik: t("sekmeler.bagla"),
             not: t("ayarlar.baglantilarAciklama"),
             denetimHtml: `<button type="button" class="birincil-btn" data-ayar-git-sekme="bagla">${escHtml(t("ayarlar.baglaSekmesineGit"))}</button>`,
-          })
-        );
-    } else if (b === "bildirimler") {
+          }),
+        ]),
+      ];
+    } else if (bolumId === "bildirimler") {
       const sessizSet = new Set(a.sessizPlatformlar || []);
-      const pltSatirlari = bilinenBildirimPlatformlari()
-        .map((p) => {
-          const genel = p === "claude" ? a.claude5sEsik : a.digerEsik;
-          const ozelDeger = typeof a.platformEsikleri?.[p] === "number" ? a.platformEsikleri[p] : "";
-          const sessiz = sessizSet.has(p);
-          return ayarSatirHtml({
-            baslik: platformAdi(p),
-            not: fmt("ayarlar.platformEsikNot", { genel: sayiBicimle(genel) }),
+      const pltSatirlari = bilinenBildirimPlatformlari().map((p) => {
+        const genel = p === "claude" ? a.claude5sEsik : a.digerEsik;
+        const ozelDeger = typeof a.platformEsikleri?.[p] === "number" ? a.platformEsikleri[p] : "";
+        const sessiz = sessizSet.has(p);
+        return ayarSatirHtml({
+          baslik: platformAdi(p),
+          not: fmt("ayarlar.platformEsikNot", { genel: sayiBicimle(genel) }),
+          denetimHtml: `
+            <div class="plt-bildirim-kontrol">
+              <label class="esik-sarici">
+                <input type="number" min="1" max="99" class="esik-girdi" data-platform-esik="${escHtml(p)}" value="${escHtml(ozelDeger)}" placeholder="${escHtml(genel)}" aria-label="${escHtml(`${platformAdi(p)} %`)}">
+                <span>%</span>
+              </label>
+              <span class="sessiz-secim-etiket">
+                <span>${escHtml(t("ayarlar.platformSessizeAl"))}</span>
+                ${ayarAnahtarHtml({
+                  checked: sessiz,
+                  label: `${platformAdi(p)}: ${t("ayarlar.platformSessizeAl")}`,
+                  attr: "data-platform-sessiz",
+                  val: p,
+                })}
+              </span>
+            </div>
+          `,
+        });
+      });
+
+      gruplar = [
+        ayarGrupObj(t("ayarlar.grupBildirimGenel"), [
+          ayarSatirHtml({
+            id: "ayar-b-etkin",
+            baslik: t("ayarlar.bildirimEtkin"),
+            denetimHtml: ayarAnahtarHtml({
+              id: "ayar-b-etkin",
+              checked: Boolean(a.bildirimEtkin),
+              label: t("ayarlar.bildirimEtkin"),
+              attr: "data-ayar-anahtar",
+              val: "bildirimEtkin",
+            }),
+          }),
+          ayarSatirHtml({
+            id: "ayar-b-sessiz",
+            baslik: t("ayarlar.sessizSaatler"),
+            not: t("ayarlar.sessizSaatNot"),
+            denetimHtml: ayarAnahtarHtml({
+              id: "ayar-b-sessiz",
+              checked: Boolean(a.sessizSaatler),
+              label: t("ayarlar.sessizSaatler"),
+              attr: "data-ayar-anahtar",
+              val: "sessizSaatler",
+            }),
+          }),
+          ayarSatirHtml({
+            baslik: t("ayarlar.ozelSessizSaatler"),
+            not: t("ayarlar.ozelSessizSaatIpucu"),
             denetimHtml: `
-              <div class="plt-bildirim-kontrol">
-                <label class="esik-sarici">
-                  <input type="number" min="1" max="99" class="esik-girdi" data-platform-esik="${escHtml(p)}" value="${escHtml(ozelDeger)}" placeholder="${escHtml(genel)}" aria-label="${escHtml(`${platformAdi(p)} %`)}">
-                  <span>%</span>
-                </label>
-                <span class="sessiz-secim-etiket">
-                  <span>${escHtml(t("ayarlar.platformSessizeAl"))}</span>
-                  ${ayarAnahtarHtml({
-                    checked: sessiz,
-                    label: `${platformAdi(p)}: ${t("ayarlar.platformSessizeAl")}`,
-                    attr: "data-platform-sessiz",
-                    val: p,
-                  })}
-                </span>
+              <div class="saat-aralik">
+                <label class="saat-secim"><span>${escHtml(t("ayarlar.sessizBaslangic"))}</span>
+                  <select id="ayar-sessiz-bas" class="ayar-select">${saatSecenekleri(a.sessizBaslangic ?? 0)}</select></label>
+                <label class="saat-secim"><span>${escHtml(t("ayarlar.sessizBitis"))}</span>
+                  <select id="ayar-sessiz-bit" class="ayar-select">${saatSecenekleri(a.sessizBitis ?? 8)}</select></label>
               </div>
             `,
-          });
-        })
-        .join("");
-
-      html =
-        ayarGrupHtml(
-          t("ayarlar.grupBildirimGenel"),
-          [
-            ayarSatirHtml({
-              id: "ayar-b-etkin",
-              baslik: t("ayarlar.bildirimEtkin"),
-              denetimHtml: ayarAnahtarHtml({
-                id: "ayar-b-etkin",
-                checked: Boolean(a.bildirimEtkin),
-                label: t("ayarlar.bildirimEtkin"),
-                attr: "data-ayar-anahtar",
-                val: "bildirimEtkin",
-              }),
-            }),
-            ayarSatirHtml({
-              id: "ayar-b-sessiz",
-              baslik: t("ayarlar.sessizSaatler"),
-              not: t("ayarlar.sessizSaatNot"),
-              denetimHtml: ayarAnahtarHtml({
-                id: "ayar-b-sessiz",
-                checked: Boolean(a.sessizSaatler),
-                label: t("ayarlar.sessizSaatler"),
-                attr: "data-ayar-anahtar",
-                val: "sessizSaatler",
-              }),
-            }),
-            ayarSatirHtml({
-              baslik: t("ayarlar.ozelSessizSaatler"),
-              not: t("ayarlar.ozelSessizSaatIpucu"),
-              denetimHtml: `
-                <div class="saat-aralik">
-                  <label class="saat-secim"><span>${escHtml(t("ayarlar.sessizBaslangic"))}</span>
-                    <select id="ayar-sessiz-bas" class="ayar-select">${saatSecenekleri(a.sessizBaslangic ?? 0)}</select></label>
-                  <label class="saat-secim"><span>${escHtml(t("ayarlar.sessizBitis"))}</span>
-                    <select id="ayar-sessiz-bit" class="ayar-select">${saatSecenekleri(a.sessizBitis ?? 8)}</select></label>
-                </div>
-              `,
-            }),
-          ].join("")
-        ) +
-        ayarGrupHtml(
-          t("ayarlar.grupBildirimEsikleri"),
-          [
-            ayarSatirHtml({
-              id: "ayar-c5s",
-              baslik: t("ayarlar.claude5sEsik"),
-              denetimHtml: `<span class="esik-sarici"><input type="number" min="1" max="99" class="esik-girdi" id="ayar-c5s" value="${a.claude5sEsik}"><span>%</span></span>`,
-            }),
-            ayarSatirHtml({
-              id: "ayar-chf",
-              baslik: t("ayarlar.claudeHaftaEsik"),
-              denetimHtml: `<span class="esik-sarici"><input type="number" min="1" max="99" class="esik-girdi" id="ayar-chf" value="${a.claudeHaftaEsik}"><span>%</span></span>`,
-            }),
-            ayarSatirHtml({
-              id: "ayar-cx",
-              baslik: t("ayarlar.digerEsik"),
-              denetimHtml: `<span class="esik-sarici"><input type="number" min="1" max="99" class="esik-girdi" id="ayar-cx" value="${a.digerEsik}"><span>%</span></span>`,
-            }),
-          ].join("")
-        ) +
-        ayarGrupHtml(t("ayarlar.grupPlatformBildirimleri"), pltSatirlari) +
-        ayarGrupHtml(
-          t("ayarlar.grupBildirimTurleri"),
-          [
-            ayarSatirHtml({
-              id: "ayar-b-esik",
-              baslik: t("ayarlar.esikBildirimi"),
-              denetimHtml: ayarAnahtarHtml({ id: "ayar-b-esik", checked: Boolean(a.esikBildirimi), label: t("ayarlar.esikBildirimi"), attr: "data-ayar-anahtar", val: "esikBildirimi" }),
-            }),
-            ayarSatirHtml({
-              id: "ayar-b-tahmin",
-              baslik: t("ayarlar.tahminBildirimi"),
-              not: t("ayarlar.tahminBildirimiNot"),
-              denetimHtml: ayarAnahtarHtml({ id: "ayar-b-tahmin", checked: Boolean(a.tahminBildirimi), label: t("ayarlar.tahminBildirimi"), attr: "data-ayar-anahtar", val: "tahminBildirimi" }),
-            }),
-            ayarSatirHtml({
-              id: "ayar-b-kredi",
-              baslik: t("ayarlar.krediBildirimi"),
-              denetimHtml: ayarAnahtarHtml({ id: "ayar-b-kredi", checked: Boolean(a.krediBildirimi), label: t("ayarlar.krediBildirimi"), attr: "data-ayar-anahtar", val: "krediBildirimi" }),
-            }),
-            ayarSatirHtml({
-              id: "ayar-b-bayat",
-              baslik: t("ayarlar.bayatBildirimi"),
-              denetimHtml: ayarAnahtarHtml({ id: "ayar-b-bayat", checked: Boolean(a.bayatBildirimi), label: t("ayarlar.bayatBildirimi"), attr: "data-ayar-anahtar", val: "bayatBildirimi" }),
-            }),
-            ayarSatirHtml({
-              id: "ayar-b-sifir",
-              baslik: t("ayarlar.sifirlandiBildirimi"),
-              denetimHtml: ayarAnahtarHtml({ id: "ayar-b-sifir", checked: Boolean(a.sifirlandiBildirimi), label: t("ayarlar.sifirlandiBildirimi"), attr: "data-ayar-anahtar", val: "sifirlandiBildirimi" }),
-            }),
-          ].join("")
-        );
-    } else if (b === "teknik") {
+          }),
+        ]),
+        ayarGrupObj(t("ayarlar.grupBildirimEsikleri"), [
+          ayarSatirHtml({
+            id: "ayar-c5s",
+            baslik: t("ayarlar.claude5sEsik"),
+            denetimHtml: `<span class="esik-sarici"><input type="number" min="1" max="99" class="esik-girdi" id="ayar-c5s" value="${Number(a.claude5sEsik) || 15}"><span>%</span></span>`,
+          }),
+          ayarSatirHtml({
+            id: "ayar-chf",
+            baslik: t("ayarlar.claudeHaftaEsik"),
+            denetimHtml: `<span class="esik-sarici"><input type="number" min="1" max="99" class="esik-girdi" id="ayar-chf" value="${Number(a.claudeHaftaEsik) || 30}"><span>%</span></span>`,
+          }),
+          ayarSatirHtml({
+            id: "ayar-cx",
+            baslik: t("ayarlar.digerEsik"),
+            denetimHtml: `<span class="esik-sarici"><input type="number" min="1" max="99" class="esik-girdi" id="ayar-cx" value="${Number(a.digerEsik) || 20}"><span>%</span></span>`,
+          }),
+        ]),
+        ayarGrupObj(t("ayarlar.grupPlatformBildirimleri"), pltSatirlari),
+        ayarGrupObj(t("ayarlar.grupBildirimTurleri"), [
+          ayarSatirHtml({
+            id: "ayar-b-esik",
+            baslik: t("ayarlar.esikBildirimi"),
+            denetimHtml: ayarAnahtarHtml({ id: "ayar-b-esik", checked: Boolean(a.esikBildirimi), label: t("ayarlar.esikBildirimi"), attr: "data-ayar-anahtar", val: "esikBildirimi" }),
+          }),
+          ayarSatirHtml({
+            id: "ayar-b-tahmin",
+            baslik: t("ayarlar.tahminBildirimi"),
+            not: t("ayarlar.tahminBildirimiNot"),
+            denetimHtml: ayarAnahtarHtml({ id: "ayar-b-tahmin", checked: Boolean(a.tahminBildirimi), label: t("ayarlar.tahminBildirimi"), attr: "data-ayar-anahtar", val: "tahminBildirimi" }),
+          }),
+          ayarSatirHtml({
+            id: "ayar-b-kredi",
+            baslik: t("ayarlar.krediBildirimi"),
+            denetimHtml: ayarAnahtarHtml({ id: "ayar-b-kredi", checked: Boolean(a.krediBildirimi), label: t("ayarlar.krediBildirimi"), attr: "data-ayar-anahtar", val: "krediBildirimi" }),
+          }),
+          ayarSatirHtml({
+            id: "ayar-b-bayat",
+            baslik: t("ayarlar.bayatBildirimi"),
+            denetimHtml: ayarAnahtarHtml({ id: "ayar-b-bayat", checked: Boolean(a.bayatBildirimi), label: t("ayarlar.bayatBildirimi"), attr: "data-ayar-anahtar", val: "bayatBildirimi" }),
+          }),
+          ayarSatirHtml({
+            id: "ayar-b-sifir",
+            baslik: t("ayarlar.sifirlandiBildirimi"),
+            denetimHtml: ayarAnahtarHtml({ id: "ayar-b-sifir", checked: Boolean(a.sifirlandiBildirimi), label: t("ayarlar.sifirlandiBildirimi"), attr: "data-ayar-anahtar", val: "sifirlandiBildirimi" }),
+          }),
+        ]),
+      ];
+    } else if (bolumId === "teknik") {
       const sd = durum.servisDurumu;
       const durumMetin = durum.demoMu
         ? t("ayarlar.servisDemoEtiket")
@@ -3819,62 +4970,57 @@
       const okunanPipe = sd.pipe || t("genel.bilinmiyor");
       const okunanSira = typeof sd.sonSira === "number" ? sayiBicimle(sd.sonSira) : t("genel.bilinmiyor");
 
-      html =
-        ayarGrupHtml(
-          t("ayarlar.grupTeknikServis"),
-          [
-            ayarSatirHtml({
-              baslik: t("ayarlar.servisDurumEtiket"),
-              denetimHtml: `<div class="ayar-secim-grup"><span class="durum-rozet ${durumSinif}">${svgDurumSimge(durumSinif)} ${escHtml(durumMetin)}</span>${canliMi() && !sd.calisiyor ? `<button type="button" class="birincil-btn" data-servis-baslat="1">${escHtml(t("genel.servisBaslatBtn"))}</button>` : ""}<button type="button" class="ikincil-btn" data-ayar-servis-kontrol="1">${escHtml(t("ayarlar.servisYenidenKontrol"))}</button></div>`,
-            }),
-            ayarSatirHtml({
-              id: "ayar-port",
-              baslik: t("ayarlar.servisPort"),
-              not: `${t("ayarlar.portNot")} · ${t("ayarlar.saltOkumaEtiket")}: ${okunanPort}`,
-              denetimHtml: `<input type="number" min="0" max="65535" class="esik-girdi" id="ayar-port" value="${a.servisPort}">`,
-            }),
-            ayarSatirHtml({
-              id: "ayar-port-oto",
-              baslik: t("ayarlar.otomatikPort"),
-              denetimHtml: ayarAnahtarHtml({ id: "ayar-port-oto", checked: Boolean(a.otomatikPort), label: t("ayarlar.otomatikPort"), attr: "data-ayar-anahtar", val: "otomatikPort" }),
-            }),
-            ayarSatirHtml({
-              baslik: t("ayarlar.pipeEtiket"),
-              denetimHtml: `<code class="salt-okuma-kutu">${escHtml(okunanPipe)}</code>`,
-            }),
-            ayarSatirHtml({
-              baslik: t("ayarlar.sonSiraEtiket"),
-              denetimHtml: `<code class="salt-okuma-kutu rakam">${escHtml(okunanSira)}</code>`,
-            }),
-          ].join("")
-        ) +
-        ayarGrupHtml(
-          t("ayarlar.grupTeknikAralik"),
-          [
-            ayarSatirHtml({
-              id: "ayar-cx-etkin",
-              baslik: t("ayarlar.codexEtkinDk"),
-              not: t("ayarlar.codexEtkinDkNot"),
-              denetimHtml: `<input type="number" min="1" max="1440" class="esik-girdi" id="ayar-cx-etkin" value="${a.codexEtkinDk}">`,
-            }),
-            ayarSatirHtml({
-              id: "ayar-cx-bosta",
-              baslik: t("ayarlar.codexBostaDk"),
-              not: t("ayarlar.codexBostaDkNot"),
-              denetimHtml: `<input type="number" min="1" max="1440" class="esik-girdi" id="ayar-cx-bosta" value="${a.codexBostaDk}">`,
-            }),
-            ayarSatirHtml({
-              baslik: t("ayarlar.gunlukKlasoruBtn"),
-              not: t("ayarlar.gunlukKlasoruIpucu"),
-              denetimHtml: `<button type="button" class="ikincil-btn" data-ayar-eylem="gunluk" ${canliMi() ? "" : "disabled"}>${escHtml(t("ayarlar.gunlukKlasoruBtn"))}</button>`,
-            }),
-            ayarSatirHtml({
-              baslik: t("ayarlar.tarihVeriDisaAktar"),
-              not: t("ayarlar.tarihVeriIpucu"),
-              denetimHtml: `<button type="button" class="ikincil-btn" data-ayar-eylem="disa-aktar" ${canliMi() && sd.calisiyor ? "" : "disabled"}>${escHtml(t("ayarlar.tarihVeriDisaAktar"))}</button>`,
-            }),
-          ].join("")
-        );
+      gruplar = [
+        ayarGrupObj(t("ayarlar.grupTeknikServis"), [
+          ayarSatirHtml({
+            baslik: t("ayarlar.servisDurumEtiket"),
+            denetimHtml: `<div class="ayar-secim-grup"><span class="durum-rozet ${durumSinif}">${svgDurumSimge(durumSinif)} ${escHtml(durumMetin)}</span>${canliMi() && !sd.calisiyor ? `<button type="button" class="birincil-btn" data-servis-baslat="1">${escHtml(t("genel.servisBaslatBtn"))}</button>` : ""}<button type="button" class="ikincil-btn" data-ayar-servis-kontrol="1">${escHtml(t("ayarlar.servisYenidenKontrol"))}</button></div>`,
+          }),
+          ayarSatirHtml({
+            id: "ayar-port",
+            baslik: t("ayarlar.servisPort"),
+            not: `${t("ayarlar.portNot")} · ${t("ayarlar.saltOkumaEtiket")}: ${okunanPort}`,
+            denetimHtml: `<input type="number" min="0" max="65535" class="esik-girdi" id="ayar-port" value="${Number(a.servisPort) || 0}">`,
+          }),
+          ayarSatirHtml({
+            id: "ayar-port-oto",
+            baslik: t("ayarlar.otomatikPort"),
+            denetimHtml: ayarAnahtarHtml({ id: "ayar-port-oto", checked: Boolean(a.otomatikPort), label: t("ayarlar.otomatikPort"), attr: "data-ayar-anahtar", val: "otomatikPort" }),
+          }),
+          ayarSatirHtml({
+            baslik: t("ayarlar.pipeEtiket"),
+            denetimHtml: `<code class="salt-okuma-kutu">${escHtml(okunanPipe)}</code>`,
+          }),
+          ayarSatirHtml({
+            baslik: t("ayarlar.sonSiraEtiket"),
+            denetimHtml: `<code class="salt-okuma-kutu rakam">${escHtml(okunanSira)}</code>`,
+          }),
+        ]),
+        ayarGrupObj(t("ayarlar.grupTeknikAralik"), [
+          ayarSatirHtml({
+            id: "ayar-cx-etkin",
+            baslik: t("ayarlar.codexEtkinDk"),
+            not: t("ayarlar.codexEtkinDkNot"),
+            denetimHtml: `<input type="number" min="1" max="1440" class="esik-girdi" id="ayar-cx-etkin" value="${Number(a.codexEtkinDk) || 5}">`,
+          }),
+          ayarSatirHtml({
+            id: "ayar-cx-bosta",
+            baslik: t("ayarlar.codexBostaDk"),
+            not: t("ayarlar.codexBostaDkNot"),
+            denetimHtml: `<input type="number" min="1" max="1440" class="esik-girdi" id="ayar-cx-bosta" value="${Number(a.codexBostaDk) || 30}">`,
+          }),
+          ayarSatirHtml({
+            baslik: t("ayarlar.gunlukKlasoruBtn"),
+            not: t("ayarlar.gunlukKlasoruIpucu"),
+            denetimHtml: `<button type="button" class="ikincil-btn" data-ayar-eylem="gunluk" ${canliMi() ? "" : "disabled"}>${escHtml(t("ayarlar.gunlukKlasoruBtn"))}</button>`,
+          }),
+          ayarSatirHtml({
+            baslik: t("ayarlar.tarihVeriDisaAktar"),
+            not: t("ayarlar.tarihVeriIpucu"),
+            denetimHtml: `<button type="button" class="ikincil-btn" data-ayar-eylem="disa-aktar" ${canliMi() && sd.calisiyor ? "" : "disabled"}>${escHtml(t("ayarlar.tarihVeriDisaAktar"))}</button>`,
+          }),
+        ]),
+      ];
     } else {
       const belgeBasliklar = {
         mit: t("ayarlar.lisansMitBtn"),
@@ -3882,57 +5028,130 @@
         ucuncu_taraf: t("ayarlar.ucuncuTarafBaslik"),
       };
       const belgeBaslik = durum.lisansBelge ? belgeBasliklar[durum.lisansBelge.tur] || durum.lisansBelge.baslik : "";
-      html =
-        ayarGrupHtml(
-          t("ayarlar.grupHakkindaBilgi"),
-          [
-            ayarSatirHtml({
-              baslik: t("ayarlar.surumEtiket"),
-              not: t("ayarlar.mimariNot"),
-              denetimHtml: `<code class="salt-okuma-kutu rakam">v${escHtml(durum.anlik?.surum || "0.1.0")}</code>`,
-            }),
-            ayarSatirHtml({
-              baslik: t("ayarlar.gizlilikBaslik"),
-              not: t("ayarlar.gizlilikNot"),
-              denetimHtml: "",
-            }),
-          ].join("")
-        ) +
-        ayarGrupHtml(
-          t("ayarlar.grupHakkindaLisans"),
-          [
-            ayarSatirHtml({
-              baslik: t("ayarlar.lisansBaslik"),
-              not: t("ayarlar.lisansOzeti"),
-              denetimHtml: `<div class="ayar-secim-grup"><button type="button" class="ikincil-btn" data-lisans-belge="mit">${escHtml(t("ayarlar.lisansMitBtn"))}</button><button type="button" class="ikincil-btn" data-lisans-belge="apache">${escHtml(t("ayarlar.lisansApacheBtn"))}</button></div>`,
-            }),
-            ayarSatirHtml({
-              baslik: t("ayarlar.ucuncuTarafBaslik"),
-              not: t("ayarlar.ucuncuTarafListe"),
-              denetimHtml: `<button type="button" class="ikincil-btn" data-lisans-belge="ucuncu_taraf">${escHtml(t("ayarlar.ucuncuTarafBtn"))}</button>`,
-            }),
-            ayarSatirHtml({
-              baslik: t("ayarlar.markaBaslik"),
-              not: t("ayarlar.markaUyarisi"),
-              denetimHtml: "",
-            }),
-          ].join("")
-        ) +
-        (durum.lisansBelge
-          ? `<div class="lisans-belge" role="region" aria-label="${escHtml(belgeBaslik)}">
-               <div class="lisans-belge-ust">
-                 <strong>${escHtml(belgeBaslik)}</strong>
-                 <button type="button" class="ikincil-btn" data-lisans-kapat="1">${escHtml(t("ayarlar.belgeKapat"))}</button>
-               </div>
-               <pre class="lisans-metin" tabindex="0">${escHtml(durum.lisansBelge.metin)}</pre>
-             </div>`
-          : "");
+      gruplar = [
+        ayarGrupObj(t("ayarlar.grupHakkindaBilgi"), [
+          ayarSatirHtml({
+            baslik: t("ayarlar.surumEtiket"),
+            not: t("ayarlar.mimariNot"),
+            denetimHtml: `<code class="salt-okuma-kutu rakam">v${escHtml(durum.anlik?.surum || "0.1.0")}</code>`,
+          }),
+          ayarSatirHtml({
+            baslik: t("ayarlar.gizlilikBaslik"),
+            not: t("ayarlar.gizlilikNot"),
+            denetimHtml: "",
+          }),
+        ]),
+        ayarGrupObj(t("ayarlar.grupHakkindaLisans"), [
+          ayarSatirHtml({
+            baslik: t("ayarlar.lisansBaslik"),
+            not: t("ayarlar.lisansOzeti"),
+            denetimHtml: `<div class="ayar-secim-grup"><button type="button" class="ikincil-btn" data-lisans-belge="mit">${escHtml(t("ayarlar.lisansMitBtn"))}</button><button type="button" class="ikincil-btn" data-lisans-belge="apache">${escHtml(t("ayarlar.lisansApacheBtn"))}</button></div>`,
+          }),
+          ayarSatirHtml({
+            baslik: t("ayarlar.ucuncuTarafBaslik"),
+            not: t("ayarlar.ucuncuTarafListe"),
+            denetimHtml: `<button type="button" class="ikincil-btn" data-lisans-belge="ucuncu_taraf">${escHtml(t("ayarlar.ucuncuTarafBtn"))}</button>`,
+          }),
+          ayarSatirHtml({
+            baslik: t("ayarlar.markaBaslik"),
+            not: t("ayarlar.markaUyarisi"),
+            denetimHtml: "",
+          }),
+        ]),
+      ];
+      if (durum.lisansBelge && !aramaNorm) {
+        ekHtml = `<div class="lisans-belge" role="region" aria-label="${escHtml(belgeBaslik)}">
+          <div class="lisans-belge-ust">
+            <strong>${escHtml(belgeBaslik)}</strong>
+            <button type="button" class="ikincil-btn" data-lisans-kapat="1">${escHtml(t("ayarlar.belgeKapat"))}</button>
+          </div>
+          <pre class="lisans-metin" tabindex="0">${escHtml(durum.lisansBelge.metin)}</pre>
+        </div>`;
+      }
+    }
+
+    const bolumAd = bolumId === "hakkinda" ? t("ayarlar.hakkindaKisa") : t(`ayarlar.bolumler.${bolumId}`);
+    const bolumEslesir = Boolean(aramaNorm) && aramaNormalize(bolumAd).includes(aramaNorm);
+    let eslesmeSayisi = 0;
+    const htmlParcalari = [];
+    for (const g of gruplar) {
+      const grupEslesir = bolumEslesir || (Boolean(aramaNorm) && aramaNormalize(g.baslik).includes(aramaNorm));
+      const eslesenSatirlar = aramaNorm
+        ? grupEslesir
+          ? g.satirlar
+          : g.satirlar.filter((s) => aramaNormalize(s.arama).includes(aramaNorm))
+        : g.satirlar;
+      if (eslesenSatirlar.length === 0) continue;
+      eslesmeSayisi += eslesenSatirlar.length;
+      const gBaslik = aramaNorm ? `${bolumAd} · ${g.baslik}` : g.baslik;
+      htmlParcalari.push(ayarGrupHtml(gBaslik, eslesenSatirlar.map((s) => s.html).join("")));
+    }
+    return { eslesmeSayisi, html: htmlParcalari.join("") + ekHtml };
+  }
+
+  function ayarlarSekmesiCiz() {
+    const bolumler = ["genel", "platformlar", "havuzlar", "bildirimler", "teknik", "hakkinda"];
+    durum.ayarBolum = ayarBolumuNormalizeEt(durum.ayarBolum);
+
+    const aramaGirdi = document.getElementById("ayar-arama-girdi");
+    const aramaTemizle = document.getElementById("btn-ayar-arama-temizle");
+    if (aramaGirdi) {
+      const yerTutucu = t("ayarlar.aramaYerTutucu");
+      if (aramaGirdi.placeholder !== yerTutucu) aramaGirdi.placeholder = yerTutucu;
+      aramaGirdi.setAttribute("aria-label", yerTutucu);
+      if (aramaGirdi.value !== durum.ayarArama) aramaGirdi.value = durum.ayarArama;
+    }
+    if (aramaTemizle) {
+      aramaTemizle.classList.toggle("gizli", !durum.ayarArama.trim());
+      aramaTemizle.setAttribute("aria-label", t("ayarlar.aramaTemizle"));
+    }
+
+    const hamSorgu = durum.ayarArama.trim();
+    const aramaNorm = hamSorgu ? aramaNormalize(hamSorgu) : "";
+
+    let icerikHtml = "";
+    let gorunenBolumler = bolumler;
+
+    if (aramaNorm) {
+      const eslesenBolumler = [];
+      const parcalar = [];
+      for (const b of bolumler) {
+        const sonuc = ayarBolumIcerigiUret(b, aramaNorm);
+        if (sonuc.eslesmeSayisi > 0) {
+          eslesenBolumler.push(b);
+          parcalar.push(sonuc.html);
+        }
+      }
+      gorunenBolumler = eslesenBolumler;
+      icerikHtml =
+        parcalar.length > 0
+          ? parcalar.join("")
+          : `<div class="bos-durum"><p>${escHtml(fmt("ayarlar.aramaSonucYok", { sorgu: hamSorgu }))}</p></div>`;
+    } else {
+      icerikHtml = ayarBolumIcerigiUret(durum.ayarBolum, "").html;
+    }
+
+    const yanMenuEl = document.getElementById("ayarlar-bolum-menu");
+    if (yanMenuEl) {
+      const mOdak = odakKimligiAl(yanMenuEl);
+      yanMenuEl.innerHTML = gorunenBolumler
+        .map((b) => {
+          const ad = b === "hakkinda" ? t("ayarlar.hakkindaKisa") : t(`ayarlar.bolumler.${b}`);
+          const aktif = !aramaNorm && durum.ayarBolum === b;
+          return `
+            <button type="button" class="ayar-bolum-btn${aktif ? " aktif" : ""}" data-ayar-bolum="${b}" aria-current="${aktif ? "page" : "false"}">
+              ${svgAyarBolumIkon(b)}
+              <span>${escHtml(ad)}</span>
+            </button>`;
+        })
+        .join("");
+      odakKimligiYukle(yanMenuEl, mOdak);
     }
 
     const gridEl = document.getElementById("ayarlar-grid");
     if (gridEl) {
       const gOdak = odakKimligiAl(gridEl);
-      gridEl.innerHTML = html;
+      gridEl.innerHTML = icerikHtml;
       odakKimligiYukle(gridEl, gOdak);
     }
   }
@@ -3982,7 +5201,7 @@
         const oran = typeof etkinKalan === "number" ? (durum.degerYonu === "kullanilan" ? 1 - etkinKalan : etkinKalan) : null;
         const yuzdeMetin = oran !== null ? yuzdeBicimle(oran) : "—";
         const sinif = dolguSinifiBul(h, olcum, g.repId);
-        const kisaAd = PLATFORM_KISA[g.platform] || g.ad.slice(0, 3).toUpperCase();
+        const kisaAd = PLATFORM_KISA[g.platform] || monogramHarfleri(g.platform);
         const metin = `${kisaAd} ${yuzdeMetin}`;
         const tamBilgi = `${g.ad}: ${oran !== null ? `${yuzdeMetin} ${durum.degerYonu === "kullanilan" ? t("genel.kullanildi") : t("genel.kalan")}` : t("baski.bilinmiyor")}`;
         return `<span class="serit-oge ${escHtml(sinif)}" title="${escHtml(tamBilgi)}" aria-label="${escHtml(tamBilgi)}">${svgDurumSimge(sinif)}<span class="serit-oge-ad rakam">${escHtml(metin)}</span></span>`;
@@ -4260,10 +5479,10 @@
   }
 
   function kartSinirlariHesapla(kartlar) {
-    const sabitSet = new Set(durum.kartTercihler.sabitKartlar);
+    const sinif = kartTercihSiniflandir(durum.anlik.havuzlar);
     let sabitSayi = 0;
     for (const k of kartlar) {
-      if (sabitSet.has(k.dataset.havuzId)) sabitSayi++;
+      if (sinif.platformSabitSira(k.dataset.havuzId) !== null) sabitSayi++;
       else break;
     }
     return sabitSayi;
@@ -4404,7 +5623,13 @@
 
   function kartSabitDegistir(id) {
     if (!id || (!platformMevcutMu(id) && !durum.anlik.havuzlar?.[id])) return;
-    const hedefId = platformKimligineEsle(id, durum.anlik.havuzlar);
+    const havuzMap = durum.anlik.havuzlar || {};
+    const havuzMu = Boolean(havuzMap[id] && havuzMap[id].platform && havuzMap[id].platform !== id);
+    if (havuzMu) {
+      havuzSabitDegistir(id);
+      return;
+    }
+    const hedefId = platformKimligineEsle(id, havuzMap);
     const konteyner =
       durum.yuzey === "acilir"
         ? document.getElementById("acilir-havuz-listesi")
@@ -4414,17 +5639,19 @@
     const itemSelector = durum.yuzey === "acilir" ? ".havuz-satir" : ".detay-kart";
     const eskiKonumlar = idKonumHaritasiAl(konteyner, itemSelector);
 
-    const liste = kartListesiniPlatformaEsle(durum.kartTercihler.sabitKartlar, durum.anlik.havuzlar);
-    const idx = liste.indexOf(hedefId);
-    const sabitlendi = idx === -1;
-    if (sabitlendi) liste.push(hedefId);
-    else liste.splice(idx, 1);
-    durum.kartTercihler.sabitKartlar = liste;
+    const liste = [...durum.kartTercihler.sabitKartlar];
+    const pHavuzIdleri = new Set(platformHavuzlari(hedefId).map(([hid]) => hid));
+    const mevcut = liste.includes(hedefId) || [...pHavuzIdleri].some((hid) => liste.includes(hid));
+    const sabitlendi = !mevcut;
+    const temiz = liste.filter((k) => k !== hedefId && !pHavuzIdleri.has(k));
+    if (sabitlendi) temiz.push(hedefId);
+    durum.kartTercihler.sabitKartlar = temiz;
     kartTercihleriniKaydet();
 
     acilirCiz();
     simdiSekmesiCiz();
     seritCiz();
+    if (durum.sekme === "ayarlar") ayarlarSekmesiCiz();
 
     if (konteyner) flipAnimasyonuUygula(konteyner, eskiKonumlar, null);
     const ad = kartGorunenAdi(hedefId);
@@ -4433,21 +5660,92 @@
 
   function kartGizleDegistir(id) {
     if (!id || (!platformMevcutMu(id) && !durum.anlik.havuzlar?.[id])) return;
-    const hedefId = platformKimligineEsle(id, durum.anlik.havuzlar);
-    const liste = kartListesiniPlatformaEsle(durum.kartTercihler.gizliKartlar, durum.anlik.havuzlar);
-    const idx = liste.indexOf(hedefId);
-    const gizlendi = idx === -1;
-    if (gizlendi) liste.push(hedefId);
-    else liste.splice(idx, 1);
-    durum.kartTercihler.gizliKartlar = liste;
+    const havuzMap = durum.anlik.havuzlar || {};
+    const havuzMu = Boolean(havuzMap[id] && havuzMap[id].platform && havuzMap[id].platform !== id);
+    if (havuzMu) {
+      havuzGenelGosterDegistir(id);
+      return;
+    }
+    const hedefId = platformKimligineEsle(id, havuzMap);
+    const pHavuzIdleri = new Set(platformHavuzlari(hedefId).map(([hid]) => hid));
+    const liste = [...durum.kartTercihler.gizliKartlar];
+    const suAnGizli =
+      liste.includes(hedefId) || (pHavuzIdleri.size > 0 && [...pHavuzIdleri].every((hid) => liste.includes(hid)));
+    const gizlendi = !suAnGizli;
+    const temiz = liste.filter((k) => k !== hedefId && !pHavuzIdleri.has(k));
+    if (gizlendi) temiz.push(hedefId);
+    durum.kartTercihler.gizliKartlar = temiz;
     kartTercihleriniKaydet();
 
     acilirCiz();
     simdiSekmesiCiz();
     seritCiz();
+    if (durum.sekme === "ayarlar") ayarlarSekmesiCiz();
 
     const ad = kartGorunenAdi(hedefId);
     ekranOkuyucuDuyur(fmt(gizlendi ? "kartlar.duyuruGizlendi" : "kartlar.duyuruGosterildi", { ad }));
+  }
+
+  function havuzGenelGosterDegistir(havuzId) {
+    const havuzMap = durum.anlik.havuzlar || {};
+    const h = havuzMap[havuzId];
+    if (!h || havuzGorulmuyorMu(h)) return;
+    const p = h.platform || havuzId;
+    const sinif = kartTercihSiniflandir(havuzMap);
+    const suAnGizli = havuzGizliMi(havuzId, h, sinif);
+    let liste = [...durum.kartTercihler.gizliKartlar];
+    const aktifKardesler = platformHavuzlari(p).map(([hid]) => hid);
+
+    if (suAnGizli) {
+      if (liste.includes(p) && p !== havuzId) {
+        liste = liste.filter((k) => k !== p);
+        for (const kid of aktifKardesler) {
+          if (kid !== havuzId && !liste.includes(kid)) liste.push(kid);
+        }
+      }
+      liste = liste.filter((k) => k !== havuzId);
+    } else {
+      if (!liste.includes(havuzId)) liste.push(havuzId);
+    }
+
+    durum.kartTercihler.gizliKartlar = liste;
+    kartTercihleriniKaydet();
+    acilirCiz();
+    simdiSekmesiCiz();
+    seritCiz();
+    if (durum.sekme === "ayarlar") ayarlarSekmesiCiz();
+    ekranOkuyucuDuyur(fmt(suAnGizli ? "kartlar.duyuruGosterildi" : "kartlar.duyuruGizlendi", { ad: havuzKisaAd(h) || h.etiket }));
+  }
+
+  function havuzSabitDegistir(havuzId) {
+    const havuzMap = durum.anlik.havuzlar || {};
+    const h = havuzMap[havuzId];
+    if (!h || havuzGorulmuyorMu(h)) return;
+    const p = h.platform || havuzId;
+    const sinif = kartTercihSiniflandir(havuzMap);
+    const suAnSabit = havuzSabitMi(havuzId, h, sinif);
+    let liste = [...durum.kartTercihler.sabitKartlar];
+    const aktifKardesler = platformHavuzlari(p).map(([hid]) => hid);
+
+    if (suAnSabit) {
+      if (liste.includes(p) && p !== havuzId) {
+        liste = liste.filter((k) => k !== p);
+        for (const kid of aktifKardesler) {
+          if (kid !== havuzId && !liste.includes(kid)) liste.push(kid);
+        }
+      }
+      liste = liste.filter((k) => k !== havuzId);
+    } else {
+      if (!liste.includes(havuzId)) liste.push(havuzId);
+    }
+
+    durum.kartTercihler.sabitKartlar = liste;
+    kartTercihleriniKaydet();
+    acilirCiz();
+    simdiSekmesiCiz();
+    seritCiz();
+    if (durum.sekme === "ayarlar") ayarlarSekmesiCiz();
+    ekranOkuyucuDuyur(fmt(suAnSabit ? "kartlar.duyuruSabitKaldirildi" : "kartlar.duyuruSabitlendi", { ad: havuzKisaAd(h) || h.etiket }));
   }
 
   function kartDuzeniniSifirla() {
@@ -4849,11 +6147,213 @@
     if (!anahtar) return;
     if (durum.duzenleModu && anahtar !== "genel") duzenleModuDegistir(false);
     durum.platformSekme = anahtar;
+    if (anahtar !== "genel") {
+      const yeniIdler = platformHavuzlari(anahtar)
+        .filter(([hid, h]) => havuzYeniMi(hid, h))
+        .map(([hid]) => hid);
+      if (yeniIdler.length > 0 && durum.altSekmeler?.[anahtar] && durum.altSekmeler[anahtar] !== "tumu") {
+        havuzuGorulduIsaretle([durum.altSekmeler[anahtar]]);
+      }
+    }
     acilirCiz();
     simdiSekmesiCiz();
     if (odakla) {
       const kap = durum.yuzey === "acilir" ? "#acilir-platform-sekmeler" : "#simdi-platform-sekmeler";
       document.querySelector(`${kap} [data-platform-sekme="${CSS.escape(anahtar)}"]`)?.focus();
+    }
+  }
+
+  function altSekmeSec(platform, secim, odakla) {
+    if (!platform || !secim) return;
+    durum.altSekmeler = { ...(durum.altSekmeler || {}), [platform]: secim };
+    tercihSenkronizeKaydet();
+    if (secim !== "tumu") havuzuGorulduIsaretle([secim]);
+    acilirCiz();
+    simdiSekmesiCiz();
+    if (odakla) {
+      const kap = durum.yuzey === "acilir" ? "#acilir-detay" : "#simdi-detay";
+      document.querySelector(`${kap} [data-alt-sekme="${CSS.escape(secim)}"]`)?.focus();
+    }
+  }
+
+  function kesifIncele() {
+    const yeniler = yeniHavuzlariBul();
+    if (yeniler.length === 0) return;
+    havuzuGorulduIsaretle(yeniler.map(([id]) => id));
+    if (yeniler.length === 1) {
+      const [id, h] = yeniler[0];
+      const p = h.platform;
+      if (p) {
+        durum.altSekmeler = { ...(durum.altSekmeler || {}), [p]: id };
+        tercihSenkronizeKaydet();
+        durum.platformSekme = p;
+      }
+      if (durum.yuzey === "pencere") durum.sekme = "simdi";
+      tumunuCiz();
+      return;
+    }
+    durum.ayarBolum = "havuzlar";
+    tercihSenkronizeKaydet();
+    if (durum.yuzey === "acilir") genislet("ayarlar");
+    else {
+      durum.sekme = "ayarlar";
+      tumunuCiz();
+    }
+  }
+
+  function kesifKapat() {
+    const yeniler = yeniHavuzlariBul();
+    if (yeniler.length > 0) havuzuGorulduIsaretle(yeniler.map(([id]) => id));
+    acilirCiz();
+    simdiSekmesiCiz();
+    if (durum.sekme === "ayarlar") ayarlarSekmesiCiz();
+  }
+
+  // --------------------------------------------------------------------------
+  // 14c. Kart Sağ Tık Bağlam Menüsü (Sağ tık, Shift+F10, Menü tuşu)
+  // --------------------------------------------------------------------------
+  let baglamDurum = null;
+
+  function havuzOzetMetni(hedefId, tur) {
+    const havuzMap = durum.anlik.havuzlar || {};
+    const havuzlar =
+      tur === "havuz" && havuzMap[hedefId]
+        ? [[hedefId, havuzMap[hedefId]]]
+        : platformHavuzlari(hedefId);
+    if (havuzlar.length === 0) return platformAdi(hedefId);
+    return havuzlar
+      .map(([, h]) => {
+        const ad = h.etiket || platformAdi(h.platform);
+        const pList = pencereSirali(h);
+        if (pList.length > 0) {
+          const parcalar = pList.map((pAd) => {
+            const ol = h.pencereler[pAd];
+            const oran = oranMetni(anaDegerOrani(ol));
+            const sure = ol?.sifirlama ? ` (${t("genel.sifirlama")} ${sureKisa(ol.sifirlama)})` : "";
+            return `${pencereEtiketi(pAd, ol)}: ${oran}${sure}`;
+          });
+          return `${ad} · ${parcalar.join(" · ")}`;
+        }
+        if (h.ek?.kullanim) {
+          const sm = sayacMetinleri(h.ek.kullanim);
+          return `${ad} · ${sm.s24}`;
+        }
+        if (h.bakiye && typeof h.bakiye.toplam === "number") {
+          return `${ad} · ${sayiBicimle(h.bakiye.toplam, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${h.bakiye.para_birimi || ""}`.trim();
+        }
+        return `${ad} · ${t(`baski.${h.durum}`, h.durum)}`;
+      })
+      .join("\n");
+  }
+
+  function panoyaKopyala(metin) {
+    if (!metin) return;
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(metin).catch(() => {});
+      return;
+    }
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = metin;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+    } catch (_) {
+      // Yoksay
+    }
+  }
+
+  function baglamMenuKapat(odagiGeriVer = false) {
+    const menu = document.getElementById("cetvel-baglam-menu");
+    const onceki = baglamDurum?.oncekiOdak || null;
+    baglamDurum = null;
+    if (menu) {
+      menu.classList.add("gizli");
+      menu.innerHTML = "";
+    }
+    if (odagiGeriVer && onceki && onceki.isConnected && typeof onceki.focus === "function") {
+      onceki.focus({ preventScroll: true });
+    }
+  }
+
+  function baglamMenuAc(hedefId, tur, x, y, oncekiOdak) {
+    const menu = document.getElementById("cetvel-baglam-menu");
+    if (!menu || !hedefId) return;
+    ipucuGizle();
+
+    const havuzMap = durum.anlik.havuzlar || {};
+    const sinif = kartTercihSiniflandir(havuzMap);
+    const h = tur === "havuz" ? havuzMap[hedefId] : null;
+    const platform = h?.platform || hedefId;
+    const pHavuzlar = platformHavuzlari(platform);
+
+    const sabitMi =
+      tur === "havuz" && h
+        ? havuzSabitMi(hedefId, h, sinif)
+        : sinif.sabitPlatform.has(platform) || pHavuzlar.some(([hid]) => sinif.sabitHavuz.has(hid));
+    const gizliMi =
+      tur === "havuz" && h
+        ? havuzGizliMi(hedefId, h, sinif)
+        : sinif.gizliPlatform.has(platform) || (pHavuzlar.length > 0 && pHavuzlar.every(([hid]) => sinif.gizliHavuz.has(hid)));
+
+    menu.innerHTML = `
+      <button type="button" class="baglam-oge" role="menuitem" data-baglam-eylem="sabitle">${escHtml(sabitMi ? t("kartlar.sabitiKaldir") : t("kartlar.sabitle"))}</button>
+      <button type="button" class="baglam-oge" role="menuitem" data-baglam-eylem="gizle">${escHtml(gizliMi ? t("kartlar.goster") : t("kartlar.gizle"))}</button>
+      <div class="baglam-ayrac" role="separator"></div>
+      <button type="button" class="baglam-oge" role="menuitem" data-baglam-eylem="ayrinti">${escHtml(t("baglamMenu.ayrintiyiAc"))}</button>
+      <button type="button" class="baglam-oge" role="menuitem" data-baglam-eylem="yenile">${escHtml(t("baglamMenu.yenile"))}</button>
+      <button type="button" class="baglam-oge" role="menuitem" data-baglam-eylem="kopyala">${escHtml(t("baglamMenu.degerleriKopyala"))}</button>
+    `;
+
+    menu.classList.remove("gizli");
+    menu.style.left = "0px";
+    menu.style.top = "0px";
+    const r = menu.getBoundingClientRect();
+    const sol = clamp(x, 8, Math.max(8, window.innerWidth - r.width - 8));
+    const ust = clamp(y, 8, Math.max(8, window.innerHeight - r.height - 8));
+    menu.style.left = `${Math.round(sol)}px`;
+    menu.style.top = `${Math.round(ust)}px`;
+
+    baglamDurum = { hedefId, tur, platform, oncekiOdak: oncekiOdak || document.activeElement };
+    menu.querySelector('[role="menuitem"]')?.focus({ preventScroll: true });
+  }
+
+  function baglamEylemiCalistir(eylem) {
+    if (!baglamDurum) return;
+    const { hedefId, tur, platform } = baglamDurum;
+    baglamMenuKapat(eylem === "kopyala" || eylem === "yenile");
+    if (eylem === "sabitle") {
+      if (tur === "havuz") havuzSabitDegistir(hedefId);
+      else kartSabitDegistir(platform);
+    } else if (eylem === "gizle") {
+      if (tur === "havuz") havuzGenelGosterDegistir(hedefId);
+      else kartGizleDegistir(platform);
+    } else if (eylem === "ayrinti") {
+      if (tur === "havuz") {
+        durum.altSekmeler = { ...(durum.altSekmeler || {}), [platform]: hedefId };
+        tercihSenkronizeKaydet();
+        havuzuGorulduIsaretle([hedefId]);
+      }
+      platformSekmesiSec(platform, false);
+    } else if (eylem === "yenile") {
+      if (canliMi()) {
+        invoke("yenile_iste", { havuz: tur === "havuz" ? hedefId : null })
+          .then((r) => {
+            if (r?.istendi) bildirimGoster(t("genel.yenileIstendi"));
+            else if (r?.bekleSn) bildirimGoster(fmt("genel.hizSiniriSn", { sn: r.bekleSn }));
+            else bildirimGoster(r?.hata ? fmt("genel.islemHatasi", { hata: r.hata }) : t("genel.servisYok"));
+          })
+          .catch((e) => bildirimGoster(fmt("genel.islemHatasi", { hata: hataMetni(e) })));
+      } else {
+        yenileTetikle();
+      }
+    } else if (eylem === "kopyala") {
+      panoyaKopyala(havuzOzetMetni(hedefId, tur));
+      bildirimGoster(t("baglamMenu.kopyalandi"));
     }
   }
 
@@ -4877,12 +6377,20 @@
     });
 
     window.addEventListener("storage", (ev) => {
+      if (ev.key === GORULEN_ANAHTARI) {
+        durum.gorulenHavuzlar = gorulenleriOku();
+        acilirCiz();
+        simdiSekmesiCiz();
+        if (durum.sekme === "ayarlar") ayarlarSekmesiCiz();
+        return;
+      }
       if (ev.key === KART_TERCIH_ANAHTARI) {
         durum.kartTercihler = kartTercihleriniOku();
         if (!aktifSurukleme && !klavyeSurukleme) {
           acilirCiz();
           simdiSekmesiCiz();
           seritCiz();
+          if (durum.sekme === "ayarlar") ayarlarSekmesiCiz();
         }
         return;
       }
@@ -4895,6 +6403,7 @@
         durum.pastaAltTuru = t2.pastaAltTuru || durum.pastaAltTuru;
         durum.gorunumModu = t2.gorunumModu || durum.gorunumModu;
         durum.degerYonu = t2.degerYonu || durum.degerYonu;
+        if (t2.altSekmeler && typeof t2.altSekmeler === "object") durum.altSekmeler = altSekmeTemizle(t2.altSekmeler);
         if (typeof t2.ayarBolum === "string") durum.ayarBolum = ayarBolumuNormalizeEt(t2.ayarBolum);
         if (t2.uiDil && t2.uiDil !== durum.dil) {
           dilYukleVeUygula(t2.uiDil);
@@ -4929,6 +6438,47 @@
     });
 
     document.addEventListener("click", (ev) => {
+      const baglamBtn = ev.target.closest("[data-baglam-eylem]");
+      if (baglamBtn) {
+        baglamEylemiCalistir(baglamBtn.dataset.baglamEylem);
+        return;
+      }
+      if (baglamDurum && !ev.target.closest("#cetvel-baglam-menu")) {
+        baglamMenuKapat(false);
+      }
+      if (ev.target.closest("[data-kesif-incele]")) {
+        kesifIncele();
+        return;
+      }
+      if (ev.target.closest("[data-kesif-kapat]")) {
+        kesifKapat();
+        return;
+      }
+      const altSekmeBtn = ev.target.closest("[data-alt-sekme]");
+      if (altSekmeBtn) {
+        altSekmeSec(altSekmeBtn.dataset.altPlatform, altSekmeBtn.dataset.altSekme, false);
+        return;
+      }
+      const gorulmeyenBtn = ev.target.closest("[data-gorulmeyen-toggle]");
+      if (gorulmeyenBtn) {
+        const p = gorulmeyenBtn.dataset.gorulmeyenToggle;
+        if (p) {
+          if (durum.acikGorulmeyenler.has(p)) durum.acikGorulmeyenler.delete(p);
+          else durum.acikGorulmeyenler.add(p);
+          acilirCiz();
+          simdiSekmesiCiz();
+        }
+        return;
+      }
+      if (ev.target.closest("[data-ekmek-genel]")) {
+        platformSekmesiSec("genel", false);
+        return;
+      }
+      const ekmekPlt = ev.target.closest("[data-ekmek-platform]");
+      if (ekmekPlt) {
+        altSekmeSec(ekmekPlt.dataset.ekmekPlatform, "tumu", false);
+        return;
+      }
       if (ev.target.closest("[data-servis-baslat]")) {
         servisBaslat();
         return;
@@ -5138,11 +6688,43 @@
       }
     });
 
-    // Ayarlar yan menüsü & panel etkileşimleri
+    // Kart sağ tık bağlam menüsü
+    document.addEventListener("contextmenu", (ev) => {
+      const kart = ev.target.closest?.(".kompakt-kart[data-havuz-id], .detay-havuz[data-havuz-id]");
+      if (!kart || durum.duzenleModu) return;
+      const id = kart.dataset.havuzId;
+      if (!id) return;
+      ev.preventDefault();
+      const tur = kart.classList.contains("detay-havuz") ? "havuz" : "platform";
+      baglamMenuAc(id, tur, ev.clientX, ev.clientY, document.activeElement);
+    });
+    window.addEventListener("blur", () => {
+      if (baglamDurum) baglamMenuKapat(false);
+    });
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (baglamDurum) baglamMenuKapat(false);
+      },
+      true
+    );
+
+    // Ayarlar yan menüsü, arama kutusu & panel etkileşimleri
+    document.getElementById("ayar-arama-girdi")?.addEventListener("input", (ev) => {
+      durum.ayarArama = ev.target.value || "";
+      ayarlarSekmesiCiz();
+    });
+    document.getElementById("btn-ayar-arama-temizle")?.addEventListener("click", () => {
+      durum.ayarArama = "";
+      ayarlarSekmesiCiz();
+      document.getElementById("ayar-arama-girdi")?.focus();
+    });
+
     document.getElementById("ayarlar-bolum-menu")?.addEventListener("click", (ev) => {
       const btn = ev.target.closest("[data-ayar-bolum]");
       if (!btn) return;
       durum.ayarSifirlaOnay = false;
+      durum.ayarArama = "";
       durum.ayarBolum = ayarBolumuNormalizeEt(btn.dataset.ayarBolum);
       tercihSenkronizeKaydet();
       ayarlarSekmesiCiz();
@@ -5151,6 +6733,26 @@
     const ayarGrid = document.getElementById("ayarlar-grid");
     if (ayarGrid) {
       ayarGrid.addEventListener("click", (ev) => {
+        const expBtn = ev.target.closest("[data-expander-toggle]");
+        if (expBtn) {
+          const p = expBtn.dataset.expanderToggle;
+          if (p) {
+            if (durum.acikGenisleticiler.has(p)) durum.acikGenisleticiler.delete(p);
+            else durum.acikGenisleticiler.add(p);
+            ayarlarSekmesiCiz();
+          }
+          return;
+        }
+        const hGosterBtn = ev.target.closest("[data-havuz-goster]");
+        if (hGosterBtn && !hGosterBtn.disabled) {
+          havuzGenelGosterDegistir(hGosterBtn.dataset.havuzGoster);
+          return;
+        }
+        const hSabitBtn = ev.target.closest("[data-havuz-sabitle]");
+        if (hSabitBtn && !hSabitBtn.disabled) {
+          havuzSabitDegistir(hSabitBtn.dataset.havuzSabitle);
+          return;
+        }
         const belgeBtn = ev.target.closest("[data-lisans-belge]");
         if (belgeBtn) {
           lisansBelgesiAc(belgeBtn.dataset.lisansBelge);
@@ -5334,12 +6936,69 @@
     document.addEventListener("keydown", (ev) => {
       const tag = document.activeElement?.tagName;
       const yaziyorMu = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+
+      if ((ev.ctrlKey || ev.metaKey) && !ev.altKey && ev.key.toLowerCase() === "f") {
+        if (durum.yuzey === "pencere" && durum.sekme === "ayarlar") {
+          const aramaEl = document.getElementById("ayar-arama-girdi");
+          if (aramaEl) {
+            ev.preventDefault();
+            aramaEl.focus();
+            aramaEl.select();
+            return;
+          }
+        }
+      }
+
+      if (document.activeElement?.id === "ayar-arama-girdi" && ev.key === "Escape") {
+        if (durum.ayarArama) {
+          ev.preventDefault();
+          durum.ayarArama = "";
+          ayarlarSekmesiCiz();
+          return;
+        }
+      }
+
+      if (baglamDurum) {
+        const menu = document.getElementById("cetvel-baglam-menu");
+        const ogeler = menu ? [...menu.querySelectorAll('[role="menuitem"]')] : [];
+        if (ev.key === "Escape") {
+          ev.preventDefault();
+          baglamMenuKapat(true);
+          return;
+        }
+        if (ev.key === "Tab") {
+          baglamMenuKapat(false);
+          return;
+        }
+        if (ogeler.length > 0 && ["ArrowDown", "ArrowUp", "Home", "End"].includes(ev.key)) {
+          ev.preventDefault();
+          const idx = ogeler.indexOf(document.activeElement);
+          let hedef = 0;
+          if (ev.key === "ArrowDown") hedef = idx === -1 ? 0 : (idx + 1) % ogeler.length;
+          else if (ev.key === "ArrowUp") hedef = idx <= 0 ? ogeler.length - 1 : idx - 1;
+          else if (ev.key === "End") hedef = ogeler.length - 1;
+          ogeler[hedef]?.focus();
+          return;
+        }
+      }
+
       if (ev.altKey && ev.key.toLowerCase() === "s") {
         ev.preventDefault();
         senaryoAcKapa();
         return;
       }
       if (yaziyorMu) return;
+
+      if ((ev.shiftKey && ev.key === "F10") || ev.key === "ContextMenu") {
+        const kart = document.activeElement?.closest?.(".kompakt-kart[data-havuz-id], .detay-havuz[data-havuz-id]");
+        if (kart && !durum.duzenleModu && kart.dataset.havuzId) {
+          ev.preventDefault();
+          const r = kart.getBoundingClientRect();
+          const tur = kart.classList.contains("detay-havuz") ? "havuz" : "platform";
+          baglamMenuAc(kart.dataset.havuzId, tur, r.left + Math.min(r.width * 0.5, 120), r.top + 28, document.activeElement);
+          return;
+        }
+      }
 
       if (ev.key === "Escape") {
         ev.preventDefault();
@@ -5410,6 +7069,19 @@
           durum.sekme = yeni;
           tumunuCiz();
           document.querySelector(`.sekme-cubugu [data-sekme="${yeni}"]`)?.focus();
+          return;
+        }
+      }
+
+      const altSekmeOdak = document.activeElement?.closest?.("[data-alt-sekme]");
+      if (altSekmeOdak && (ev.key === "ArrowLeft" || ev.key === "ArrowRight")) {
+        const cubuk = altSekmeOdak.closest(".alt-sekme-cubuk");
+        const dugmeler = cubuk ? [...cubuk.querySelectorAll("[data-alt-sekme]")] : [];
+        const idx = dugmeler.indexOf(altSekmeOdak);
+        if (dugmeler.length > 1 && idx !== -1) {
+          ev.preventDefault();
+          const hedefBtn = dugmeler[(idx + (ev.key === "ArrowRight" ? 1 : -1) + dugmeler.length) % dugmeler.length];
+          altSekmeSec(hedefBtn.dataset.altPlatform, hedefBtn.dataset.altSekme, true);
           return;
         }
       }
@@ -5670,6 +7342,8 @@
     durum.pastaAltTuru = v.pastaAltTuru;
     durum.gorunumModu = v.gorunumModu;
     durum.degerYonu = v.degerYonu;
+    durum.altSekmeler = {};
+    durum.ayarArama = "";
     tercihSenkronizeKaydet();
 
     if (!canliMi()) {
@@ -5911,7 +7585,7 @@
     }
 
     if (k.platform === "claude") {
-      const cl = durum.anlik.havuzlar?.claude_max;
+      const cl = platformEnTazeHavuz("claude");
       if (tar) {
         yeni.rozet =
           cl?.durum === "ok"
@@ -6075,6 +7749,7 @@
     window.addEventListener("focus", tazele);
 
     window.setInterval(() => {
+      if (document.visibilityState === "hidden") return;
       acilirCiz();
       simdiSekmesiCiz();
       seritCiz();

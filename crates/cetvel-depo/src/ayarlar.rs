@@ -394,7 +394,8 @@ impl Default for BildirimAyari {
 impl BildirimAyari {
     /// Havuz/pencere için kalan oran eşiği (`0.0..=1.0`).
     pub fn esik_orani(&self, havuz_id: &str, pencere: &str) -> f64 {
-        let yuzde = if havuz_id == "claude_max" {
+        // Tüm Claude köprü havuzları (`claude_max`, `claude_<x>`) Claude eşiklerini kullanır.
+        let yuzde = if havuz_id == "claude_max" || havuz_id.starts_with("claude_") {
             if pencere == "hafta" {
                 self.claude_hafta_esik_yuzde
             } else {
@@ -645,6 +646,13 @@ impl Ayarlar {
         self.codex.etkin_aralik_sn = self.codex.etkin_aralik_sn.clamp(60, 86_400);
         self.codex.bosta_aralik_sn = self.codex.bosta_aralik_sn.clamp(60, 86_400);
         self.agy.aralik_sn = self.agy.aralik_sn.clamp(600, 86_400);
+        // agy kota harcayabilir: tavan fiilen kapatılamasın; dış zaman aşımı `--print-timeout
+        // 40s`ten kısa olup süreci yarım turda öldürmesin. Diğer zaman aşımları servis döngüsünü
+        // dakikalarca tutmasın.
+        self.agy.saatlik_tavan = self.agy.saatlik_tavan.clamp(1, 12);
+        self.agy.zaman_asimi_sn = self.agy.zaman_asimi_sn.clamp(45, 120);
+        self.codex.zaman_asimi_sn = self.codex.zaman_asimi_sn.clamp(1, 60);
+        self.deepseek.zaman_asimi_sn = self.deepseek.zaman_asimi_sn.clamp(1, 60);
         self.opencode.aralik_sn = self.opencode.aralik_sn.clamp(60, 86_400);
         self.dsh.aralik_sn = self.dsh.aralik_sn.clamp(60, 86_400);
         self.bildirim.sessiz_baslangic_saat %= 24;
@@ -944,6 +952,22 @@ mod tests {
         assert!(metin.contains("kip = \"koyu\""));
         assert!(!metin.contains("terminal"));
         let _ = std::fs::remove_dir_all(&d);
+    }
+
+    #[test]
+    fn sinirla_agy_tavanini_ve_zaman_asimlarini_kistirir_claude_esigi_genel() {
+        let mut a = Ayarlar::default();
+        a.agy.saatlik_tavan = 4_000_000_000;
+        a.agy.zaman_asimi_sn = 5;
+        a.codex.zaman_asimi_sn = 100_000;
+        a.sinirla();
+        assert_eq!(a.agy.saatlik_tavan, 12);
+        assert_eq!(a.agy.zaman_asimi_sn, 45);
+        assert_eq!(a.codex.zaman_asimi_sn, 60);
+        assert_eq!(
+            a.bildirim.esik_orani("claude_pro", "hafta"),
+            a.bildirim.esik_orani("claude_max", "hafta")
+        );
     }
 
     #[test]

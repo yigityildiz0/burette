@@ -99,35 +99,28 @@ impl Baglayici for CodexBaglayicisi {
             }
 
             if let Some((ikili_yol, surum_degisti)) = self.ikili_yolu_coz() {
+                // Şema uyumsuzluğu okumayı engellemez: gerçek okuma yine denenir (ayrıştırıcının
+                // takma adları var), yalnız sonuç ayrıştırılamazsa hata verilir. Sonuç sürüm başına
+                // bir kez önbelleklenir (başarısızlık dahil); her geri çekilmede şema üretilmez.
+                let mut sema_uyarisi = false;
                 if self.ayar.sema_bekcisi && surum_degisti {
                     match codex_sema_kontrol(&ikili_yol, Duration::from_secs(6)).await {
-                        SemaKontrolSonucu::Uygun => self.sema_dogrulandi_isaretle(),
-                        SemaKontrolSonucu::SemaDegisti => {
-                            return BaglayiciSonucu {
-                                havuz_id: self.havuz_id().to_string(),
-                                havuz: codex_hata_havuzu(
-                                    Durum::Hata,
-                                    "sema_degisti",
-                                    None,
-                                    vec![
-                                        "codex şeması beklenen rateLimits alanlarını içermiyor"
-                                            .into(),
-                                    ],
-                                ),
-                                retry_after_sn: None,
-                                gecici_hata: true,
-                            };
-                        }
-                        SemaKontrolSonucu::Atlandi => {
-                            self.sema_dogrulandi_isaretle();
-                        }
+                        SemaKontrolSonucu::Uygun | SemaKontrolSonucu::Atlandi => {}
+                        SemaKontrolSonucu::SemaDegisti => sema_uyarisi = true,
                     }
+                    self.sema_dogrulandi_isaretle();
                 }
 
                 let asim = Duration::from_secs(self.ayar.zaman_asimi_sn.max(1));
                 match codex_app_server_oku(&ikili_yol, asim).await {
                     Ok(sonuc_degeri) => {
-                        let havuz = codex_yanit_ayristir(&sonuc_degeri, simdi);
+                        let mut havuz = codex_yanit_ayristir(&sonuc_degeri, simdi);
+                        if sema_uyarisi {
+                            havuz.notlar.push(
+                                "codex şeması beklenen rateLimits alanlarını içermiyor; okuma yine denendi"
+                                    .into(),
+                            );
+                        }
                         let gecici_hata = havuz.durum == Durum::Hata;
                         return BaglayiciSonucu {
                             havuz_id: self.havuz_id().to_string(),
@@ -610,11 +603,22 @@ pub fn codex_yanit_ayristir(sonuc: &Value, simdi: UtcZaman) -> HavuzAnlik {
         );
     };
 
+    // Ana grup açık kurala bağlı: `rateLimits` > `rateLimitsByLimitId["codex"]` > tek grup.
+    // Birden çok model-özel grup varsa ve hiçbiri "codex" değilse ilk grup seçilir ama not düşülür.
+    let mut ana_grup_notu = None;
     let ana_grup = ham
         .rate_limits
         .as_ref()
         .or_else(|| ham.rate_limits_by_limit_id.get("codex"))
-        .or_else(|| ham.rate_limits_by_limit_id.values().next());
+        .or_else(|| {
+            if ham.rate_limits_by_limit_id.len() > 1 {
+                ana_grup_notu = Some(
+                    "codex ana kota grubu belirsiz (rateLimits yok); ilk limit grubu ana sayıldı"
+                        .to_string(),
+                );
+            }
+            ham.rate_limits_by_limit_id.values().next()
+        });
 
     let Some(grup) = ana_grup else {
         return codex_hata_havuzu(
@@ -638,28 +642,50 @@ pub fn codex_yanit_ayristir(sonuc: &Value, simdi: UtcZaman) -> HavuzAnlik {
         );
     }
 
+    // Ek limit kimlikleri (model-özel kotalar) kaybolmaz: her grubun hem birincil hem ikincil
+    // penceresi alt sayaç olur. Birincil `<limit_id>` (geriye uyum), ikincil
+    // `<limit_id>_<pencere>`; ebeveyn, ana havuzun aynı süreli penceresi (varsa).
     let mut alt_sayaclar = BTreeMap::new();
     let ana_id = grup.limit_id.as_deref().unwrap_or("codex");
     for (limit_id, alt_grup) in &ham.rate_limits_by_limit_id {
-        if limit_id == ana_id {
+        if limit_id == ana_id || std::ptr::eq(alt_grup, grup) {
             continue;
         }
-        if let Some(p) = &alt_grup.primary
-            && let Some(used_pct) = p.used_percent
+        for (sira, p) in [alt_grup.primary.as_ref(), alt_grup.secondary.as_ref()]
+            .into_iter()
+            .enumerate()
         {
+            let Some(p) = p else { continue };
+            let Some(used_pct) = p.used_percent.filter(|u| u.is_finite()) else {
+                continue;
+            };
             let kullanilan = (used_pct / 100.0).clamp(0.0, 1.0);
+            // usedPercent == 0 iken resetsAt kayar; sıfırlama yazılmaz.
             let sifirlama = if used_pct <= 0.0 {
                 None
             } else {
                 p.resets_at.and_then(UtcZaman::from_unix_timestamp)
             };
+            let pencere = p.window_duration_mins.map(pencere_adi_dakikadan);
+            let anahtar = match (sira, &pencere) {
+                (0, _) => limit_id.clone(),
+                (_, Some(pa)) => format!("{limit_id}_{pa}"),
+                (_, None) => format!("{limit_id}_2"),
+            };
+            let ebeveyn = pencere.clone().filter(|pa| pencereler.contains_key(pa));
             alt_sayaclar.insert(
-                limit_id.clone(),
+                anahtar,
                 AltSayac {
                     kullanilan,
                     kalan: Some((1.0 - kullanilan).clamp(0.0, 1.0)),
                     uzunluk_dk: p.window_duration_mins,
                     sifirlama,
+                    etiket: Some(match &pencere {
+                        Some(pa) => format!("{limit_id} · {pa}"),
+                        None => limit_id.clone(),
+                    }),
+                    ebeveyn,
+                    ilk_gorulme: None,
                 },
             );
         }
@@ -713,7 +739,9 @@ pub fn codex_yanit_ayristir(sonuc: &Value, simdi: UtcZaman) -> HavuzAnlik {
         bakiye: None,
         ek: Some(ek),
         hata: None,
-        notlar: Vec::new(),
+        notlar: ana_grup_notu.into_iter().collect(),
+        kesif: None,
+        etkin_kalan_zincir: None,
     };
     havuz.hesapla_etkin_durum();
     havuz
@@ -736,13 +764,15 @@ fn pencere_ekle(hedef: &mut BTreeMap<String, PencereOlcum>, pencere: Option<&Ham
         p.resets_at.and_then(UtcZaman::from_unix_timestamp)
     };
     let ad = pencere_adi_dakikadan(uzunluk_dk);
-    hedef.insert(
+    cetvel_model::pencere_cakismasiz_ekle(
+        hedef,
         ad,
         PencereOlcum {
             uzunluk_dk,
             kullanilan,
             kalan,
             sifirlama,
+            etiket: None,
         },
     );
 }
@@ -898,6 +928,8 @@ pub fn codex_rollout_ayristir(icerik: &str, simdi: UtcZaman) -> Option<HavuzAnli
             ek: None,
             hata: None,
             notlar: vec!["app-server başarısız; son yerel rollout kaydı gösteriliyor".into()],
+            kesif: None,
+            etkin_kalan_zincir: None,
         };
         havuz.hesapla_etkin_durum();
         return Some(havuz);
@@ -930,12 +962,39 @@ fn codex_hata_havuzu(
             http_kodu,
         }),
         notlar,
+        kesif: None,
+        etkin_kalan_zincir: None,
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn ek_limit_kimlikleri_iki_penceresiyle_alt_sayac_olur() {
+        let simdi = UtcZaman::parse_tarih_veya_zaman("2026-11-20T10:00:00Z").unwrap();
+        let sifir = simdi.ekle_sn(3600).as_offset().unix_timestamp();
+        let yanit = serde_json::json!({
+            "rateLimits": { "limitId": "codex",
+                "primary": { "usedPercent": 10.0, "windowDurationMins": 300, "resetsAt": sifir },
+                "secondary": { "usedPercent": 20.0, "windowDurationMins": 10080, "resetsAt": sifir } },
+            "rateLimitsByLimitId": {
+                "codex": { "limitId": "codex",
+                    "primary": { "usedPercent": 10.0, "windowDurationMins": 300, "resetsAt": sifir } },
+                "gpt-6-nova": { "limitId": "gpt-6-nova",
+                    "primary": { "usedPercent": 40.0, "windowDurationMins": 300, "resetsAt": sifir },
+                    "secondary": { "usedPercent": 70.0, "windowDurationMins": 10080, "resetsAt": sifir } }
+            }
+        });
+        let h = codex_yanit_ayristir(&yanit, simdi);
+        assert_eq!(h.durum, Durum::Ok);
+        assert!((h.alt_sayaclar["gpt-6-nova"].kullanilan - 0.4).abs() < 1e-9);
+        let haftalik = &h.alt_sayaclar["gpt-6-nova_hafta"];
+        assert!((haftalik.kullanilan - 0.7).abs() < 1e-9);
+        assert_eq!(haftalik.ebeveyn.as_deref(), Some("hafta"));
+        assert!(!h.alt_sayaclar.contains_key("codex"));
+    }
 
     #[test]
     fn rpc_hatasi_giris_gerek_ile_digerlerinden_ayrilir() {

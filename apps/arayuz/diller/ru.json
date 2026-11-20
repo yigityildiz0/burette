@@ -164,7 +164,13 @@
     "hakkinda": "О программе",
     "cikis": "Выход",
     "kisayollar": "Горячие клавиши",
-    "kaynakBilgi": "{kaynak} · {guven} · прочитано {yas}"
+    "kaynakBilgi": "{kaynak} · {guven} · прочитано {yas}",
+    "baglacVe": "{a} и {b}",
+    "dahaFazlaPencere": "+{n}",
+    "dahaFazlaPencereIpucu": "Другие окна: {liste}",
+    "altSayacSinirliIpucu": "{ad}: доступно {kullanilabilir} (сыр. {ham}) — ограничено окном {ebeveyn} ({ebeveynDeger})",
+    "altSayacSinirliKullanilanIpucu": "{ad}: эфф. расход {etkin} (сыр. {ham}) — ограничено окном {ebeveyn} ({ebeveynDeger})",
+    "altSayacOzetIpucu": "Подсчётчики: {liste}"
   },
   "gorunum": {
     "gostergeEtiket": "Индикатор",
@@ -208,6 +214,7 @@
   },
   "pencereAdlari": {
     "5dk": "5-минутное окно",
+    "1s": "1-часовое окно",
     "5s": "5-часовое окно",
     "gun": "Дневное окно",
     "hafta": "Недельное окно",
@@ -215,6 +222,7 @@
   },
   "pencereEtiket": {
     "5dk": "5 мин",
+    "1s": "1 ч",
     "5s": "5 ч",
     "gun": "День",
     "hafta": "Неделя",
@@ -222,6 +230,7 @@
   },
   "pencereBaslik": {
     "5dk": "5 минут",
+    "1s": "1 час",
     "5s": "Сессия (5 часов)",
     "gun": "Дневной",
     "hafta": "Недельный",
@@ -229,6 +238,7 @@
   },
   "pencereKisa": {
     "5dk": "5м",
+    "1s": "1ч",
     "5s": "5ч",
     "gun": "день",
     "hafta": "нед.",
@@ -236,10 +246,43 @@
   },
   "pencereIpucu": {
     "5dk": "Лимит частоты кратких запросов (5-минутное окно)",
+    "1s": "Скользящее 1-часовое окно квоты",
     "5s": "5-часовое скользящее окно квоты сессии",
     "gun": "24-часовое дневное окно токенов или запросов",
     "hafta": "7-дневное совокупное недельное окно квоты",
     "ay": "Месячное окно квоты биллинга"
+  },
+  "pencereSure": {
+    "dk": "{n} мин",
+    "saat": "{n} ч",
+    "gun": "{n} дн.",
+    "kisaDk": "{n}м",
+    "kisaSaat": "{n}ч",
+    "kisaGun": "{n}д"
+  },
+  "kesif": {
+    "yeniAlgilandiIpucu": "Обнаружен недавно · {zaman}",
+    "yeniHavuzSerit": "Новый пул: {ad}",
+    "cokYeniHavuz": "Новых пулов: {n}",
+    "incele": "Открыть",
+    "kapat": "Скрыть",
+    "gorulmeyenBaslik": "Невидимые пулы ({n})",
+    "sonGorulme": "Последний раз: {zaman}",
+    "ebeveynIpucu": "Расход также учитывается в квоте {ebeveyn} ({guven})",
+    "ebeveynIpucuGuvensiz": "Расход также учитывается в квоте {ebeveyn}",
+    "zincirEtkin": "эффективно по цепочке: {oran}",
+    "altSekmelerAria": "Подвкладки пулов",
+    "ekmekKirintisiAria": "Путь навигации",
+    "durumAktif": "Активен",
+    "durumYeni": "Новый",
+    "durumGorulmuyor": "Не виден"
+  },
+  "baglamMenu": {
+    "aria": "Действия с карточкой",
+    "yenile": "Обновить",
+    "ayrintiyiAc": "Открыть детали",
+    "degerleriKopyala": "Копировать значения",
+    "kopyalandi": "Значения скопированы в буфер обмена."
   },
   "kaynakTur": {
     "mod_koprusu": "Мост плагина",
@@ -358,9 +401,18 @@
       "bildirimler": "Уведомления",
       "baglantilar": "Подключения",
       "platformlar": "Платформы",
+      "havuzlar": "Пулы",
       "teknik": "Технические",
       "hakkinda": "О программе и лицензии"
     },
+    "aramaYerTutucu": "Поиск настроек…",
+    "aramaTemizle": "Очистить поиск",
+    "aramaSonucYok": "По запросу «{sorgu}» ничего не найдено.",
+    "havuzlarBaslik": "Обнаруженные пулы",
+    "havuzlarBos": "Пулы пока не обнаружены.",
+    "geneldeGoster": "В Обзоре",
+    "havuzSabitle": "Закрепить",
+    "gorulmeyenGenelIpucu": "Невидимые пулы не показываются в Обзоре.",
     "hakkindaKisa": "О программе",
     "grupGorunum": "Внешний вид и язык",
     "grupDavranis": "Окно и система",

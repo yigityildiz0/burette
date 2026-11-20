@@ -19,6 +19,13 @@ use crate::claude_kopru::{
     suresi_dolan_pencereleri_hesapla,
 };
 use crate::durum_makinesi::{YenileSinirlayici, kopru_havuzu_mu, yayin_birlestir};
+use crate::kova_kaydi::KovaKaydi;
+
+/// Köprüden (`POST /v1/claude`) yaratılabilecek en fazla havuz sayısı: yetkili bir istemci
+/// sınırsız kalıcı havuz üretemesin.
+pub const KOPRU_HAVUZ_TAVANI: usize = 8;
+/// İçerik değişmeyen köprü gönderimi bu süre içinde yeniden yazılmaz (sira, SQLite, disk).
+const KOPRU_DEGISMEYEN_ATLAMA_SN: i64 = 60;
 
 /// "Test et" isteğinin servis döngüsüne iletilen biçimi (bağlayıcıyı yalnız döngü çalıştırır).
 pub struct TestIstegi {
@@ -129,6 +136,10 @@ pub struct PaylasilanServisDurumu {
     yenile_sinirlayici: Mutex<YenileSinirlayici>,
     test_tx: mpsc::UnboundedSender<TestIstegi>,
     test_rx: Mutex<Option<mpsc::UnboundedReceiver<TestIstegi>>>,
+    /// Dinamik kova kaydı (`kovalar.json`).
+    kova_kaydi: Mutex<KovaKaydi>,
+    /// Orkestra uyumunda havuz başına pencere yaş eşiği (sn); servis döngüsü kurar.
+    uyum_yas_esikleri: Mutex<BTreeMap<String, u64>>,
 }
 
 impl PaylasilanServisDurumu {
@@ -163,6 +174,96 @@ impl PaylasilanServisDurumu {
             yenile_sinirlayici: Mutex::new(YenileSinirlayici::default()),
             test_tx,
             test_rx: Mutex::new(Some(test_rx)),
+            kova_kaydi: Mutex::new(KovaKaydi::default()),
+            uyum_yas_esikleri: Mutex::new(BTreeMap::new()),
+        }
+    }
+
+    /// `kovalar.json` kaydını diskten yükler (servis başlangıcı).
+    pub fn kova_kaydini_yukle(&self) {
+        if let Some(yollar) = &self.yollar
+            && let Ok(mut g) = self.kova_kaydi.lock()
+        {
+            *g = KovaKaydi::yukle(&yollar.kovalar_dosyasi());
+        }
+    }
+
+    /// Kayıtlı havuz kimlikleri (platform filtresiyle).
+    pub fn kayitli_kimlikler(&self, platform: &str) -> Vec<String> {
+        self.kova_kaydi
+            .lock()
+            .map(|k| k.kimlikler(platform))
+            .unwrap_or_default()
+    }
+
+    /// Uyum yaş eşiklerini ayarlar (bağlayıcı yoklama aralıklarından türetilmiş).
+    pub fn uyum_esiklerini_ayarla(&self, esikler: BTreeMap<String, u64>) {
+        if let Ok(mut g) = self.uyum_yas_esikleri.lock() {
+            *g = esikler;
+        }
+    }
+
+    fn uyum_esikleri(&self) -> BTreeMap<String, u64> {
+        self.uyum_yas_esikleri
+            .lock()
+            .map(|g| g.clone())
+            .unwrap_or_default()
+    }
+
+    /// Başarıyla okunan platformlar için yaşam döngüsünü uygular: yanıtta olmayan kayıtlı
+    /// havuzlar `gorulmuyor`, 7 günden eskiler düşer. Düşen kimlikleri döndürür.
+    pub fn kova_yasam_uygula(
+        &self,
+        okunanlar: &[(String, BTreeSet<String>)],
+        havuzlar: &mut BTreeMap<String, HavuzAnlik>,
+        simdi: UtcZaman,
+    ) -> Vec<String> {
+        let Ok(mut kayit) = self.kova_kaydi.lock() else {
+            return Vec::new();
+        };
+        let mut dusen = Vec::new();
+        for (platform, gorulen) in okunanlar {
+            dusen.extend(kayit.yasam_uygula(platform, gorulen, havuzlar, simdi));
+        }
+        if !dusen.is_empty() {
+            self.kova_kaydini_yaz(&kayit);
+        }
+        dusen
+    }
+
+    fn kova_kaydini_yaz(&self, kayit: &KovaKaydi) {
+        if let Some(yollar) = &self.yollar
+            && let Err(e) = cetvel_depo::atomik_yaz_json(&yollar.kovalar_dosyasi(), kayit)
+        {
+            tracing::warn!("kovalar.json yazılamadı: {e}");
+        }
+    }
+
+    /// Yayınlanacak havuzları kayda işler (ilk/son görülme, alt sayaç ilk görülme) ve iç içe
+    /// kota zincirini hesaplar.
+    fn kayda_isle(&self, anlik: &mut AnlikV2) {
+        if let Ok(mut kayit) = self.kova_kaydi.lock() {
+            let mut degisti = false;
+            for (id, havuz) in &anlik.havuzlar {
+                degisti |= kayit.gozlemle(id, havuz);
+            }
+            for (id, havuz) in &mut anlik.havuzlar {
+                kayit.havuza_isle(id, havuz);
+            }
+            if degisti {
+                self.kova_kaydini_yaz(&kayit);
+            }
+        }
+        anlik.zincirleri_hesapla();
+    }
+
+    /// Geçmiş veritabanında 90 günden eski kayıtları siler (servis döngüsü günde bir çağırır).
+    pub fn gecmis_temizle(&self, simdi: UtcZaman) {
+        if let Ok(guard) = self.gecmis.lock()
+            && let Some(depo) = guard.as_ref()
+            && let Err(e) = depo.eski_verileri_temizle(simdi, 90)
+        {
+            tracing::warn!("geçmiş temizliği başarısız: {e}");
         }
     }
 
@@ -292,6 +393,7 @@ impl PaylasilanServisDurumu {
         for havuz in yeni.havuzlar.values_mut() {
             let _ = suresi_dolan_pencereleri_hesapla(havuz, simdi);
         }
+        self.kayda_isle(&mut yeni);
         let guncel_ayarlar = self.ayarlar_kopya();
         let bildirim_ayari = &guncel_ayarlar.bildirim;
 
@@ -308,7 +410,12 @@ impl PaylasilanServisDurumu {
         }
 
         if let Some(yollar) = &self.yollar {
-            dosyaya_anlik_ve_uyum_yaz(yollar, &yeni, Some(guncel_ayarlar.agy.aralik_sn));
+            dosyaya_anlik_ve_uyum_yaz(
+                yollar,
+                &yeni,
+                Some(guncel_ayarlar.agy.aralik_sn),
+                &self.uyum_esikleri(),
+            );
         }
 
         let sira = yeni.sira;
@@ -361,7 +468,39 @@ impl PaylasilanServisDurumu {
 
         let mut guncellenmis = self.anlik.write().await;
         let mevcut = guncellenmis.havuzlar.get(&havuz_id).cloned();
-        let (mut havuz, uygulandi) = claude_havuzu_guncelle(mevcut.as_ref(), ham, simdi)?;
+        if mevcut.is_none()
+            && guncellenmis
+                .havuzlar
+                .values()
+                .filter(|h| kopru_havuzu_mu(h))
+                .count()
+                >= KOPRU_HAVUZ_TAVANI
+        {
+            return Err(ClaudeKopruHatasi::GecersizBicim(format!(
+                "köprü havuz sayısı tavanı ({KOPRU_HAVUZ_TAVANI}) dolu"
+            )));
+        }
+        let (mut havuz, mut uygulandi) = claude_havuzu_guncelle(mevcut.as_ref(), ham, simdi)?;
+        // Statusline sık gönderir: içerik (pencereler, alt sayaçlar, bakiye) değişmediyse ve son
+        // uygulama 60 sn'den yeniyse sira artışı, SQLite işlemi ve disk yazımı atlanır.
+        if uygulandi
+            && let Some(eski) = &mevcut
+            && eski.pencereler == havuz.pencereler
+            && eski.alt_sayaclar.keys().eq(havuz.alt_sayaclar.keys())
+            && eski
+                .alt_sayaclar
+                .iter()
+                .zip(havuz.alt_sayaclar.iter())
+                .all(|((_, a), (_, b))| a.kullanilan == b.kullanilan && a.sifirlama == b.sifirlama)
+            && eski.bakiye == havuz.bakiye
+            && eski
+                .kaynak
+                .as_ref()
+                .is_some_and(|k| simdi.fark_sn(k.okuma) < KOPRU_DEGISMEYEN_ATLAMA_SN)
+        {
+            uygulandi = false;
+            havuz = eski.clone();
+        }
 
         let sira = if uygulandi {
             let guncel_ayarlar = self.ayarlar_kopya();
@@ -383,7 +522,13 @@ impl PaylasilanServisDurumu {
                     havuz = t_havuz;
                 }
             }
-            guncellenmis.havuzlar.insert(havuz_id, havuz.clone());
+            guncellenmis
+                .havuzlar
+                .insert(havuz_id.clone(), havuz.clone());
+            self.kayda_isle(&mut guncellenmis);
+            if let Some(h) = guncellenmis.havuzlar.get(&havuz_id) {
+                havuz = h.clone();
+            }
 
             if let Ok(gecmis_guard) = self.gecmis.lock()
                 && let Some(depo) = gecmis_guard.as_ref()
@@ -398,6 +543,7 @@ impl PaylasilanServisDurumu {
                     yollar,
                     &guncellenmis,
                     Some(guncel_ayarlar.agy.aralik_sn),
+                    &self.uyum_esikleri(),
                 );
             }
             let _ = self.sira_yayini.send(guncellenmis.sira);
@@ -431,7 +577,7 @@ impl PaylasilanServisDurumu {
         let ornekler = if let Ok(guard) = self.gecmis.lock()
             && let Some(depo) = guard.as_ref()
         {
-            depo.pencere_ornekleri(havuz, pencere, baslangic, 2_000)
+            depo.pencere_ornekleri_seyrek(havuz, pencere, baslangic, simdi, 2_000)
                 .unwrap_or_default()
                 .into_iter()
                 .map(GecmisKaydiJson::from)
@@ -635,9 +781,10 @@ fn tahminleri_havuzlara_doldur(
                         zaman: o.zaman,
                         kullanilan: o.kullanilan,
                         sifirlama: o.sifirlama,
-                        tahmini_kaynak: o.kaynak == "hesap"
-                            || o.kaynak == "agy_usage"
-                            || tahmini_kaynak,
+                        // Kaynak etiketi sabit listeye bağlı değil: havuzun kendi güveni
+                        // tahminiyse ya da örnek hesaplanmış/agy kaynaklıysa gürültü eşiği uygulanır.
+                        tahmini_kaynak: tahmini_kaynak
+                            || matches!(o.kaynak.as_str(), "hesap" | "agy_usage" | "tahmini"),
                         hassasiyet: o.hassasiyet.or(hassasiyet),
                     })
                     .collect();
@@ -664,13 +811,20 @@ pub fn dosyaya_anlik_ve_uyum_yaz(
     yollar: &CetvelYollar,
     anlik: &AnlikV2,
     agy_aralik_sn: Option<u64>,
+    uyum_esikleri: &BTreeMap<String, u64>,
 ) {
     if let Err(e) = std::fs::create_dir_all(&yollar.local_kok) {
         tracing::warn!("Cetvel klasörü oluşturulamadı: {e}");
         return;
     }
     let _ = kullanici_dacl_uygula(&yollar.local_kok);
-    if let Err(e) = crate::anlik_ve_uyum_yayinla_ayarli(yollar, anlik, anlik.zaman, agy_aralik_sn) {
+    if let Err(e) = crate::anlik_ve_uyum_yayinla_esikli(
+        yollar,
+        anlik,
+        anlik.zaman,
+        agy_aralik_sn,
+        uyum_esikleri,
+    ) {
         tracing::warn!("anlik / orkestra-uyum yazılamadı: {e}");
     }
 }
@@ -689,6 +843,7 @@ mod tests {
             kullanilan: 0.35,
             kalan: 0.65,
             sifirlama: Some(simdi.ekle_sn(92 * 3600)),
+            etiket: None,
         };
         let ufuk = tahmin_ufku(Some(&hafta), simdi);
         assert_eq!(simdi.fark_sn(ufuk), 76 * 3600 + 600);
@@ -698,6 +853,7 @@ mod tests {
             kullanilan: 0.2,
             kalan: 0.8,
             sifirlama: Some(simdi.ekle_sn(4 * 3600)),
+            etiket: None,
         };
         assert_eq!(simdi.fark_sn(tahmin_ufku(Some(&bes), simdi)), 3600 + 600);
         assert_eq!(simdi.fark_sn(tahmin_ufku(None, simdi)), 4 * 3600);
@@ -726,6 +882,8 @@ mod tests {
             }),
             hata: None,
             notlar: Vec::new(),
+            kesif: None,
+            etkin_kalan_zincir: None,
         }
     }
 

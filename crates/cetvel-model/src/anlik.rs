@@ -43,7 +43,9 @@ const BILINEN_DURUMLAR: [&str; 7] = [
 
 /// Yeni sürümde biçimi değişmiş olabilecek, havuzun özü için gerekmeyen alanlar: ilk ayrıştırma
 /// başarısızsa bunlar çıkarılıp yeniden denenir.
-const ATLANABILIR_ALANLAR: [&str; 7] = [
+const ATLANABILIR_ALANLAR: [&str; 9] = [
+    "kesif",
+    "etkin_kalan_zincir",
     "baski",
     "tahmin",
     "ek",
@@ -202,6 +204,44 @@ pub struct HavuzAnlik {
     /// Yerel bilgilendirme notları.
     #[serde(default)]
     pub notlar: Vec<String>,
+    /// Çalışma anında keşif ve yaşam döngüsü bilgisi (dinamik kova, ilk/son görülme, iç içe
+    /// ebeveyn havuz). Eski okuyucular için isteğe bağlı.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub kesif: Option<KesifBilgisi>,
+    /// `min(etkin_kalan, ebeveyn_havuz.etkin_kalan)`; yalnız ebeveyn havuzu varsa doldurulur.
+    /// `etkin_kalan` anlamı değişmez (kendi pencerelerinin en darı).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub etkin_kalan_zincir: Option<f64>,
+}
+
+/// Havuzun keşif ve yaşam döngüsü bilgisi (`kovalar.json` kaydından beslenir).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+pub struct KesifBilgisi {
+    /// Bilinen sabit eşlemeden değil, çalışma anında keşfedildi.
+    pub dinamik: bool,
+    /// Sağlayıcının ham grup/kova kimliği ya da adı.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub grup: Option<String>,
+    pub ilk_gorulme: UtcZaman,
+    pub son_gorulme: UtcZaman,
+    pub yasam: KovaYasam,
+    /// İç içe: bu havuzu kullanmak ayrıca ebeveyn havuzdan da düşer (`agy_argon` -> `agy_gemini`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub ebeveyn_havuz: Option<String>,
+    /// Ebeveyn ilişkisinin güveni (kanıt çelişkiliyse `tahmini`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub ebeveyn_guven: Option<GuvenEtiketi>,
+}
+
+/// Kovanın yaşam evresi: sağlayıcı yanıtında görülüyor mu?
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum KovaYasam {
+    Aktif,
+    /// Platform başarıyla okunduğu hâlde yanıtta yok (7 gün son değerleriyle gösterilir).
+    Gorulmuyor,
+    #[serde(other)]
+    Bilinmiyor,
 }
 
 /// Resmî kotası olmayan, yalnız yerel kullanım sayacı üreten araçların platform kimlikleri.
@@ -371,6 +411,9 @@ pub struct PencereOlcum {
     pub kalan: f64,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sifirlama: Option<UtcZaman>,
+    /// Sağlayıcının ham pencere etiketi (ör. `"Weekly"`, `"5h"`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub etiket: Option<String>,
 }
 
 /// Ek alt sayaç bilgisi.
@@ -383,6 +426,16 @@ pub struct AltSayac {
     pub uzunluk_dk: Option<u64>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sifirlama: Option<UtcZaman>,
+    /// Ham etiket (ör. `"Weekly · Fable"`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub etiket: Option<String>,
+    /// Aynı havuzda bu sayaçla birlikte düşen üst pencere anahtarı (ör. `"hafta"`). Arayüzdeki
+    /// kullanılabilir pay `min(alt.kalan, pencereler[ebeveyn].kalan)` ("tavan çentiği").
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub ebeveyn: Option<String>,
+    /// Sayacın ilk görüldüğü an (`kovalar.json` kaydından).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub ilk_gorulme: Option<UtcZaman>,
 }
 
 /// Tahmin bilgisi.
@@ -507,14 +560,37 @@ pub struct HataBilgisi {
 }
 
 /// Pencere süresini (dakika) standart pencere adına çevirir.
+///
+/// Ad yalnız bilinen tam süreler için atanır (5 -> `5dk`, 60 -> `1s`, 300 -> `5s`, 1440 -> `gun`,
+/// 10080 -> `hafta`, 43200 -> `ay`); diğerleri `"<N>dk"`. Geniş aralıklar (8 sa -> `5s`) iki farklı
+/// pencerenin aynı ada düşüp birbirini ezmesine yol açıyordu.
 pub fn pencere_adi_dakikadan(uzunluk_dk: u64) -> String {
-    match uzunluk_dk {
-        1..=15 => "5dk".to_string(),
-        16..=600 => "5s".to_string(),
-        601..=2880 => "gun".to_string(),
-        2881..=20160 => "hafta".to_string(),
-        20161.. => "ay".to_string(),
-        0 => "0dk".to_string(),
+    crate::pencere::pencere_anahtari_dakikadan(uzunluk_dk)
+}
+
+impl AnlikV2 {
+    /// Ebeveyn havuzu olan (iç içe kota) havuzlar için `etkin_kalan_zincir` =
+    /// `min(kendi etkin_kalan, ebeveyn etkin_kalan)` doldurur; ebeveyni olmayanlarda temizler.
+    pub fn zincirleri_hesapla(&mut self) {
+        let etkinler: BTreeMap<String, Option<f64>> = self
+            .havuzlar
+            .iter()
+            .map(|(id, h)| (id.clone(), h.etkin_kalan))
+            .collect();
+        for (id, havuz) in &mut self.havuzlar {
+            let ebeveyn = havuz
+                .kesif
+                .as_ref()
+                .and_then(|k| k.ebeveyn_havuz.as_deref())
+                .filter(|e| *e != id.as_str());
+            havuz.etkin_kalan_zincir = match ebeveyn {
+                Some(e) => match (havuz.etkin_kalan, etkinler.get(e).copied().flatten()) {
+                    (Some(k), Some(eb)) => Some(k.min(eb)),
+                    (k, eb) => k.or(eb),
+                },
+                None => None,
+            };
+        }
     }
 }
 
@@ -595,6 +671,7 @@ mod tests {
                 kullanilan: 0.0,
                 kalan: 1.0,
                 sifirlama: None,
+                etiket: None,
             },
         );
         pencereler.insert(
@@ -604,6 +681,7 @@ mod tests {
                 kullanilan: 1.0,
                 kalan: 0.0,
                 sifirlama: Some(ornek_zaman("2026-11-20T07:00:00Z")),
+                etiket: None,
             },
         );
 
@@ -629,6 +707,8 @@ mod tests {
             ek: None,
             hata: None,
             notlar: Vec::new(),
+            etkin_kalan_zincir: None,
+            kesif: None,
         };
 
         havuz.hesapla_etkin_durum();
@@ -654,6 +734,7 @@ mod tests {
                 kullanilan: 0.5,
                 kalan: 0.5,
                 sifirlama: None,
+                etiket: None,
             },
         );
         pencereler.insert(
@@ -663,6 +744,7 @@ mod tests {
                 kullanilan: 0.5,
                 kalan: 0.5,
                 sifirlama: Some(ornek_zaman("2026-11-20T07:00:00Z")),
+                etiket: None,
             },
         );
 
@@ -682,6 +764,8 @@ mod tests {
             ek: None,
             hata: None,
             notlar: Vec::new(),
+            etkin_kalan_zincir: None,
+            kesif: None,
         };
 
         havuz.hesapla_etkin_durum();
@@ -722,6 +806,8 @@ mod tests {
             ek: None,
             hata: None,
             notlar: Vec::new(),
+            etkin_kalan_zincir: None,
+            kesif: None,
         };
         havuz.hesapla_etkin_durum();
         assert_eq!(havuz.etkin_kalan, None);

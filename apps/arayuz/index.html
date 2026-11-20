@@ -99,6 +99,7 @@
             <div class="duzenle-arac-cubuk gizli" id="acilir-duzenle-cubuk" role="region" data-i18n-aria="aria.kartDuzenleme" aria-label="Kart düzenleme"></div>
             <div class="canli-bildirim gizli" id="acilir-bildirim" role="status" aria-live="polite"></div>
             <div class="servis-uyari-cubuk gizli" id="servis-uyari-acilir" role="status" aria-live="polite"></div>
+            <div class="kesif-serit gizli" id="acilir-kesif-serit" role="status" aria-live="polite"></div>
 
             <div class="acilir-icerik" id="acilir-icerik">
               <div class="ozet-cubuk gizli" id="acilir-ozet"></div>
@@ -204,6 +205,8 @@
               <div class="simdi-duzen">
                 <nav class="platform-sekmeler yan" id="simdi-platform-sekmeler" role="tablist" aria-label="Platformlar"></nav>
                 <div class="simdi-ana">
+                  <nav class="ekmek-kirintisi gizli" id="simdi-ekmek" data-i18n-aria="kesif.ekmekKirintisiAria" aria-label="Gezinme yolu"></nav>
+                  <div class="kesif-serit genis gizli" id="simdi-kesif-serit" role="status" aria-live="polite"></div>
                   <div class="ozet-cubuk gizli" id="simdi-ozet"></div>
                   <div class="duzenle-arac-cubuk genis gizli" id="simdi-duzenle-cubuk" role="region" data-i18n-aria="aria.kartDuzenleme" aria-label="Kart düzenleme"></div>
                   <div class="simdi-pasta-tek-alan gizli" id="simdi-pasta-tek-alan"></div>
@@ -247,7 +250,17 @@
             <!-- Sekme 4: Ayarlar -->
             <div class="sekme-icerik" id="panel-ayarlar" role="tabpanel" aria-labelledby="tab-ayarlar">
               <div class="ayarlar-duzen">
-                <nav class="ayarlar-yan-menu" id="ayarlar-bolum-menu" data-i18n-aria="aria.ayarKategorileri" aria-label="Ayar kategorileri"></nav>
+                <aside class="ayarlar-kenar">
+                  <div class="ayar-arama-kutu">
+                    <svg class="ayar-arama-ikon" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                      <circle cx="7" cy="7" r="4.8" stroke="currentColor" stroke-width="1.5"/>
+                      <path d="M10.7 10.7L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <input type="search" class="ayar-arama-girdi" id="ayar-arama-girdi" placeholder="Ayarlarda ara…" autocomplete="off" spellcheck="false" aria-label="Ayarlarda ara…">
+                    <button type="button" class="ayar-arama-temizle gizli" id="btn-ayar-arama-temizle" aria-label="Aramayı temizle">×</button>
+                  </div>
+                  <nav class="ayarlar-yan-menu" id="ayarlar-bolum-menu" data-i18n-aria="aria.ayarKategorileri" aria-label="Ayar kategorileri"></nav>
+                </aside>
                 <div class="ayarlar-grid" id="ayarlar-grid"></div>
               </div>
             </div>
@@ -289,8 +302,9 @@
     </main>
   </div>
 
-  <!-- Erişilebilir, pencere kenarından taşmayan yüzen ipucu (tooltip) -->
+  <!-- Erişilebilir, pencere kenarından taşmayan yüzen ipucu (tooltip) ve kart bağlam menüsü -->
   <div class="cetvel-ipucu gizli" id="cetvel-ipucu" role="tooltip"></div>
+  <div class="baglam-menu gizli" id="cetvel-baglam-menu" role="menu" tabindex="-1" data-i18n-aria="baglamMenu.aria" aria-label="Kart işlemleri"></div>
   <div class="ekran-okuyucu-gizli" id="ekran-okuyucu-duyuru" aria-live="polite" aria-atomic="true"></div>
 
   <script src="uygulama.js"></script>

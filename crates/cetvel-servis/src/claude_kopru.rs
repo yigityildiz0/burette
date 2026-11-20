@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 
 use cetvel_model::{
     AltSayac, BakiyeBilgisi, Durum, EkBilgi, GuvenEtiketi, HavuzAnlik, KaynakBilgisi, KaynakTuru,
-    PencereOlcum, UtcZaman,
+    PencereOlcum, UtcZaman, pencere_anahtari, slug,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -159,9 +159,14 @@ fn eksik_alanlari_tasi(havuz: &mut HavuzAnlik, eski: &HavuzAnlik, simdi: UtcZama
     for (ad, olcum) in &eski.pencereler {
         if !havuz.pencereler.contains_key(ad) && gecerli(olcum.sifirlama) {
             havuz.pencereler.insert(ad.clone(), olcum.clone());
-            havuz
-                .notlar
-                .push(format!("{ad}: bu yükte yok, önceki okumadan taşındı"));
+            let yas_dk = eski
+                .kaynak
+                .as_ref()
+                .map(|k| simdi.fark_sn(k.okuma).max(0) / 60)
+                .unwrap_or(0);
+            havuz.notlar.push(format!(
+                "{ad}: bu yükte yok, önceki okumadan taşındı ({yas_dk} dk önce)"
+            ));
         }
     }
     for (ad, sayac) in &eski.alt_sayaclar {
@@ -263,6 +268,8 @@ pub fn claude_havuzu_guncelle(
         ek: Some(ek),
         hata: None,
         notlar,
+        kesif: None,
+        etkin_kalan_zincir: None,
     };
     havuz.notlar.extend(yeni.atlanan);
     if let Some(eski) = mevcut {
@@ -432,22 +439,15 @@ fn claude_yuku_ayristir(
         }
     }
 
-    // Doğrudan Anthropic OAuth üst düzey anahtarları (`five_hour`, `seven_day`, vb.)
-    for ham_ad in [
-        "five_hour",
-        "seven_day",
-        "seven_day_sonnet",
-        "seven_day_opus",
-        "seven_day_cowork",
-        "seven_day_oauth_apps",
-        "fiveHour",
-        "sevenDay",
-    ] {
-        if let Some(val) = obj.get(ham_ad)
-            && val.is_object()
-        {
-            ekle(Some(ham_ad), val, &mut pencereler, &mut alt_sayaclar);
+    // Doğrudan Anthropic OAuth üst düzey anahtarları: sabit liste yerine kullanım oranı ya da
+    // sıfırlama taşıyan HER nesne (`five_hour`, `seven_day`, `seven_day_<model>`,
+    // `five_hour_<model>`, yeni biçimler). Sağlayıcı yeni bir model sayacı çıkarınca kod
+    // değişmeden alt sayaç olur.
+    for (ham_ad, val) in obj {
+        if UST_DUZEY_PENCERE_DISI.contains(&ham_ad.as_str()) || !pencere_nesnesi_mi(val) {
+            continue;
         }
+        ekle(Some(ham_ad), val, &mut pencereler, &mut alt_sayaclar);
     }
 
     if pencereler.is_empty() {
@@ -473,6 +473,37 @@ fn claude_yuku_ayristir(
     })
 }
 
+/// Üst düzeyde pencere sayılmayan nesneler (ek kullanım bakiyesi `utilization` taşır).
+const UST_DUZEY_PENCERE_DISI: [&str; 10] = [
+    "pencereler",
+    "windows",
+    "limits",
+    "extraUsage",
+    "extra_usage",
+    "plan",
+    "rate_limits",
+    "rateLimits",
+    "model",
+    "okuma",
+];
+
+/// Üst düzeyde kullanım oranı ya da sıfırlama alanı taşıyan nesne mi?
+fn pencere_nesnesi_mi(val: &Value) -> bool {
+    val.as_object().is_some_and(|o| {
+        [
+            "utilization",
+            "resets_at",
+            "resetsAt",
+            "percent",
+            "used_percentage",
+            "percentUsed",
+            "percent_used",
+        ]
+        .iter()
+        .any(|k| o.contains_key(*k))
+    })
+}
+
 fn pencere_veya_alt_ekle(
     ham_ad: &str,
     val: &Value,
@@ -495,26 +526,47 @@ fn pencere_veya_alt_ekle(
         })
         .transpose()?;
 
+    // Geçmiş sıfırlama: pencere o anda sıfırlanmış demektir (önbellekli statusline'ın eski
+    // oturum penceresi); kullanılan 0 sayılır.
+    let (kullanilan, kalan, sifirlama) = match sifirlama {
+        Some(Sifirlama::Gecti) => (0.0, 1.0, None),
+        Some(Sifirlama::Gelecek(z)) => (kullanilan, kalan, Some(z)),
+        None => (kullanilan, kalan, None),
+    };
+
     match pencere_ad_sinifla(ham_ad) {
-        ClaudePencereSinifi::AnaPencere { ad, uzunluk_dk } => {
+        ClaudePencereSinifi::AnaPencere {
+            ad,
+            uzunluk_dk,
+            etiket,
+        } => {
             pencereler.insert(
-                ad.to_string(),
+                ad,
                 PencereOlcum {
                     uzunluk_dk,
                     kullanilan,
                     kalan,
                     sifirlama,
+                    etiket,
                 },
             );
         }
-        ClaudePencereSinifi::AltSayac(ad) => {
+        ClaudePencereSinifi::AltSayac {
+            ad,
+            ebeveyn,
+            uzunluk_dk,
+            etiket,
+        } => {
             alt_sayaclar.insert(
                 ad,
                 AltSayac {
                     kullanilan,
                     kalan: Some(kalan),
-                    uzunluk_dk: Some(10080),
+                    uzunluk_dk,
                     sifirlama,
+                    etiket: Some(etiket),
+                    ebeveyn,
+                    ilk_gorulme: None,
                 },
             );
         }
@@ -523,59 +575,120 @@ fn pencere_veya_alt_ekle(
 }
 
 enum ClaudePencereSinifi {
-    AnaPencere { ad: &'static str, uzunluk_dk: u64 },
-    AltSayac(String),
+    AnaPencere {
+        ad: String,
+        uzunluk_dk: u64,
+        etiket: Option<String>,
+    },
+    AltSayac {
+        ad: String,
+        ebeveyn: Option<String>,
+        uzunluk_dk: Option<u64>,
+        etiket: String,
+    },
 }
 
-fn pencere_ad_sinifla(ham: &str) -> ClaudePencereSinifi {
-    let k = ham.trim().to_ascii_lowercase();
-    if k.contains("sonnet")
-        || k.contains("opus")
-        || k.contains("cowork")
-        || k.contains("oauth_apps")
-        || k.contains("fable")
-    {
-        let kisa = if k.contains("sonnet") {
-            "sonnet"
-        } else if k.contains("opus") {
-            "opus"
-        } else if k.contains("cowork") {
-            "cowork"
-        } else if k.contains("oauth") {
-            "oauth_apps"
+/// `fiveHour` → `five_hour` (camelCase anahtarlar snake_case kuralına iner).
+fn yilan_bicimi(ham: &str) -> String {
+    let mut s = String::new();
+    for c in ham.trim().chars() {
+        if c.is_ascii_uppercase() {
+            if !s.is_empty() {
+                s.push('_');
+            }
+            s.push(c.to_ascii_lowercase());
         } else {
-            "fable"
-        };
-        return ClaudePencereSinifi::AltSayac(kisa.to_string());
+            s.push(c);
+        }
+    }
+    s
+}
+
+/// Model adını görünen biçime getirir (`fable` → `Fable`, `oauth_apps` → `Oauth Apps`).
+fn baslik_harfi(ad: &str) -> String {
+    ad.split(['_', ' '])
+        .filter(|p| !p.is_empty())
+        .map(|p| {
+            let mut c = p.chars();
+            match c.next() {
+                Some(ilk) => ilk.to_uppercase().collect::<String>() + c.as_str(),
+                None => String::new(),
+            }
+        })
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+/// Pencere/alt sayaç sınıflandırması (genel kural, model adı sabit kodlanmaz):
+/// - anahtar biçimi: `five_hour` → `5s`; `seven_day` → `hafta`; `seven_day_<x>` → alt sayaç `<x>`
+///   (ebeveyn `hafta`, etiket `Weekly · <X>`); `five_hour_<x>` → alt sayaç (ebeveyn `5s`).
+/// - etiket biçimi (get_usage `windows[].label`): `5-hour limit` → `5s`; `Weekly · all models`
+///   ya da `Current week (all models)` → `hafta`; `Weekly · <Model>` / `Current week (<Model>
+///   only)` → alt sayaç `slug(model)` (ebeveyn `hafta`, etiket ham).
+/// - başka biçim → [`pencere_anahtari`]; süre çıkarılamazsa alt sayaç (ebeveyn yok).
+fn pencere_ad_sinifla(ham: &str) -> ClaudePencereSinifi {
+    let yilan = yilan_bicimi(ham);
+    let anahtar_kurali = [
+        ("seven_day", "hafta", 10080u64, "Weekly"),
+        ("five_hour", "5s", 300, "5-hour"),
+    ];
+    for (onek, pencere, dk, gorunen) in anahtar_kurali {
+        if yilan == onek {
+            return ClaudePencereSinifi::AnaPencere {
+                ad: pencere.to_string(),
+                uzunluk_dk: dk,
+                etiket: None,
+            };
+        }
+        if let Some(model) = yilan.strip_prefix(onek).and_then(|r| r.strip_prefix('_'))
+            && !model.is_empty()
+        {
+            return ClaudePencereSinifi::AltSayac {
+                ad: slug(model),
+                ebeveyn: Some(pencere.to_string()),
+                uzunluk_dk: Some(dk),
+                etiket: format!("{gorunen} · {}", baslik_harfi(model)),
+            };
+        }
     }
 
-    if k == "5s"
-        || k == "5h"
-        || k == "five_hour"
-        || k == "fivehour"
-        || k.contains("session")
-        || k.contains("5-hour")
-        || k.contains("5 hour")
-        || k.contains("5 saat")
-    {
-        ClaudePencereSinifi::AnaPencere {
-            ad: "5s",
-            uzunluk_dk: 300,
-        }
-    } else if k == "hafta"
-        || k == "7d"
-        || k == "seven_day"
-        || k == "sevenday"
-        || k.contains("week")
-        || k.contains("hafta")
-        || k.contains("7-day")
-    {
-        ClaudePencereSinifi::AnaPencere {
-            ad: "hafta",
-            uzunluk_dk: 10080,
-        }
+    let temiz = ham.trim();
+    let (taban, nitelik) = if let Some((t, n)) = temiz.split_once('·') {
+        (t.trim(), Some(n.trim()))
+    } else if let Some((t, n)) = temiz.split_once('(') {
+        (t.trim(), Some(n.trim_end_matches(')').trim()))
     } else {
-        ClaudePencereSinifi::AltSayac(k.replace(' ', "_"))
+        (temiz, None)
+    };
+    let model = nitelik
+        .map(|n| {
+            let k = n.to_lowercase();
+            k.strip_suffix(" only")
+                .or_else(|| k.strip_suffix(" models"))
+                .unwrap_or(&k)
+                .trim()
+                .to_string()
+        })
+        .filter(|m| !m.is_empty() && !matches!(m.as_str(), "all" | "all models" | "tüm modeller"));
+    let (pencere, dk) = pencere_anahtari(taban, None);
+    match model {
+        Some(m) => ClaudePencereSinifi::AltSayac {
+            ad: slug(&m),
+            ebeveyn: (dk > 0).then_some(pencere),
+            uzunluk_dk: (dk > 0).then_some(dk),
+            etiket: temiz.to_string(),
+        },
+        None if dk > 0 => ClaudePencereSinifi::AnaPencere {
+            ad: pencere,
+            uzunluk_dk: dk,
+            etiket: (temiz.len() > 6 || temiz.contains(' ')).then(|| temiz.to_string()),
+        },
+        None => ClaudePencereSinifi::AltSayac {
+            ad: slug(temiz),
+            ebeveyn: None,
+            uzunluk_dk: None,
+            etiket: temiz.to_string(),
+        },
     }
 }
 
@@ -592,6 +705,7 @@ fn oran_coz(val: &Value) -> Result<f64, ClaudeKopruHatasi> {
         .or_else(|| val.get("percentUsed"))
         .or_else(|| val.get("percent_used"))
         .or_else(|| val.get("utilization"))
+        .or_else(|| val.get("percent"))
         .or_else(|| val.get("yuzde"))
         .and_then(Value::as_f64)
     {
@@ -615,18 +729,29 @@ fn oran_coz(val: &Value) -> Result<f64, ClaudeKopruHatasi> {
     ))
 }
 
-fn zaman_dogrula(val: &Value, simdi: UtcZaman) -> Result<UtcZaman, ClaudeKopruHatasi> {
+/// Doğrulanmış sıfırlama anı.
+enum Sifirlama {
+    Gelecek(UtcZaman),
+    /// Sıfırlama son 8 gün içinde geçmiş: pencere sıfırlanmış sayılır.
+    Gecti,
+}
+
+fn zaman_dogrula(val: &Value, simdi: UtcZaman) -> Result<Sifirlama, ClaudeKopruHatasi> {
     let z = zaman_coz(val)
         .ok_or_else(|| ClaudeKopruHatasi::GecersizZaman(format!("zaman ayrıştırılamadı: {val}")))?;
     let en_eski = simdi.ekle_sn(-300);
+    let gecmis_siniri = simdi.ekle_sn(-8 * 86_400);
     let en_yeni = simdi.ekle_sn(8 * 86_400);
-    if z.fark_sn(en_eski) < 0 || z.fark_sn(en_yeni) > 0 {
+    if z.fark_sn(en_yeni) > 0 || z.fark_sn(gecmis_siniri) < 0 {
         return Err(ClaudeKopruHatasi::GecersizZaman(format!(
-            "resets_at aralık dışı ([şimdi - 5dk, şimdi + 8gün]): {}",
+            "resets_at aralık dışı ([şimdi - 8gün, şimdi + 8gün]): {}",
             z.to_iso_z()
         )));
     }
-    Ok(z)
+    if z.fark_sn(en_eski) < 0 {
+        return Ok(Sifirlama::Gecti);
+    }
+    Ok(Sifirlama::Gelecek(z))
 }
 
 fn zaman_coz(val: &Value) -> Option<UtcZaman> {
@@ -743,9 +868,15 @@ mod tests {
             json!({ "five_hour": { "utilization": 105.0, "resets_at": "2026-11-15T20:00:00Z" } });
         assert!(claude_havuzu_guncelle(None, gecersiz, simdi).is_err());
 
+        // Son 8 gün içinde geçmiş sıfırlama: pencere sıfırlanmış sayılır (önbellekli statusline).
         let eski_zaman =
             json!({ "five_hour": { "utilization": 20.0, "resets_at": "2026-11-10T20:00:00Z" } });
-        assert!(claude_havuzu_guncelle(None, eski_zaman, simdi).is_err());
+        let (sifirlanmis, _) = claude_havuzu_guncelle(None, eski_zaman, simdi).unwrap();
+        assert_eq!(sifirlanmis.pencereler["5s"].kalan, 1.0);
+        assert!(sifirlanmis.pencereler["5s"].sifirlama.is_none());
+        let cok_eski =
+            json!({ "five_hour": { "utilization": 20.0, "resets_at": "2026-10-01T20:00:00Z" } });
+        assert!(claude_havuzu_guncelle(None, cok_eski, simdi).is_err());
 
         let gecerli = json!({
             "five_hour": { "utilization": 85.0, "resets_at": "2026-11-15T19:00:00Z" }
@@ -849,6 +980,50 @@ mod tests {
         assert!(claude_havuzu_guncelle(None, uzun, simdi).is_err());
         let iyi = json!({ "havuz": "claude_pro", "five_hour": pencere });
         assert!(claude_havuzu_guncelle(None, iyi, simdi).is_ok());
+    }
+
+    #[test]
+    fn yeni_model_sayaclari_kod_degismeden_alt_sayac_olur() {
+        let simdi = z("2026-11-20T10:00:00Z");
+        let sifir = simdi.ekle_sn(3 * 86_400).to_iso_z();
+        let get_usage = json!({
+            "windows": [
+                { "label": "5-hour limit", "percentUsed": 20, "resetsAt": simdi.ekle_sn(3600).to_iso_z() },
+                { "label": "Weekly · all models", "percentUsed": 40, "resetsAt": sifir },
+                { "label": "Weekly · Fable", "percentUsed": 70, "resetsAt": sifir },
+                { "label": "Weekly · Nova", "percentUsed": 10, "resetsAt": sifir }
+            ]
+        });
+        let (h, _) = claude_havuzu_guncelle(None, get_usage, simdi).unwrap();
+        assert_eq!(h.pencereler.len(), 2);
+        assert!((h.pencereler["hafta"].kullanilan - 0.4).abs() < 1e-9);
+        assert!((h.pencereler["5s"].kullanilan - 0.2).abs() < 1e-9);
+        for (ad, etiket) in [("fable", "Weekly · Fable"), ("nova", "Weekly · Nova")] {
+            let alt = &h.alt_sayaclar[ad];
+            assert_eq!(alt.ebeveyn.as_deref(), Some("hafta"), "{ad}");
+            assert_eq!(alt.etiket.as_deref(), Some(etiket));
+            assert_eq!(alt.uzunluk_dk, Some(10080));
+        }
+
+        let oauth = json!({
+            "five_hour": { "utilization": 5, "resets_at": simdi.ekle_sn(3600).to_iso_z() },
+            "seven_day": { "utilization": 30, "resets_at": sifir },
+            "seven_day_fable": { "utilization": 55, "resets_at": sifir },
+            "seven_day_zephyr": { "utilization": 12, "resets_at": sifir },
+            "five_hour_nova": { "percent": 9, "resets_at": simdi.ekle_sn(3600).to_iso_z() },
+            "seven_day_oauth_apps": null,
+            "extra_usage": { "is_enabled": true, "monthly_limit": 50.0, "used_credits": 5.0, "utilization": 10 }
+        });
+        let (o, _) = claude_havuzu_guncelle(None, oauth, simdi).unwrap();
+        assert_eq!(o.pencereler.len(), 2, "extra_usage pencere sayılmaz");
+        assert_eq!(
+            o.alt_sayaclar["fable"].etiket.as_deref(),
+            Some("Weekly · Fable")
+        );
+        assert_eq!(o.alt_sayaclar["fable"].ebeveyn.as_deref(), Some("hafta"));
+        assert!(o.alt_sayaclar.contains_key("zephyr"));
+        assert_eq!(o.alt_sayaclar["nova"].ebeveyn.as_deref(), Some("5s"));
+        assert!(o.bakiye.is_some());
     }
 
     #[test]

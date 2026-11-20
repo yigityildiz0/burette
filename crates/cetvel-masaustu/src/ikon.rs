@@ -44,26 +44,37 @@ pub fn tepsi_verisi_cikar(
     // Kullanım sayacı (OpenCode, dsh) kota değildir: çubuğa da bayatlık kararına da katılmaz.
     for havuz in anlik.havuzlar.values().filter(|h| !h.kullanim_sayaci_mi()) {
         match havuz.durum {
-            Durum::Ok => {
-                ok_sayisi += 1;
-            }
-            Durum::Bayat => {
-                bayat_sayisi += 1;
-            }
-            _ => continue,
+            Durum::Ok => ok_sayisi += 1,
+            Durum::Bayat => bayat_sayisi += 1,
+            _ => {}
         }
-        if let Some(olcum) = havuz.pencereler.get("5s") {
+    }
+    // Çubuklar pencere adına değil süresine bakar: kısa çubuk haftadan kısa her pencere (`5dk`,
+    // `1s`, `5s`, `gun`, `<N>dk`), uzun çubuk hafta ve daha uzunu (`hafta`, `ay`). Taze havuz
+    // varken bayat havuzlar en dar hesabına katılmaz (bayat veri güncel gibi görünmesin).
+    let hedef_durum = if ok_sayisi > 0 {
+        Durum::Ok
+    } else {
+        Durum::Bayat
+    };
+    for havuz in anlik
+        .havuzlar
+        .values()
+        .filter(|h| !h.kullanim_sayaci_mi() && h.durum == hedef_durum)
+    {
+        for olcum in havuz.pencereler.values() {
+            if olcum.uzunluk_dk == 0 {
+                continue;
+            }
             let k = olcum.kalan.clamp(0.0, 1.0);
             let u = olcum.kullanilan.clamp(0.0, 1.0);
-            if en_dar_5s.is_none_or(|(prev_k, _)| k < prev_k) {
-                en_dar_5s = Some((k, u));
-            }
-        }
-        if let Some(olcum) = havuz.pencereler.get("hafta") {
-            let k = olcum.kalan.clamp(0.0, 1.0);
-            let u = olcum.kullanilan.clamp(0.0, 1.0);
-            if en_dar_hafta.is_none_or(|(prev_k, _)| k < prev_k) {
-                en_dar_hafta = Some((k, u));
+            let hedef = if olcum.uzunluk_dk < 10080 {
+                &mut en_dar_5s
+            } else {
+                &mut en_dar_hafta
+            };
+            if hedef.is_none_or(|(prev_k, _)| k < prev_k) {
+                *hedef = Some((k, u));
             }
         }
     }
@@ -304,7 +315,7 @@ pub fn ipucu_metni_olustur(
         let p_kisa = dar
             .baglayici_pencere
             .as_deref()
-            .map_or("", |kod| metinler::pencere_kisa(dil, kod));
+            .map_or(String::new(), |kod| metinler::pencere_kisa(dil, kod));
         let oran = match deger_yonu {
             DegerYonu::Kalan => kalan,
             DegerYonu::Kullanilan => 1.0 - kalan,
@@ -314,7 +325,7 @@ pub fn ipucu_metni_olustur(
         parcalar.push(metinler::ipucu_havuz(
             dil,
             &dar.etiket,
-            p_kisa,
+            &p_kisa,
             yuzde,
             deger_yonu,
         ));
@@ -350,6 +361,7 @@ mod tests {
                 kalan: 1.0 - u5,
                 sifirlama: Some(simdi.ekle_sn(3600)),
                 uzunluk_dk: 300,
+                etiket: None,
             },
         );
         pencereler.insert(
@@ -359,6 +371,7 @@ mod tests {
                 kalan: 1.0 - uhafta,
                 sifirlama: Some(simdi.ekle_sn(86400)),
                 uzunluk_dk: 10080,
+                etiket: None,
             },
         );
         let mut claude = HavuzAnlik {
@@ -377,6 +390,8 @@ mod tests {
             ek: None,
             hata: None,
             notlar: Vec::new(),
+            kesif: None,
+            etkin_kalan_zincir: None,
         };
         claude.hesapla_etkin_durum();
 
@@ -410,6 +425,8 @@ mod tests {
             }),
             hata: None,
             notlar: Vec::new(),
+            kesif: None,
+            etkin_kalan_zincir: None,
         };
         h.hesapla_etkin_durum();
         h
@@ -659,6 +676,7 @@ mod tests {
                 kalan: 0.40,
                 sifirlama: Some(simdi.ekle_sn(86_400)),
                 uzunluk_dk: 10080,
+                etiket: None,
             },
         );
         let mut codex = HavuzAnlik {
@@ -677,6 +695,8 @@ mod tests {
             ek: None,
             hata: None,
             notlar: Vec::new(),
+            kesif: None,
+            etkin_kalan_zincir: None,
         };
         codex.hesapla_etkin_durum();
         anlik.havuzlar.insert("codex_plus".to_string(), codex);

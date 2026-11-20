@@ -152,6 +152,57 @@ impl GecmisDeposu {
         Ok(eklenen)
     }
 
+    /// `[baslangic, bitis]` aralığını en fazla `en_fazla` eşit dilime bölüp her dilimin en yüksek
+    /// kullanımlı örneğini kronolojik sırada döndürür. "Son N örnek" yerine tüm aralığı kapsar:
+    /// sık yazılan (statusline) havuzda 30 günlük grafik son birkaç saate daralmaz.
+    pub fn pencere_ornekleri_seyrek(
+        &self,
+        havuz: &str,
+        pencere: &str,
+        baslangic: UtcZaman,
+        bitis: UtcZaman,
+        en_fazla: usize,
+    ) -> Result<Vec<GecmisOrnegi>, DepoHatasi> {
+        let dilim_sayisi = en_fazla.clamp(1, 10_000) as i64;
+        let baslangic_ts = baslangic.as_offset().unix_timestamp();
+        let aralik = bitis.fark_sn(baslangic).max(1);
+        let dilim_sn = aralik / dilim_sayisi + 1;
+
+        // SQLite: tek MAX() toplamında çıplak sütunlar en yüksek satırdan gelir.
+        let mut stmt = self.conn.prepare(
+            r#"
+            SELECT havuz, pencere, zaman, MAX(kullanilan), kalan, sifirlama, kaynak, hassasiyet
+            FROM ornekler
+            WHERE havuz = ?1 AND pencere = ?2 AND zaman >= ?3
+            GROUP BY (zaman - ?3) / ?4
+            ORDER BY zaman ASC
+            LIMIT ?5
+            "#,
+        )?;
+        let rows = stmt.query_map(
+            params![havuz, pencere, baslangic_ts, dilim_sn, dilim_sayisi],
+            |row| {
+                let zaman_ts: i64 = row.get(2)?;
+                let sifirlama_ts: Option<i64> = row.get(5)?;
+                Ok(GecmisOrnegi {
+                    havuz: row.get(0)?,
+                    pencere: row.get(1)?,
+                    zaman: UtcZaman::from_unix_timestamp(zaman_ts).unwrap_or_else(UtcZaman::simdi),
+                    kullanilan: row.get(3)?,
+                    kalan: row.get(4)?,
+                    sifirlama: sifirlama_ts.and_then(UtcZaman::from_unix_timestamp),
+                    kaynak: row.get(6)?,
+                    hassasiyet: row.get(7)?,
+                })
+            },
+        )?;
+        let mut sonuc = Vec::new();
+        for item in rows {
+            sonuc.push(item?);
+        }
+        Ok(sonuc)
+    }
+
     /// Belirli bir havuz ve pencerenin son örneklerini kronolojik artan sırada döndürür (`limit <= 10_000`).
     pub fn pencere_ornekleri(
         &self,
@@ -311,6 +362,7 @@ mod tests {
                 kullanilan,
                 kalan: 1.0 - kullanilan,
                 sifirlama: Some(z("2026-11-15T23:00:00Z")),
+                etiket: None,
             },
         );
         let mut havuz = HavuzAnlik {
@@ -335,6 +387,8 @@ mod tests {
             ek: None,
             hata: None,
             notlar: Vec::new(),
+            kesif: None,
+            etkin_kalan_zincir: None,
         };
         havuz.hesapla_etkin_durum();
         let mut havuzlar = BTreeMap::new();
@@ -359,6 +413,13 @@ mod tests {
                 .pencere_ornekleri("claude_max", "5s", t0, 100)
                 .expect("sorgu");
             assert_eq!(liste.len(), 3);
+            // Seyrek sorgu tüm aralığı kapsar; dilim başına en yüksek kullanım.
+            let seyrek = depo
+                .pencere_ornekleri_seyrek("claude_max", "5s", t0, t0.ekle_sn(1200), 2)
+                .expect("seyrek");
+            assert_eq!(seyrek.len(), 2);
+            assert!((seyrek[0].kullanilan - 0.25).abs() < 1e-9);
+            assert!((seyrek[1].kullanilan - 0.40).abs() < 1e-9);
             assert!((liste[0].kullanilan - 0.10).abs() < 1e-9);
             assert!((liste[2].kullanilan - 0.40).abs() < 1e-9);
             assert_eq!(liste[0].hassasiyet, Some(0.1));

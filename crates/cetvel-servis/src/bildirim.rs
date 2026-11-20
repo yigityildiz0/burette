@@ -344,7 +344,12 @@ impl<G: BildirimGonderici> BildirimYoneticisi<G> {
             }
         }
 
-        self.onceki = Some(yeni.clone());
+        // Sessiz saatte önceki durum güncellenmez: gece eşik altına inen pencere sabah sessiz saat
+        // bitince (önceki hâlâ eşiğin üstündeyken) bildirilir; sıfırlanma da kaybolmaz. Aynı
+        // olay tekilleme anahtarıyla bir kez gönderilir.
+        if !(ayar.etkin && sessiz_saat_mi(yerel_saat, ayar)) {
+            self.onceki = Some(yeni.clone());
+        }
         gonderilenler
     }
 }
@@ -523,6 +528,7 @@ mod tests {
                 kullanilan: (1.0 - kalan_5s).clamp(0.0, 1.0),
                 kalan: kalan_5s,
                 sifirlama: Some(z("2026-11-15T22:00:00Z")),
+                etiket: None,
             },
         );
         let mut havuz = HavuzAnlik {
@@ -551,6 +557,8 @@ mod tests {
             ek: None,
             hata: None,
             notlar: Vec::new(),
+            kesif: None,
+            etkin_kalan_zincir: None,
         };
         havuz.hesapla_etkin_durum();
 
@@ -689,6 +697,29 @@ mod tests {
         );
     }
 
+    #[test]
+    fn sessiz_saatte_gecilen_esik_sabah_bildirilir() {
+        let depo = GecmisDeposu::bellekte().unwrap();
+        let ayar = BildirimAyari::default(); // 00..08 sessiz
+        let simdi = z("2026-11-15T14:00:00Z");
+        let mut yonetici = BildirimYoneticisi::yeni(SahteBildirimGonderici::yeni());
+        let aksam = ornek_anlik("codex_plus", 0.60, 0, simdi);
+        assert!(
+            yonetici
+                .degerlendir(&aksam, &ayar, &depo, 23, simdi)
+                .is_empty()
+        );
+        let gece = ornek_anlik("codex_plus", 0.10, 0, simdi.ekle_sn(60));
+        assert!(
+            yonetici
+                .degerlendir(&gece, &ayar, &depo, 2, simdi.ekle_sn(60))
+                .is_empty()
+        );
+        let sabah = ornek_anlik("codex_plus", 0.09, 0, simdi.ekle_sn(120));
+        let g = yonetici.degerlendir(&sabah, &ayar, &depo, 9, simdi.ekle_sn(120));
+        assert!(g.iter().any(|m| m.tur == "esik"), "{g:?}");
+    }
+
     fn tahminli_anlik(
         kalan: f64,
         simdi: UtcZaman,
@@ -799,6 +830,7 @@ mod tests {
             kullanilan: 1.0 - kalan,
             kalan,
             sifirlama: Some(simdi.ekle_sn(sifirlama_sn)),
+            etiket: None,
         };
         let tahmin = |durum: TahminDurumu, bitis_sn: i64, biter: bool| TahminBilgisi {
             durum,
@@ -941,13 +973,8 @@ mod tests {
         let mut sessiz_ayar = ozel_esik_ayar;
         sessiz_ayar.sessiz_platformlar.push("claude".to_string());
         let mut yonetici_sessiz = BildirimYoneticisi::yeni(SahteBildirimGonderici::yeni());
-        let giden_sessiz = yonetici_sessiz.degerlendir(
-            &d_alt,
-            &sessiz_ayar,
-            &depo_sessiz,
-            14,
-            simdi.ekle_sn(120),
-        );
+        let giden_sessiz =
+            yonetici_sessiz.degerlendir(&d_alt, &sessiz_ayar, &depo_sessiz, 14, simdi.ekle_sn(120));
         assert!(giden_sessiz.is_empty());
     }
 }

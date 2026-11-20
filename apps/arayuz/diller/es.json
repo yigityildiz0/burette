@@ -164,7 +164,13 @@
     "hakkinda": "Acerca de",
     "cikis": "Salir",
     "kisayollar": "Atajos",
-    "kaynakBilgi": "{kaynak} · {guven} · leído {yas}"
+    "kaynakBilgi": "{kaynak} · {guven} · leído {yas}",
+    "baglacVe": "{a} y {b}",
+    "dahaFazlaPencere": "+{n}",
+    "dahaFazlaPencereIpucu": "Otras ventanas: {liste}",
+    "altSayacSinirliIpucu": "{ad}: {kullanilabilir} usable (bruto {ham}) — limitado por {ebeveyn} ({ebeveynDeger})",
+    "altSayacSinirliKullanilanIpucu": "{ad}: {etkin} uso efectivo (bruto {ham}) — limitado por {ebeveyn} ({ebeveynDeger})",
+    "altSayacOzetIpucu": "Subcontadores: {liste}"
   },
   "gorunum": {
     "gostergeEtiket": "Indicador",
@@ -208,6 +214,7 @@
   },
   "pencereAdlari": {
     "5dk": "Ventana de 5 minutos",
+    "1s": "Ventana de 1 hora",
     "5s": "Ventana de 5 horas",
     "gun": "Ventana diaria",
     "hafta": "Ventana semanal",
@@ -215,6 +222,7 @@
   },
   "pencereEtiket": {
     "5dk": "5 min",
+    "1s": "1 h",
     "5s": "5 h",
     "gun": "Diario",
     "hafta": "Semanal",
@@ -222,6 +230,7 @@
   },
   "pencereBaslik": {
     "5dk": "5 minutos",
+    "1s": "1 hora",
     "5s": "Sesión (5 horas)",
     "gun": "Diario",
     "hafta": "Semanal",
@@ -229,6 +238,7 @@
   },
   "pencereKisa": {
     "5dk": "5m",
+    "1s": "1h",
     "5s": "5h",
     "gun": "día",
     "hafta": "semana",
@@ -236,10 +246,43 @@
   },
   "pencereIpucu": {
     "5dk": "Límite de tasa de solicitudes en ráfaga (ventana de 5 minutos)",
+    "1s": "Ventana de cuota móvil de 1 hora",
     "5s": "Ventana de cuota de sesión móvil de 5 horas",
     "gun": "Ventana diaria de 24 horas de tokens o solicitudes",
     "hafta": "Ventana de cuota semanal acumulada de 7 días",
     "ay": "Ventana de cuota de facturación mensual"
+  },
+  "pencereSure": {
+    "dk": "{n} min",
+    "saat": "{n} h",
+    "gun": "{n} d",
+    "kisaDk": "{n}m",
+    "kisaSaat": "{n}h",
+    "kisaGun": "{n}d"
+  },
+  "kesif": {
+    "yeniAlgilandiIpucu": "Recién detectado · {zaman}",
+    "yeniHavuzSerit": "Nuevo grupo: {ad}",
+    "cokYeniHavuz": "{n} grupos nuevos",
+    "incele": "Revisar",
+    "kapat": "Cerrar",
+    "gorulmeyenBaslik": "Grupos no vistos ({n})",
+    "sonGorulme": "Última vez: {zaman}",
+    "ebeveynIpucu": "El uso también descuenta de la cuota de {ebeveyn} ({guven})",
+    "ebeveynIpucuGuvensiz": "El uso también descuenta de la cuota de {ebeveyn}",
+    "zincirEtkin": "efectivo encadenado: {oran}",
+    "altSekmelerAria": "Subpestañas de grupos",
+    "ekmekKirintisiAria": "Ruta de navegación",
+    "durumAktif": "Activo",
+    "durumYeni": "Nuevo",
+    "durumGorulmuyor": "No visto"
+  },
+  "baglamMenu": {
+    "aria": "Acciones de tarjeta",
+    "yenile": "Actualizar",
+    "ayrintiyiAc": "Abrir detalles",
+    "degerleriKopyala": "Copiar valores",
+    "kopyalandi": "Valores copiados al portapapeles."
   },
   "kaynakTur": {
     "mod_koprusu": "Puente de extensión",
@@ -358,9 +401,18 @@
       "bildirimler": "Notificaciones",
       "baglantilar": "Conexiones",
       "platformlar": "Plataformas",
+      "havuzlar": "Grupos",
       "teknik": "Técnico",
       "hakkinda": "Acerca de y legal"
     },
+    "aramaYerTutucu": "Buscar ajustes…",
+    "aramaTemizle": "Limpiar búsqueda",
+    "aramaSonucYok": "No se encontraron ajustes para \"{sorgu}\".",
+    "havuzlarBaslik": "Grupos detectados",
+    "havuzlarBos": "Aún no se han detectado grupos.",
+    "geneldeGoster": "Mostrar en Resumen",
+    "havuzSabitle": "Fijar",
+    "gorulmeyenGenelIpucu": "Los grupos no vistos no se muestran en Resumen.",
     "hakkindaKisa": "Acerca de",
     "grupGorunum": "Apariencia e idioma",
     "grupDavranis": "Ventana y sistema",

@@ -20,14 +20,19 @@ use crate::ServisHatasi;
 use crate::claude_kopru::KiraIstegi;
 use crate::durum::PaylasilanServisDurumu;
 
-const AZAMI_GOVDE_BAYT: usize = 4096;
+/// Köprü yükü büyüyebilir (yeni alt sayaçlar, OAuth `usage` alanları): 4 KB dar kalıyordu.
+const AZAMI_GOVDE_BAYT: usize = 16 * 1024;
 const AZAMI_ESZAMANLI_ISTEK: usize = 16;
+/// `GET /v1/anlik?bekle=` uzun yoklamaları ayrı sınır kullanır: 60 sn bekleyen istemciler genel
+/// eşzamanlılık iznini tutup sağlık/yenile/bağla uçlarını 429'a düşürmesin.
+const AZAMI_UZUN_YOKLAMA: usize = 8;
 const AZAMI_SANIYE_ISTEK: usize = 20;
 
 #[derive(Clone)]
 struct HttpGuvenlikDurumu {
     paylasilan: Arc<PaylasilanServisDurumu>,
     eszamanli_kapisi: Arc<Semaphore>,
+    uzun_yoklama_kapisi: Arc<Semaphore>,
     hiz_siniri: Arc<Mutex<HizSinirlayici>>,
 }
 
@@ -183,6 +188,7 @@ pub fn http_router_olustur(paylasilan: Arc<PaylasilanServisDurumu>) -> Router {
     let guvenlik = HttpGuvenlikDurumu {
         paylasilan: Arc::clone(&paylasilan),
         eszamanli_kapisi: Arc::new(Semaphore::new(AZAMI_ESZAMANLI_ISTEK)),
+        uzun_yoklama_kapisi: Arc::new(Semaphore::new(AZAMI_UZUN_YOKLAMA)),
         hiz_siniri: Arc::new(Mutex::new(HizSinirlayici::yeni())),
     };
 
@@ -268,16 +274,35 @@ async fn guvenlik_katmani(
         );
     }
 
-    // 5. Eşzamanlı istek sınırı (<= 16).
-    let Ok(_izin) = Arc::clone(&guvenlik.eszamanli_kapisi).try_acquire_owned() else {
+    // 5. Eşzamanlı istek sınırı (<= 16); uzun yoklama ayrı havuzdan (<= 8).
+    let uzun_yoklama = req.uri().path() == "/v1/anlik"
+        && req
+            .uri()
+            .query()
+            .is_some_and(|q| q.split('&').any(|p| p.starts_with("bekle=")));
+    let kapi = if uzun_yoklama {
+        &guvenlik.uzun_yoklama_kapisi
+    } else {
+        &guvenlik.eszamanli_kapisi
+    };
+    let Ok(_izin) = Arc::clone(kapi).try_acquire_owned() else {
         return json_hata(
             StatusCode::TOO_MANY_REQUESTS,
             "eszamanli_siniri",
-            "Eşzamanlı istek sınırı (16) dolu",
+            "Eşzamanlı istek sınırı dolu",
         );
     };
 
-    next.run(req).await
+    let yanit = next.run(req).await;
+    // Gövde sınırı aşımı düz metin yerine JSON hata döndürür (köprü istemcisi ayrıştırabilsin).
+    if yanit.status() == StatusCode::PAYLOAD_TOO_LARGE {
+        return json_hata(
+            StatusCode::PAYLOAD_TOO_LARGE,
+            "govde_cok_buyuk",
+            "İstek gövdesi 16 KB sınırını aşıyor",
+        );
+    }
+    yanit
 }
 
 fn sabit_zamanli_esit(a: &[u8], b: &[u8]) -> bool {
@@ -505,6 +530,7 @@ mod tests {
                 kullanilan: 0.25,
                 kalan: 0.75,
                 sifirlama: Some(simdi.ekle_sn(7200)),
+                etiket: None,
             },
         );
         let mut codex = HavuzAnlik {
@@ -523,6 +549,8 @@ mod tests {
             ek: None,
             hata: None,
             notlar: Vec::new(),
+            kesif: None,
+            etkin_kalan_zincir: None,
         };
         codex.hesapla_etkin_durum();
 
