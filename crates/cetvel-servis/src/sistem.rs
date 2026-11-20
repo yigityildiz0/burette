@@ -214,7 +214,7 @@ pub fn cetvel_surecini_sonlandir(pid: u32, bekleme: Duration) -> Result<(), Stri
     Ok(())
 }
 
-/// Son klavye/fare girdisi eşik süreden kısa önce gerçekleştiyse `true` döner (`plan.md §4.1`).
+/// Son klavye/fare girdisi eşik süreden kısa önce gerçekleştiyse `true` döner.
 pub fn kullanici_etkin_mi(esik_sn: u64) -> bool {
     let mut bilgi = LASTINPUTINFO {
         cbSize: size_of::<LASTINPUTINFO>() as u32,

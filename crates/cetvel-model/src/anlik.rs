@@ -157,7 +157,7 @@ impl AnlikV2 {
     }
 }
 
-/// Havuzun anlık durumu (`plan.md §5.1`).
+/// Havuzun anlık durumu.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct HavuzAnlik {
     /// Platform kimliği (`codex`, `deepseek`, `claude`, vb.).
@@ -184,7 +184,7 @@ pub struct HavuzAnlik {
     /// Alt sayaçlar (ör. model-bazlı ek limit kimlikleri).
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub alt_sayaclar: BTreeMap<String, AltSayac>,
-    /// Pencere bazlı tahmin bilgisi (M4'te dolar).
+    /// Pencere bazlı tahmin bilgisi (yeterli okuma biriktiÄinde dolar).
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub tahmin: BTreeMap<String, TahminBilgisi>,
     /// Kullanım baskısı etiketi.
@@ -385,7 +385,7 @@ pub struct AltSayac {
     pub sifirlama: Option<UtcZaman>,
 }
 
-/// Tahmin bilgisi (`plan.md §7`).
+/// Tahmin bilgisi.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct TahminBilgisi {
     pub durum: TahminDurumu,
@@ -506,7 +506,7 @@ pub struct HataBilgisi {
     pub http_kodu: Option<u16>,
 }
 
-/// Pencere süresini (dakika) standart pencere adına çevirir (`plan.md §5.1`).
+/// Pencere süresini (dakika) standart pencere adına çevirir.
 pub fn pencere_adi_dakikadan(uzunluk_dk: u64) -> String {
     match uzunluk_dk {
         1..=15 => "5dk".to_string(),

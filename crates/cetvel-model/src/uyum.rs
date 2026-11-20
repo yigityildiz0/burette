@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use crate::anlik::{AnlikV2, Durum, HavuzAnlik, KaynakTuru};
 use crate::zaman::UtcZaman;
 
-/// Orkestra v1 uyum belgesi (`orkestra-uyum.json`, `plan.md §5.2`).
+/// Orkestra v1 uyum belgesi (`orkestra-uyum.json`).
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct OrkestraUyumV1 {
     /// Şema sürümü (sabit `1`).
@@ -77,7 +77,7 @@ pub const AGY_VARSAYILAN_ARALIK_SN: u64 = 1800;
 /// Antigravity (`agy`) okuma gecikmeleri için tampon süre (sn).
 pub const AGY_YAS_TAMPON_SN: u64 = 300;
 
-/// Anlık v2 verisini Orkestra v1 uyum biçimine dönüştürür (`plan.md §5.2`, `§2 D2`).
+/// Anlık v2 verisini Orkestra v1 uyum biçimine dönüştürür.
 pub fn uyum_uret(anlik: &AnlikV2, simdi: UtcZaman) -> OrkestraUyumV1 {
     uyum_uret_agy_araligi(anlik, simdi, None)
 }

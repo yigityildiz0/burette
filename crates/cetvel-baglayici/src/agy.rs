@@ -20,7 +20,7 @@ use crate::{Baglayici, BaglayiciSonucu};
 const CREATE_NO_WINDOW: u32 = 0x0800_0000;
 const AGY_HAVUZLARI: [&str; 3] = ["agy_gemini", "agy_claude_gpt", "agy_argon"];
 
-/// Antigravity (`agy -p /usage`) kota bağlayıcısı (`plan.md §6.3`).
+/// Antigravity (`agy -p /usage`) kota bağlayıcısı.
 /// Varsayılan olarak kapalıdır; `istek_uzerine` veya `otomatik` izin kapısıyla çalışır.
 /// `~/.gemini/antigravity/daemon/hub_*.json` dosyalarına kesinlikle erişmez.
 pub struct AntigravityBaglayicisi {
@@ -295,7 +295,7 @@ struct HamAgyBucket {
     reset_time: Option<Value>,
 }
 
-/// `agy -p /usage` JSON çıktısını (veya yedek metin tablosunu) 3 Cetvel havuzuna ayrıştırır (`plan.md §6.3`).
+/// `agy -p /usage` JSON çıktısını (veya yedek metin tablosunu) 3 Cetvel havuzuna ayrıştırır.
 pub fn agy_cikti_ayristir(cikti: &str, simdi: UtcZaman) -> BTreeMap<String, HavuzAnlik> {
     if let Some(havuzlar) = agy_json_ayristir(cikti, simdi) {
         return havuzlar;

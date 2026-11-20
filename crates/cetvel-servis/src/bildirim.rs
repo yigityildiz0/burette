@@ -3,7 +3,7 @@ use std::sync::Mutex;
 use cetvel_depo::{BildirimAyari, GecmisDeposu};
 use cetvel_model::{AnlikV2, Durum, PencereOlcum, TahminBilgisi, TahminDurumu, UtcZaman};
 
-/// Kullanıcıya sunulacak soyutlanmış bildirim mesajı (`plan.md §9.5`).
+/// Kullanıcıya sunulacak soyutlanmış bildirim mesajı.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BildirimMesaji {
     pub tur: String,

@@ -215,7 +215,7 @@ pub fn nesne_sahibi_sid(tutamac: windows::Win32::Foundation::HANDLE) -> Result<S
     }
 }
 
-/// Dizin veya dosya üzerinde DACL'i yalnız geçerli oturum sahibi + SYSTEM olarak daraltır (`plan.md §4.4`).
+/// Dizin veya dosya üzerinde DACL'i yalnız geçerli oturum sahibi + SYSTEM olarak daraltır.
 #[cfg(windows)]
 pub fn kullanici_dacl_uygula(yol: &Path) -> Result<(), DepoHatasi> {
     use std::os::windows::ffi::OsStrExt;

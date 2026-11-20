@@ -57,7 +57,7 @@
       "type": "string"
     },
     "HavuzAnlik": {
-      "description": "Havuzun anlık durumu (`plan.md §5.1`).",
+      "description": "Havuzun anlık durumu.",
       "type": "object",
       "properties": {
         "platform": {
@@ -120,7 +120,7 @@
           }
         },
         "tahmin": {
-          "description": "Pencere bazlı tahmin bilgisi (M4'te dolar).",
+          "description": "Pencere bazlı tahmin bilgisi (yeterli okuma biriktiÄinde dolar).",
           "type": "object",
           "additionalProperties": {
             "$ref": "#/$defs/TahminBilgisi"
@@ -339,7 +339,7 @@
       ]
     },
     "TahminBilgisi": {
-      "description": "Tahmin bilgisi (`plan.md §7`).",
+      "description": "Tahmin bilgisi.",
       "type": "object",
       "properties": {
         "durum": {

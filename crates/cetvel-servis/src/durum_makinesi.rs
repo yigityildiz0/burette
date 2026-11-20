@@ -11,7 +11,7 @@ const DEVRE_ESIGI: u32 = 5;
 /// `baglanmadi` (kurulu değil / anahtar yok) havuzlar bu aralıkla yeniden denenir; böylece
 /// sonradan kurulan Codex veya eklenen anahtar servis yeniden başlatılmadan algılanır.
 pub const BAGLANMADI_YENIDEN_DENEME_SN: i64 = 600;
-/// Elle/zorla yenilemede havuz başına en kısa okuma aralığı (`plan.md §5.3`: havuz başına 1/dk).
+/// Elle/zorla yenilemede havuz başına en kısa okuma aralığı (havuz başına 1/dk).
 pub const ZORLA_OKUMA_ASGARI_SN: i64 = 60;
 
 /// Tek bir havuz için zamanlama ve bayatlık kuralları.
@@ -38,7 +38,7 @@ pub fn bayat_esigi_hesapla(taban_sn: u64, en_uzun_aralik_sn: u64) -> u64 {
     taban_sn.max(en_uzun_aralik_sn.saturating_mul(2))
 }
 
-/// Havuz durum makinesi evreleri (`plan.md §6.6`, `§4.1`).
+/// Havuz durum makinesi evreleri.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TakipEvresi {
     Baslangic,
@@ -206,7 +206,7 @@ impl HavuzDurumMakinesi {
     }
 }
 
-/// Duvar saati sıçramasıyla uyku/uyanma algılar (`plan.md §4.1`: > 2 aralık).
+/// Duvar saati sıçramasıyla uyku/uyanma algılar (> 2 aralık).
 pub fn uyanma_algila(onceki_tik: UtcZaman, simdi: UtcZaman, tik_araligi_sn: u64) -> bool {
     let esik = (tik_araligi_sn.saturating_mul(2)).max(120) as i64;
     simdi.fark_sn(onceki_tik) > esik
@@ -363,7 +363,7 @@ pub fn yayin_birlestir(
     }
 }
 
-/// Havuz başına yenileme isteği hız sınırı (`plan.md §5.3`: 1/dk). `*` tüm havuzlar demektir.
+/// Havuz başına yenileme isteği hız sınırı (1/dk). `*` tüm havuzlar demektir.
 #[derive(Debug, Clone)]
 pub struct YenileSinirlayici {
     aralik_sn: i64,

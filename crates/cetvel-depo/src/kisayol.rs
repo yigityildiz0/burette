@@ -1,4 +1,4 @@
-//! Başlat menüsü kısayolu ve AppUserModelID (AUMID) ataması (`plan.md §9.5`).
+//! Başlat menüsü kısayolu ve AppUserModelID (AUMID) ataması.
 //!
 //! Paketlenmemiş bir masaüstü uygulamasının Windows toast'ı gösterebilmesi için Başlat
 //! menüsünde, `System.AppUserModel.ID` özelliği toast'ın kullandığı AUMID ile aynı olan bir

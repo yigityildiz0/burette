@@ -19,7 +19,7 @@ pub struct GecmisOrnegi {
     pub hassasiyet: Option<f64>,
 }
 
-/// SQLite (WAL) tabanlı yerel okuma geçmişi ve bildirim olay deposu (`plan.md §4.4`).
+/// SQLite (WAL) tabanlı yerel okuma geçmişi ve bildirim olay deposu.
 pub struct GecmisDeposu {
     conn: Connection,
 }
@@ -255,7 +255,7 @@ impl GecmisDeposu {
         Ok(sayi.max(0) as u64)
     }
 
-    /// `saklama_gun` günden eski ham örnekleri temizler (`plan.md §4.4`: 90 gün).
+    /// `saklama_gun` günden eski ham örnekleri temizler (90 gün).
     pub fn eski_verileri_temizle(
         &self,
         simdi: UtcZaman,

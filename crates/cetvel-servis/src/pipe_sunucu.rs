@@ -12,7 +12,7 @@ use crate::durum::PaylasilanServisDurumu;
 /// SID çözülemezse kullanılan yedek boru yolu.
 pub const VARSAYILAN_PIPE_ADI: &str = r"\\.\pipe\cetvel";
 
-/// Oturum kullanıcısına özgü boru adı (`plan.md §5.4`: `\\.\pipe\cetvel-<SID>`); iki Windows
+/// Oturum kullanıcısına özgü boru adı (`\\.\pipe\cetvel-<SID>`); iki Windows
 /// kullanıcısının servisleri çakışmaz.
 pub fn kullanici_pipe_adi() -> String {
     cetvel_depo::gecerli_kullanici_sid()
@@ -417,7 +417,7 @@ fn hatali(id: Option<Value>, kod: &str, mesaj: &str) -> PipeYanit {
     }
 }
 
-/// İstemci keşif sırası (`plan.md §5.4`): önce `baglanti.json`'daki ad (servisin yazdığı, yalnız
+/// İstemci keşif sırası: önce `baglanti.json`'daki ad (servisin yazdığı, yalnız
 /// kullanıcı DACL'li dosya), sonra oturum SID'li ad, en son eski sürümlerin sabit adı
 /// (`\\.\pipe\cetvel`, geriye uyum). Yalnız `\\.\pipe\cetvel` önekli adlar kabul edilir.
 pub fn pipe_adaylari(baglanti_pipe: Option<&str>) -> Vec<String> {

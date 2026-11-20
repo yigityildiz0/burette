@@ -90,7 +90,7 @@ struct HataGovdesi {
 }
 
 /// `127.0.0.1:<port>` dinleyicisi açar; port doluysa ve `otomatik_port` açıksa işletim
-/// sisteminden boş port alır (`plan.md §5.3`; seçilen port `baglanti.json`'a yazılır).
+/// sisteminden boş port alır (seçilen port `baglanti.json`'a yazılır).
 pub async fn loopback_dinleyici_ac(
     port: u16,
     otomatik_port: bool,

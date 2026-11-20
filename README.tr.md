@@ -1,14 +1,24 @@
+[English](README.md) | **Türkçe**
+
+<p align="center">
+  <img src="apps/arayuz/logo.png" alt="Cetvel logosu" width="96" height="96">
+</p>
+
 # Cetvel
 
 **Yapay zekâ kullanım sınırları, ölçülmüş hâliyle.**
 
-> English: [README.md](README.md)
-
 Cetvel, yapay zekâ kodlama araçlarındaki sınırlarınızdan ne kadarının kaldığını gösteren yerel bir Windows uygulamasıdır: Claude Code'un 5 saatlik ve haftalık pencereleri, Codex, Antigravity'nin üç havuzu ve isteğe bağlı olarak DeepSeek bakiyesi ile yerel kullanım sayaçları. Sistem tepsisinde durur, bir sınır bitmeden önce uyarır ve aynı sayıları kendi betikleriniz ve ajanlarınız için JSON olarak yayımlar.
 
-Projenin İngilizce yayın adı **Burette**'tir. Crate'ler, ikililer (`cetvel.exe`, `cetvel-masaustu.exe`), Windows servisi ve veri klasörleri `cetvel` adını kullanır.
+Aynı anda birkaç yapay zekâ kodlama aracı kullananlar için tasarlandı: her aracın kendi kullanım sayfasını açmadan, hangisinde hâlâ yer olduğunu tek bakışta görürsünüz.
 
-Cetvel bağımsız bir projedir; Anthropic, OpenAI, Google ya da DeepSeek ile bağı yoktur ve onlarca desteklenmez. Ürün adları yalnız tanımlamak için geçer.
+**Hızlı başlangıç:** [Sürümler (Releases) sayfasından](https://github.com/yigityildiz0/burette/releases) `Cetvel_<SÜRÜM>_x64-setup.exe` dosyasını indirin, SHA-256 değerini denetleyin, çalıştırın (yönetici yetkisi gerekmez) ve sistem tepsisindeki simgeye bakın. Ayrıntılar: [Kurulum](#kurulum).
+
+Projenin İngilizce yayın adı **Burette**'tir. Crate'ler, çalıştırılabilir dosyalar (`cetvel.exe`, `cetvel-masaustu.exe`), Windows servisi ve veri klasörleri `cetvel` adını kullanır.
+
+Durum: 0.1.0 sürümü; yalnız Windows 10 ve 11 (64 bit) için erken bir yayın.
+
+Cetvel bağımsız bir projedir; Anthropic, OpenAI, Google ya da DeepSeek ile bağı yoktur, bu şirketler tarafından desteklenmez ya da onaylanmaz. Ürün adları yalnız tanımlamak için geçer.
 
 ## Desteklenen platformlar
 
@@ -41,7 +51,7 @@ OpenCode ve DeepSeek Harness'ın resmî kotası olmadığı için Cetvel yalnız
 - **11 dil:** Türkçe, İngilizce, Almanca, Fransızca, İspanyolca, Portekizce (Brezilya), Rusça, Japonca, Korece, Basitleştirilmiş ve Geleneksel Çince.
 - **Temalar:** dört renk teması; her biri açık, koyu ya da sistemi izleyen kipte.
 - **Betikler ve ajanlar için:**
-  - `anlik.json` (anlık şema v2) ve `orkestra-uyum.json` (sade uyum şeması v1) `%LOCALAPPDATA%\Cetvel` altına atomik olarak yazılır. JSON şemaları [`schema/`](schema/) klasöründedir.
+  - `anlik.json` (anlık şema v2) ve `orkestra-uyum.json` (sade uyum şeması v1; her işi zorluğa ve kalan kotaya göre bir modele yönlendiren [Orkestra](https://github.com/yigityildiz0/orkestra) bu dosyayı okur) `%LOCALAPPDATA%\Cetvel` altına atomik olarak yazılır. JSON şemaları [`schema/`](schema/) klasöründedir.
   - `127.0.0.1` üzerinde yerel HTTP API (varsayılan port 43117, Bearer jeton zorunlu), kullanıcıya özel adlandırılmış boru (named pipe) ve MCP stdio sunucusu (`cetvel mcp`; araçlar `kota_anlik`, `havuz_detay`, `uygun_havuzlar`).
   - Komut satırı aracı (bkz. [Komut satırı](#komut-satırı)).
 
@@ -49,10 +59,25 @@ OpenCode ve DeepSeek Harness'ın resmî kotası olmadığı için Cetvel yalnız
 
 Gereksinim: Windows 10 ya da 11, 64 bit. Yönetici yetkisi gerekmez.
 
-1. [Sürümler (Releases) sayfasından](../../releases) `Cetvel_<SÜRÜM>_x64-setup.exe` dosyasını indirin.
+1. [Sürümler (Releases) sayfasından](https://github.com/yigityildiz0/burette/releases) `Cetvel_<SÜRÜM>_x64-setup.exe` dosyasını indirin.
 2. SHA-256 değerini sürüm sayfasındakiyle karşılaştırın, sonra çalıştırın.
 
-Kurulum dosyası henüz kod imzalı değildir; SmartScreen uyarı verebilir. Ayrıntılı adımlar, sessiz kurulum (`/S`), yükseltme ve kaldırma: [docs/KURULUM.md](docs/KURULUM.md).
+Kurulum dosyası henüz kod imzalı değildir; SmartScreen uyarı verebilir. Ayrıntılı adımlar, sessiz kurulum (`/S`), bir YZ kodlama ajanına kurulumu yaptırmak için hazır istem, yükseltme ve kaldırma: [docs/KURULUM.md](docs/KURULUM.md).
+
+## İlk çalıştırma
+
+1. Kurulum, oturum açtığınızda başlayan bir arka plan servisi kaydeder. Son sayfada **Cetvel'i çalıştır** işaretliyse uygulama açılır ve simgesi sistem tepsisinde görünür; açılır pencere için simgeye tıklayın ya da `Ctrl+Alt+K`'ya basın.
+2. Codex kuruluysa ve oturum açıksa kendiliğinden görünür.
+3. Claude için **Bağla** sekmesini açıp statusLine bağlantısını onaylayın (önce önizleme görürsünüz ve tarihli bir yedek alınır). Ardından Claude Code'u bir kez kullanın; ilk okuma böylece gelir.
+4. Antigravity, DeepSeek ve yerel kullanım sayaçları, uygulamada siz açana kadar kapalı kalır.
+
+## Kaldırma
+
+Ayarlar > Uygulamalar > Yüklü uygulamalar > Cetvel > Kaldır. **Uygulama verilerini sil** kutusunu işaretlemezseniz ayarlarınız ve geçmişiniz korunur. Sessiz kaldırma ve nelerin silindiği: [docs/KURULUM.md](docs/KURULUM.md#3-kaldırma).
+
+## Sorun giderme
+
+Servis çalışmıyor, port çakışması, SmartScreen, bildirimlerin görünmemesi ya da WebView2 eksikliği: [docs/KURULUM.md](docs/KURULUM.md#4-sorun-giderme). Kısa yanıtlar [SSS](#sss) bölümünde.
 
 ## Kaynaktan derleme
 
@@ -70,7 +95,7 @@ Kurulum dosyası için Tauri CLI'yi kurun (`cargo install tauri-cli --version "^
 pwsh -File paketleme/kurulum-dosyasi-uret.ps1   # -> target/release/bundle/nsis/Cetvel_<SÜRÜM>_x64-setup.exe
 ```
 
-Betik yerel derleme yollarını yeniden eşler (`--remap-path-prefix`, `/d1trimfile:`); böylece kullanıcı klasörünüz ikililere girmez. Ardından çıktıda bu yolu arar ve SHA-256 değerini yazar. Düz `cargo tauri build` de çalışır ama çıktısında yerel yollar kalır, yayımlanmamalıdır.
+Betik yerel derleme yollarını yeniden eşler (`--remap-path-prefix`, `/d1trimfile:`); böylece kullanıcı klasörünüz çalıştırılabilir dosyalara girmez. Ardından çıktıda bu yolu arar ve SHA-256 değerini yazar. Düz `cargo tauri build` de çalışır ama çıktısında yerel yollar kalır, yayımlanmamalıdır.
 
 ## Komut satırı
 
@@ -113,6 +138,10 @@ Hayır. Cetvel yalnız Windows'ta bulunan API'leri kullanır (Görev Zamanlayıc
 
 **API anahtarım bir yere gönderiliyor mu?**
 DeepSeek anahtarı yalnız DeepSeek bakiye uç noktasına gönderilir. Günlüğe ya da ayar dosyasına yazılmaz.
+
+## Katkı
+
+Hata bildirimleri ve fikirler [issue](https://github.com/yigityildiz0/burette/issues) olarak açılabilir. Katkı verenler ve YZ kodlama ajanları için derleme, test ve stil kuralları [AGENTS.md](AGENTS.md) dosyasındadır (İngilizce).
 
 ## Lisans
 

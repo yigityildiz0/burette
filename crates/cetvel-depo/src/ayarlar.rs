@@ -275,7 +275,7 @@ pub fn kart_listesi_gecerli_mi(liste: &[String]) -> bool {
     liste.len() <= 64 && liste.iter().all(|ad| kart_adi_gecerli_mi(ad))
 }
 
-/// Bozuk/eksik `ayarlar.toml` kurtarma sonucu (`plan.md §4.4`: bozuksa yedekten açılır).
+/// Bozuk/eksik `ayarlar.toml` kurtarma sonucu (bozuksa yedekten açılır).
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum AyarKurtarma {
     /// Dosya sağlamdı ya da yoktu (varsayılan kullanıldı).
@@ -328,12 +328,12 @@ pub struct AyarYukleme {
     pub kurtarma: AyarKurtarma,
 }
 
-/// Yerel HTTP API ayarları (`plan.md §5.3`).
+/// Yerel HTTP API ayarları.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(default)]
 pub struct HttpAyari {
     pub port: u16,
-    /// Port doluysa işletim sisteminden boş port alınıp `baglanti.json`'a yazılır (`plan.md §5.3`).
+    /// Port doluysa işletim sisteminden boş port alınıp `baglanti.json`'a yazılır.
     pub otomatik_port: bool,
 }
 
@@ -346,7 +346,7 @@ impl Default for HttpAyari {
     }
 }
 
-/// Windows toast bildirim ayarları (`plan.md §9.5`).
+/// Windows toast bildirim ayarları.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(default)]
 pub struct BildirimAyari {
@@ -438,7 +438,7 @@ impl BildirimAyari {
     }
 }
 
-/// Antigravity (`agy`) izin kapısı (`plan.md §6.3`).
+/// Antigravity (`agy`) izin kapısı.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum AgyOkumaIzni {
@@ -472,7 +472,7 @@ impl Default for AgyAyari {
     }
 }
 
-/// DeepSeek bakiye API ayarları (`plan.md §6.5`).
+/// DeepSeek bakiye API ayarları.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(default)]
 pub struct DeepSeekAyari {

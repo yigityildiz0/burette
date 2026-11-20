@@ -7,7 +7,7 @@ use crate::DepoHatasi;
 use crate::atomik::{atomik_yaz, atomik_yaz_json, kullanici_dacl_uygula};
 use crate::yollar::CetvelYollar;
 
-/// `%LOCALAPPDATA%\Cetvel\baglanti.json` içeriği (`plan.md §4.4`, `§5.3`).
+/// `%LOCALAPPDATA%\Cetvel\baglanti.json` içeriği.
 #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct BaglantiBilgisi {
     pub port: u16,

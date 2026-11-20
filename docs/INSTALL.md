@@ -16,7 +16,7 @@ Cetvel installs like a regular Windows app: a single setup file (`Cetvel_<VERSIO
 
 ## 1. Manual install
 
-1. Open the [Releases page](../../../releases) of this repository.
+1. Open the [Releases page](https://github.com/yigityildiz0/burette/releases) of this repository.
 2. Download **`Cetvel_<VERSION>_x64-setup.exe`** from the latest release.
 3. (Recommended) Check that the file is intact and unmodified. In PowerShell:
 
@@ -58,7 +58,7 @@ A silent install (`/S`) shows no window and always upgrades by overwriting. A pa
 
 ## 2. Install with an AI agent (copy and paste)
 
-Give the text below to an AI coding agent (Claude Code, Codex, etc.). Fill in `[RELEASES_URL]` (this repository's releases address, `https://github.com/<owner>/burette/releases`) and `<VERSION>`.
+Give the text below to an AI coding agent (Claude Code, Codex, etc.). Before you send it, set `$version` in step 1 to the version you want (see the [Releases page](https://github.com/yigityildiz0/burette/releases); `0.1.0` is the first release).
 
 ```text
 Install Cetvel on my Windows computer. Use PowerShell.
@@ -72,8 +72,9 @@ Rules:
 
 Steps:
 1. Download the setup file:
-   $file = Join-Path $env:TEMP "Cetvel_<VERSION>_x64-setup.exe"
-   Invoke-WebRequest -Uri "[RELEASES_URL]/download/v<VERSION>/Cetvel_<VERSION>_x64-setup.exe" -OutFile $file
+   $version = "0.1.0"
+   $file = Join-Path $env:TEMP "Cetvel_${version}_x64-setup.exe"
+   Invoke-WebRequest -Uri "https://github.com/yigityildiz0/burette/releases/download/v$version/Cetvel_${version}_x64-setup.exe" -OutFile $file
 2. Compute the SHA-256 and compare it with the value on the release page:
    (Get-FileHash $file -Algorithm SHA256).Hash
    If it does not match, do not install and tell me.
@@ -180,7 +181,7 @@ Cetvel is not code-signed yet, so Windows may show "Windows protected your PC".
 2. If it matches: **More info** → **Run anyway**.
 3. If it does not match, delete the file and download it again.
 
-Do not turn off SmartScreen or your antivirus and do not add exclusions. If your antivirus flags the file wrongly, report a false positive to the vendor and let us know.
+Do not turn off SmartScreen or your antivirus and do not add exclusions. If your antivirus flags the file wrongly, report a false positive to the vendor and report it as an [issue](https://github.com/yigityildiz0/burette/issues).
 
 ### Notifications do not appear
 

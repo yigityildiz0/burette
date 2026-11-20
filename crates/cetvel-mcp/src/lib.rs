@@ -1,4 +1,4 @@
-//! Cetvel MCP stdio JSON-RPC 2.0 sunucusu (`plan.md §5.5`).
+//! Cetvel MCP stdio JSON-RPC 2.0 sunucusu.
 
 use std::future::Future;
 use std::pin::Pin;

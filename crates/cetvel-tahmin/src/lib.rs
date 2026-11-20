@@ -1,4 +1,4 @@
-//! Kota tüketim hızı (EWMA), tükenme saati tahmini ve baskı etiketi hesaplamaları (`plan.md §7`).
+//! Kota tüketim hızı (EWMA), tükenme saati tahmini ve baskı etiketi hesaplamaları.
 //! Tüm tahmin çıktıları doğrulama kapısı geçene kadar `deneysel` etiketiyle üretilir.
 
 use std::collections::BTreeSet;
@@ -135,8 +135,8 @@ pub fn pencere_tahmini(
 
 /// Havuzdaki tüm pencereler için tahminleri doldurur ve bağlayıcı pencereye göre baskıyı günceller.
 ///
-/// `taban_esik(pencere)`: o pencerenin orkestra tabanı (Claude 5s %15, hafta %30, diğer %20;
-/// `plan.md §7, §9`). Herhangi bir pencere tabanının altındaysa baskı `kaçın` olur.
+/// `taban_esik(pencere)`: o pencerenin orkestra tabanı (Claude 5s %15, hafta %30, diğer %20).
+/// Herhangi bir pencere tabanının altındaysa baskı `kaçın` olur.
 pub fn havuz_tahminlerini_doldur<F, T>(
     havuz: &mut HavuzAnlik,
     simdi: UtcZaman,
@@ -176,7 +176,7 @@ pub fn havuz_tahminlerini_doldur<F, T>(
     }
 }
 
-/// Orkestra tabanı varsayılanları (`plan.md §9`): Claude 5s %15, Claude hafta %30, diğer %20.
+/// Orkestra tabanı varsayılanları: Claude 5s %15, Claude hafta %30, diğer %20.
 pub fn varsayilan_taban_esigi(platform: &str, pencere: &str) -> f64 {
     match (platform, pencere) {
         ("claude", "5s") => 0.15,
@@ -185,7 +185,7 @@ pub fn varsayilan_taban_esigi(platform: &str, pencere: &str) -> f64 {
     }
 }
 
-/// Tahmin ve kalan orana göre baskı etiketini belirler (`plan.md §7`).
+/// Tahmin ve kalan orana göre baskı etiketini belirler.
 ///
 /// - `kalan <= 0` ya da `kalan < taban_esik` (orkestra tabanı) → `kaçın`.
 /// - Tabanın üstünde model bandı (`hesapla_etkin_durum`: ≤ %20 `dikkat`) korunur.

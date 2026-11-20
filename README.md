@@ -1,12 +1,22 @@
+**English** | [Türkçe](README.tr.md)
+
+<p align="center">
+  <img src="apps/arayuz/logo.png" alt="Burette logo" width="96" height="96">
+</p>
+
 # Burette
 
 **AI usage limits, measured.**
 
-> Türkçe: [README.tr.md](README.tr.md)
-
 Burette is a local Windows app that shows how much of your AI coding tool limits you have left: Claude Code's 5-hour and weekly windows, Codex, the three Antigravity pools, and optionally a DeepSeek balance and local usage counters. It sits in the system tray, warns you before a limit runs out, and publishes the same numbers as JSON for your own scripts and agents.
 
+It is for people who work with several AI coding tools at once and want to see, at a glance, which one still has room, without opening each tool's own usage page.
+
+**Quick start:** download `Cetvel_<VERSION>_x64-setup.exe` from the [Releases page](https://github.com/yigityildiz0/burette/releases), check its SHA-256, run it (no administrator rights needed), and look for the icon in the system tray. Details: [Install](#install).
+
 Burette is the English name of the project; its Turkish name is **Cetvel**. The crates, binaries (`cetvel.exe`, `cetvel-masaustu.exe`), Windows service and data folders use the name `cetvel`.
+
+Status: version 0.1.0, an early release for Windows 10 and 11 (64-bit) only.
 
 Burette is independent and is not affiliated with or endorsed by Anthropic, OpenAI, Google or DeepSeek. Their product names are used only to identify them.
 
@@ -41,7 +51,7 @@ OpenCode and DeepSeek Harness have no official quota, so Burette only counts loc
 - **11 languages:** Turkish, English, German, French, Spanish, Portuguese (Brazil), Russian, Japanese, Korean, Simplified and Traditional Chinese.
 - **Themes:** four colour themes, each in light, dark or follow-system mode.
 - **For scripts and agents:**
-  - `anlik.json` (snapshot schema v2) and `orkestra-uyum.json` (compact compatibility schema v1) are written atomically to `%LOCALAPPDATA%\Cetvel`. JSON Schemas are in [`schema/`](schema/).
+  - `anlik.json` (snapshot schema v2) and `orkestra-uyum.json` (compact compatibility schema v1, read by [Orkestra](https://github.com/yigityildiz0/orkestra), a router that picks a model for each task by difficulty and remaining quota) are written atomically to `%LOCALAPPDATA%\Cetvel`. JSON Schemas are in [`schema/`](schema/).
   - A local HTTP API on `127.0.0.1` (default port 43117, Bearer token required), a per-user named pipe, and an MCP stdio server (`cetvel mcp`, tools `kota_anlik`, `havuz_detay`, `uygun_havuzlar`).
   - A command-line tool (see [Command line](#command-line)).
 
@@ -49,10 +59,25 @@ OpenCode and DeepSeek Harness have no official quota, so Burette only counts loc
 
 Requirements: Windows 10 or 11, 64-bit. No administrator rights are needed.
 
-1. Download `Cetvel_<VERSION>_x64-setup.exe` from the [Releases page](../../releases).
+1. Download `Cetvel_<VERSION>_x64-setup.exe` from the [Releases page](https://github.com/yigityildiz0/burette/releases).
 2. Compare its SHA-256 with the value on the release page, then run it.
 
-The installer is not code-signed yet, so SmartScreen may warn you. Full instructions, silent install (`/S`), upgrading and uninstalling: [docs/INSTALL.md](docs/INSTALL.md).
+The installer is not code-signed yet, so SmartScreen may warn you. Full instructions, silent install (`/S`), a ready-made prompt that lets an AI coding agent install it for you, upgrading and uninstalling: [docs/INSTALL.md](docs/INSTALL.md).
+
+## First run
+
+1. Setup registers a background service that starts when you sign in. If **Run Cetvel** is ticked on the last page, the app opens and its icon appears in the system tray; click the icon for the popover, or press `Ctrl+Alt+K`.
+2. Codex shows up on its own if it is installed and signed in.
+3. For Claude, open the **Connect** tab and approve the statusLine link (you see a preview first and a dated backup is made). Then use Claude Code once so it sends its first reading.
+4. Antigravity, DeepSeek and the local usage counters stay off until you enable them in the app.
+
+## Uninstall
+
+Settings > Apps > Installed apps > Cetvel > Uninstall. Your settings and history are kept unless you tick **Delete the application data**. Silent uninstall and what is removed: [docs/INSTALL.md](docs/INSTALL.md#3-uninstalling).
+
+## Troubleshooting
+
+Service not running, port conflicts, SmartScreen, missing notifications or WebView2: [docs/INSTALL.md](docs/INSTALL.md#4-troubleshooting). Short answers are in the [FAQ](#faq).
 
 ## Build from source
 
@@ -115,6 +140,10 @@ No. Burette uses Windows-only APIs (Task Scheduler, Credential Manager, named pi
 
 **Is my API key sent anywhere?**
 The DeepSeek key is sent only to the DeepSeek balance endpoint. It is not written to logs or settings files.
+
+## Contributing
+
+Bug reports and ideas are welcome as [issues](https://github.com/yigityildiz0/burette/issues). Build, test and style rules for contributors and AI coding agents are in [AGENTS.md](AGENTS.md).
 
 ## License
 

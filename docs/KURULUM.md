@@ -16,7 +16,7 @@ Cetvel normal bir Windows uygulaması gibi kurulur: tek bir kurulum dosyası (`C
 
 ## 1. Elle kurulum
 
-1. Bu deponun [Sürümler (Releases) sayfasını](../../../releases) açın.
+1. Bu deponun [Sürümler (Releases) sayfasını](https://github.com/yigityildiz0/burette/releases) açın.
 2. En son sürümün altındaki **`Cetvel_<SÜRÜM>_x64-setup.exe`** dosyasını indirin.
 3. (Önerilir) Dosyanın bozulmadığını ve değiştirilmediğini doğrulayın. PowerShell'de:
 
@@ -58,7 +58,7 @@ Sessiz kurulum (`/S`) bu pencereyi göstermez ve her zaman üzerine yazarak yük
 
 ## 2. YZ ajanıyla kurulum (kopyala-yapıştır)
 
-Aşağıdaki metni bir YZ kodlama ajanına (Claude Code, Codex vb.) verin. `[RELEASES_URL]` (bu deponun sürüm adresi, `https://github.com/<sahip>/burette/releases`) ve `<SÜRÜM>` yerlerini doldurun.
+Aşağıdaki metni bir YZ kodlama ajanına (Claude Code, Codex vb.) verin. Göndermeden önce 1. adımdaki `$surum` değerini istediğiniz sürüme ayarlayın ([Sürümler sayfasına](https://github.com/yigityildiz0/burette/releases) bakın; ilk sürüm `0.1.0`).
 
 ```text
 Windows bilgisayarıma Cetvel'i kur. PowerShell kullan.
@@ -72,8 +72,9 @@ Kurallar:
 
 Adımlar:
 1. Kurulum dosyasını indir:
-   $dosya = Join-Path $env:TEMP "Cetvel_<SÜRÜM>_x64-setup.exe"
-   Invoke-WebRequest -Uri "[RELEASES_URL]/download/v<SÜRÜM>/Cetvel_<SÜRÜM>_x64-setup.exe" -OutFile $dosya
+   $surum = "0.1.0"
+   $dosya = Join-Path $env:TEMP "Cetvel_${surum}_x64-setup.exe"
+   Invoke-WebRequest -Uri "https://github.com/yigityildiz0/burette/releases/download/v$surum/Cetvel_${surum}_x64-setup.exe" -OutFile $dosya
 2. SHA-256 değerini hesapla ve sürüm sayfasındaki değerle karşılaştır:
    (Get-FileHash $dosya -Algorithm SHA256).Hash
    Eşleşmiyorsa kurma ve bana bildir.
@@ -178,7 +179,7 @@ Cetvel şu an kod imzası taşımıyor; Windows bu yüzden "Windows kişisel bil
 2. Değer eşleşiyorsa **Ek bilgi** → **Yine de çalıştır**.
 3. Eşleşmiyorsa dosyayı silin ve yeniden indirin.
 
-SmartScreen'i ya da antivirüsü kapatmayın, dışlama eklemeyin. Antivirüs dosyayı yanlış işaretlerse üreticiye yanlış pozitif bildirimi yapın ve bize bildirin.
+SmartScreen'i ya da antivirüsü kapatmayın, dışlama eklemeyin. Antivirüs dosyayı yanlış işaretlerse üreticiye yanlış pozitif bildirimi yapın ve [issue](https://github.com/yigityildiz0/burette/issues) olarak da bildirin.
 
 ### Bildirimler görünmüyor
 

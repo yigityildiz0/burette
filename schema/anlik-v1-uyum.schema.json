@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "OrkestraUyumV1",
-  "description": "Orkestra v1 uyum belgesi (`orkestra-uyum.json`, `plan.md §5.2`).",
+  "description": "Orkestra v1 uyum belgesi (`orkestra-uyum.json`).",
   "type": "object",
   "properties": {
     "sema": {

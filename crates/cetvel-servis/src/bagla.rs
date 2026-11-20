@@ -1,4 +1,4 @@
-//! Bağla akışı (`plan.md §8`): salt-okunur platform taraması, "Test et" sonucu özeti ve
+//! Bağla akışı: salt-okunur platform taraması, "Test et" sonucu özeti ve
 //! Claude `statusLine` zincirleme planı.
 //!
 //! Tarama hiçbir şey kurmaz, hiçbir ayarı değiştirmez ve gizli değer okumaz: yalnız dosya/ikili
@@ -273,7 +273,7 @@ pub fn havuz_test_ozeti(havuz: &HavuzAnlik) -> (bool, String, String) {
 }
 
 // ---------------------------------------------------------------------------
-// Claude statusLine zincirleme (`plan.md §8`: önizle → tarihli yedek → açık onay → yaz)
+// Claude statusLine zincirleme (önizle → tarihli yedek → açık onay → yaz)
 // ---------------------------------------------------------------------------
 
 /// Cetvel'in statusLine komutunu tanıyan işaret.

@@ -17,7 +17,7 @@ use crate::{Baglayici, BaglayiciSonucu};
 
 const MAKS_GOVDE_BAYT: usize = 64 * 1024;
 
-/// DeepSeek `/user/balance` bakiye bağlayıcısı (`plan.md §6.5`).
+/// DeepSeek `/user/balance` bakiye bağlayıcısı.
 /// Anahtar yoksa ağ isteği atmadan `Durum::Baglanmadi` (`baglanmadi`) döndürür.
 pub struct DeepSeekBaglayicisi {
     ayar: CozulmusDeepSeek,
@@ -225,7 +225,7 @@ struct HamBakiye {
     topped_up_balance: Option<Value>,
 }
 
-/// DeepSeek `/user/balance` JSON gövdesini `HavuzAnlik` yapısına çevirir (`plan.md §6.5`).
+/// DeepSeek `/user/balance` JSON gövdesini `HavuzAnlik` yapısına çevirir.
 pub fn deepseek_yanit_ayristir(govde: &[u8], simdi: UtcZaman) -> HavuzAnlik {
     let Ok(ham) = serde_json::from_slice::<HamDeepSeekYanit>(govde) else {
         return deepseek_durum_havuzu(

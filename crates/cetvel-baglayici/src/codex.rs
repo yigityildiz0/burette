@@ -28,7 +28,7 @@ struct OnbellekIkili {
     sema_dogrulandi: bool,
 }
 
-/// `codex.exe app-server` üzerinden Codex kota okuyucusu (`plan.md §6.2`).
+/// `codex.exe app-server` üzerinden Codex kota okuyucusu.
 pub struct CodexBaglayicisi {
     ayar: CodexAyari,
     onbellek: Mutex<Option<OnbellekIkili>>,
@@ -460,7 +460,7 @@ async fn yanit_bekle(
             continue;
         }
         let Ok(deger) = serde_json::from_str::<Value>(temiz) else {
-            // JSON olmayan günlük satırları atlanır (`plan.md §6.2`).
+            // JSON olmayan günlük satırları atlanır.
             continue;
         };
         let Some(id_val) = deger.get("id").and_then(Value::as_i64) else {
@@ -729,7 +729,7 @@ fn pencere_ekle(hedef: &mut BTreeMap<String, PencereOlcum>, pencere: Option<&Ham
     }
     let kullanilan = (used_pct / 100.0).clamp(0.0, 1.0);
     let kalan = (1.0 - kullanilan).clamp(0.0, 1.0);
-    // `plan.md §6.2`: usedPercent == 0 iken resetsAt kayar; sıfırlama alanı yazılmaz.
+    // usedPercent == 0 iken resetsAt kayar; sıfırlama alanı yazılmaz.
     let sifirlama = if used_pct <= 0.0 {
         None
     } else {
