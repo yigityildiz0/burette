@@ -72,7 +72,7 @@ Kurallar:
 
 Adımlar:
 1. Kurulum dosyasını indir:
-   $surum = "0.1.0"
+   $surum = "0.2.0"
    $dosya = Join-Path $env:TEMP "Cetvel_${surum}_x64-setup.exe"
    Invoke-WebRequest -Uri "https://github.com/yigityildiz0/burette/releases/download/v$surum/Cetvel_${surum}_x64-setup.exe" -OutFile $dosya
 2. SHA-256 değerini hesapla ve sürüm sayfasındaki değerle karşılaştır:

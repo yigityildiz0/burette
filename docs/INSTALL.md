@@ -72,7 +72,7 @@ Rules:
 
 Steps:
 1. Download the setup file:
-   $version = "0.1.0"
+   $version = "0.2.0"
    $file = Join-Path $env:TEMP "Cetvel_${version}_x64-setup.exe"
    Invoke-WebRequest -Uri "https://github.com/yigityildiz0/burette/releases/download/v$version/Cetvel_${version}_x64-setup.exe" -OutFile $file
 2. Compute the SHA-256 and compare it with the value on the release page:

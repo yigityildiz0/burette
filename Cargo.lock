@@ -597,7 +597,7 @@ checksum = "6d43a04d8753f35258c91f8ec639f792891f748a1edbd759cf1dcea3382ad83c"
 
 [[package]]
 name = "cetvel"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "cetvel-baglayici",
  "cetvel-depo",
@@ -617,7 +617,7 @@ dependencies = [
 
 [[package]]
 name = "cetvel-ajan"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "cetvel-model",
  "rusqlite",
@@ -627,7 +627,7 @@ dependencies = [
 
 [[package]]
 name = "cetvel-baglayici"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "cetvel-depo",
  "cetvel-model",
@@ -645,7 +645,7 @@ dependencies = [
 
 [[package]]
 name = "cetvel-depo"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "cetvel-model",
  "getrandom 0.4.3",
@@ -661,7 +661,7 @@ dependencies = [
 
 [[package]]
 name = "cetvel-masaustu"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "axum",
  "cetvel-depo",
@@ -687,7 +687,7 @@ dependencies = [
 
 [[package]]
 name = "cetvel-mcp"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "cetvel-depo",
  "cetvel-model",
@@ -701,7 +701,7 @@ dependencies = [
 
 [[package]]
 name = "cetvel-model"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "schemars 1.2.3",
  "serde",
@@ -712,7 +712,7 @@ dependencies = [
 
 [[package]]
 name = "cetvel-servis"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "axum",
  "cetvel-ajan",
@@ -733,7 +733,7 @@ dependencies = [
 
 [[package]]
 name = "cetvel-tahmin"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "cetvel-model",
  "serde",

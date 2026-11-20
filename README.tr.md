@@ -16,7 +16,7 @@ Aynı anda birkaç yapay zekâ kodlama aracı kullananlar için tasarlandı: her
 
 Projenin İngilizce yayın adı **Burette**'tir. Crate'ler, çalıştırılabilir dosyalar (`cetvel.exe`, `cetvel-masaustu.exe`), Windows servisi ve veri klasörleri `cetvel` adını kullanır.
 
-Durum: 0.1.0 sürümü; yalnız Windows 10 ve 11 (64 bit) için erken bir yayın.
+Durum: 0.2.0 sürümü; yalnız Windows 10 ve 11 (64 bit) için erken bir yayın.
 
 Cetvel bağımsız bir projedir; Anthropic, OpenAI, Google ya da DeepSeek ile bağı yoktur, bu şirketler tarafından desteklenmez ya da onaylanmaz. Ürün adları yalnız tanımlamak için geçer.
 

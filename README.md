@@ -16,7 +16,7 @@ It is for people who work with several AI coding tools at once and want to see, 
 
 Burette is the English name of the project; its Turkish name is **Cetvel**. The crates, binaries (`cetvel.exe`, `cetvel-masaustu.exe`), Windows service and data folders use the name `cetvel`.
 
-Status: version 0.1.0, an early release for Windows 10 and 11 (64-bit) only.
+Status: version 0.2.0, an early release for Windows 10 and 11 (64-bit) only.
 
 Burette is independent and is not affiliated with or endorsed by Anthropic, OpenAI, Google or DeepSeek. Their product names are used only to identify them.
 
