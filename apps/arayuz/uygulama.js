@@ -2977,16 +2977,28 @@
     return '<svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true"><rect x="3" y="3" width="5" height="5" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="3" width="5" height="5" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="10" width="5" height="5" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="10" width="5" height="5" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>';
   }
 
-  // Platformun en dar etkin kalanı (sekme altındaki ince çizgi için).
+  // Bir platformun bağımsız kök havuzları: ebeveyni aynı platformda olan (iç içe, ör. Argon ->
+  // Gemini, Fable -> Claude haftalık) havuzlar köke sayılmaz. Antigravity'de Gemini ve Claude-GPT
+  // ayrı kotalardır; biri bitince platform "bitti" görünmemeli.
+  function bagimsizKokHavuzlar(havuzListesi) {
+    const idler = new Set(havuzListesi.map(([id]) => id));
+    return havuzListesi.filter(([, h]) => {
+      const eb = h?.kesif?.ebeveyn_havuz;
+      return !(eb && idler.has(eb));
+    });
+  }
+
+  // Platformun sekme çizgisi: her bağımsız kökün kendi etkin kalanı, platform için en uygun kök.
+  // Tek kökte (Claude, Codex) bu, kök havuzun değeridir.
   function platformEnDar(platform, sirali) {
-    let enDar = null;
-    for (const [id, h] of sirali) {
-      if (h.platform !== platform) continue;
+    const kokler = bagimsizKokHavuzlar(sirali.filter(([, h]) => h.platform === platform));
+    let secilen = null;
+    for (const [id, h] of kokler) {
       const { bp, etkinKalan } = baglayiciBul(h);
       if (typeof etkinKalan !== "number") continue;
-      if (!enDar || etkinKalan < enDar.kalan) enDar = { id, h, bp, kalan: etkinKalan };
+      if (!secilen || etkinKalan > secilen.kalan) secilen = { id, h, bp, kalan: etkinKalan };
     }
-    return enDar;
+    return secilen;
   }
 
   function platformSekmeleriHtml(sirali, yan) {
@@ -3370,7 +3382,34 @@
       degerHtml = `<span class="kart-deger soluk">${escHtml(t(`baski.${h.durum}`, h.durum))}</span>`;
     }
 
-    if (grup.havuzlar.length > 1) {
+    const kokler = bagimsizKokHavuzlar(grup.havuzlar);
+    if (kokler.length > 1 && !durum.duzenleModu) {
+      // Bağımsız kotalar ayrı satırlar: her biri kendi etkin kalanı, çubuğu ve sıfırlanma süresiyle.
+      const satirlar = kokler
+        .map(([kid, kh]) => {
+          const { bp: kbp, olcum: kol, etkinKalan: kek } = baglayiciBul(kh);
+          const ad = havuzKisaAd(kh) || kh.etiket || kid;
+          if (typeof kek !== "number" || !kol) {
+            return `
+            <span class="kp-ad kisalt-etiket" data-ipucu="${escHtml(kh.etiket || ad)}">${escHtml(ad)}</span>
+            <span class="kp-sure soluk">${escHtml(t(`baski.${kh.durum}`, kh.durum))}</span>
+            <span class="kp-sure rakam">—</span>`;
+          }
+          const kOran = kalanModuMu() ? kek : 1 - kek;
+          const ipucu = `${kh.etiket || ad}: ${oranMetni(kOran)} · ${pencereBasligi(kbp, kol)}`;
+          return `
+            <span class="kp-ad kisalt-etiket" data-ipucu="${escHtml(ipucu)}">${escHtml(ad)}</span>
+            ${inceCubukHtml({ oran: kOran, sinif: cubukSinifi(kid, kh, kbp, kol) })}
+            <span class="kp-sure rakam" data-ipucu="${escHtml(ipucu)}">${escHtml(yuzdeBicimle(kOran))}${kol.sifirlama ? ` · ${escHtml(sureKisa(kol.sifirlama))}` : ""}</span>`;
+        })
+        .join("");
+      cubuklarHtml = `<span class="kart-pencereler-sarici"><span class="kart-pencereler">${satirlar}</span></span>`;
+      const enIyi = platformEnDar(p, grup.havuzlar);
+      if (enIyi) {
+        const oran = kalanModuMu() ? enIyi.kalan : 1 - enIyi.kalan;
+        degerHtml = `<span class="kart-deger rakam" data-ipucu="${escHtml(kokler.map(([, x]) => havuzKisaAd(x) || x.etiket).join(" · "))}">${escHtml(oranMetni(oran))}</span>`;
+      }
+    } else if (grup.havuzlar.length > 1) {
       const repKisa = havuzKisaAd(h) || h.etiket;
       const repTam = h.hamEtiket || h.etiket;
       const havuzOzeti = grup.havuzlar

@@ -253,7 +253,8 @@ const OLCUM = String.raw`(() => {
   // görünmeyen kısım (ör. liste altı, sabit alt çubuğun altında kalan satır) kırpılarak ölçülür.
   const kirpmaKutusu = (el) => {
     let k = { left: -Infinity, top: -Infinity, right: Infinity, bottom: Infinity };
-    for (let a = el.parentElement; a; a = a.parentElement) {
+    // Öğenin kendisi de kırpar: .kisalt-etiket gibi taşması gizli öğenin görünmeyen metni sayılmaz.
+    for (let a = el; a; a = a.parentElement) {
       const s = getComputedStyle(a);
       if (s.overflowX !== "visible" || s.overflowY !== "visible") {
         const r = a.getBoundingClientRect();

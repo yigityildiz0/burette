@@ -83,9 +83,22 @@ fn masaustu_run_kaydini_sil() {
     }
 }
 
+/// Servisi konsolsuz başlatan aracı: `conhost.exe --headless`. `cetvel.exe` konsol alt sistemli
+/// olduğundan doğrudan başlatılınca varsayılan terminal Windows Terminal ise görünür bir pencere
+/// açılıp kapanır; `SW_HIDE` bunu engelleyemez. Başsız conhost hiç pencere oluşturmaz.
+pub(crate) fn konsolsuz_baslatici() -> String {
+    let kok = std::env::var("SystemRoot").unwrap_or_else(|_| r"C:\Windows".to_string());
+    format!(r"{kok}\System32\conhost.exe")
+}
+
+/// `conhost --headless`'e verilen argümanlar: servis komutu (görev XML'i ile `Run` aynı).
+pub(crate) fn servis_arguman(exe_yolu: &Path) -> String {
+    format!("--headless \"{}\" servis --gizli", exe_yolu.display())
+}
+
 /// Servisin oturum açılışı kaydının (yedek yol) `Run` değeri: pencere açmadan çalışan servis.
 pub fn servis_run_komutu(exe_yolu: &Path) -> String {
-    format!("\"{}\" servis --gizli", exe_yolu.display())
+    format!("\"{}\" {}", konsolsuz_baslatici(), servis_arguman(exe_yolu))
 }
 
 /// Servisin oturum açılışında nasıl başlatıldığı.
@@ -764,7 +777,8 @@ pub(crate) async fn servis_pid_bul(yollar: &CetvelYollar) -> Option<u32> {
 /// yazılmaz ("herhangi bir kullanıcı"; yalnız yönetici kaydedebilir, kayıt `Run` yedeğine düşer).
 /// Eylem `servis --gizli`'dir: `Run` yedeğiyle aynı, kendi konsolu varsa pencere gizlenir.
 pub fn gorev_xml_uret(exe_yolu: &Path, kullanici_sid: Option<&str>) -> String {
-    let exe_escaped = xml_kacis(&exe_yolu.display().to_string());
+    let baslatici = xml_kacis(r"%SystemRoot%\System32\conhost.exe");
+    let arguman = xml_kacis(&servis_arguman(exe_yolu));
     let kullanici = kullanici_sid
         .map(|sid| format!("\n      <UserId>{}</UserId>", xml_kacis(sid)))
         .unwrap_or_default();
@@ -810,8 +824,8 @@ pub fn gorev_xml_uret(exe_yolu: &Path, kullanici_sid: Option<&str>) -> String {
   </Settings>
   <Actions Context="Author">
     <Exec>
-      <Command>{exe_escaped}</Command>
-      <Arguments>servis --gizli</Arguments>
+      <Command>{baslatici}</Command>
+      <Arguments>{arguman}</Arguments>
     </Exec>
   </Actions>
 </Task>
@@ -1707,9 +1721,11 @@ mod tests {
         assert_eq!(GOREV_ADI, "CetvelServis");
         assert!(ESKI_GOREV_ADLARI.contains(&r"Cetvel\CetvelServis"));
         assert!(!ESKI_GOREV_ADLARI.contains(&GOREV_ADI));
-        assert_eq!(
-            servis_run_komutu(Path::new(r"C:\Program Files\Cetvel\cetvel.exe")),
-            r#""C:\Program Files\Cetvel\cetvel.exe" servis --gizli"#
+        let run = servis_run_komutu(Path::new(r"C:\Program Files\Cetvel\cetvel.exe"));
+        assert!(run.starts_with('"') && run.contains(r"\System32\conhost.exe"), "{run}");
+        assert!(
+            run.ends_with(r#"" --headless "C:\Program Files\Cetvel\cetvel.exe" servis --gizli"#),
+            "{run}"
         );
     }
 
@@ -1957,8 +1973,11 @@ mod tests {
             Some(ORNEK_SID),
         );
         assert!(xml.contains("Cetvel &amp; Co\\cetvel.exe"));
-        // Görev de `Run` yedeği gibi pencereyi gizleyen bayrakla çalışır.
-        assert!(xml.contains("<Arguments>servis --gizli</Arguments>"));
+        // Görev de `Run` yedeği gibi başsız conhost üzerinden, hiç pencere açmadan çalışır.
+        assert!(xml.contains(r"<Command>%SystemRoot%\System32\conhost.exe</Command>"));
+        assert!(xml.contains(
+            "<Arguments>--headless &quot;C:\\Program Files\\Cetvel &amp; Co\\cetvel.exe&quot; servis --gizli</Arguments>"
+        ));
         assert!(xml.contains("<RunLevel>LeastPrivilege</RunLevel>"));
         assert!(xml.contains("<LogonType>InteractiveToken</LogonType>"));
     }
