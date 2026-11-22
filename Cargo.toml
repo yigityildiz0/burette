@@ -13,7 +13,7 @@ members = [
 ]
 
 [workspace.package]
-version = "0.2.1"
+version = "0.2.2"
 edition = "2024"
 license = "MIT OR Apache-2.0"
 
@@ -67,6 +67,19 @@ features = [
     "Win32_UI_Shell",
     "Win32_UI_Shell_PropertiesSystem",
 ]
+
+# Derleme klasörü (target) şişmesin: hata ayıklama bilgisi ve artımlı derleme önbelleği
+# geliştirme ve test derlemelerinde kapalıdır (hata ayıklama bilgisi tek başına çıktının çoğunu tutar).
+[profile.dev]
+debug = false
+incremental = false
+
+[profile.test]
+debug = false
+incremental = false
+
+[profile.release]
+strip = "debuginfo"
 
 [workspace.lints.clippy]
 all = { level = "warn", priority = -1 }

@@ -24,11 +24,16 @@
 .PARAMETER YalnizDogrula
   Derlemeden yalnız mevcut çıktıları tarar.
 
+.PARAMETER OnbellekTut
+  Verilmezse betik başarıyla bitince target klasöründeki büyük ara çıktılar (debug, deps, build,
+  incremental) silinir; kurulum dosyası (target\release\bundle) kalır. Aynı sürümü tekrar derlemek
+  gerekirse bu bayrakla hızlı derleme için önbellek korunur.
+
 .EXAMPLE
   pwsh -File paketleme\kurulum-dosyasi-uret.ps1
 #>
 [CmdletBinding()]
-param([switch]$YalnizDogrula)
+param([switch]$YalnizDogrula, [switch]$OnbellekTut)
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version 3
@@ -159,3 +164,13 @@ if ($sorunSayisi -gt 0) {
     exit 1
 }
 Write-Host 'Temiz: dağıtılacak ikililerde kullanıcı klasörü yolu yok.' -ForegroundColor Green
+
+if (-not $OnbellekTut -and -not $YalnizDogrula) {
+    $hedef = Join-Path $kok 'target'
+    $silinecek = @('debug', 'tmp', 'release\deps', 'release\build', 'release\incremental', 'release\.fingerprint', 'release\examples', 'release\wix', 'release\resources') |
+        ForEach-Object { Join-Path $hedef $_ }
+    foreach ($yol in $silinecek) {
+        if (Test-Path $yol) { Remove-Item $yol -Recurse -Force -ErrorAction SilentlyContinue }
+    }
+    Write-Host 'Büyük ara derleme çıktıları silindi (kurulum dosyası kaldı).' -ForegroundColor Green
+}

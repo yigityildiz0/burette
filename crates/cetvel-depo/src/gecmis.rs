@@ -52,6 +52,9 @@ impl GecmisDeposu {
             self.conn.pragma_update(None, "synchronous", "NORMAL")?;
         }
         self.conn.pragma_update(None, "busy_timeout", 5000)?;
+        // WAL dosyası büyüyüp sabit kalmasın: kontrol noktasından sonra en çok 1 MiB tutulur.
+        self.conn
+            .pragma_update(None, "journal_size_limit", 1_048_576)?;
         // Negatif değer KiB'dir: bağlantı başına 512 KiB sayfa önbelleği.
         self.conn.pragma_update(None, "cache_size", -512)?;
         self.conn.execute_batch(
@@ -323,6 +326,10 @@ impl GecmisDeposu {
         let _ = self
             .conn
             .execute("DELETE FROM olaylar WHERE zaman < ?1", params![kesim])?;
+        // WAL'ı ana dosyaya işleyip kes: günde bir çalıştığı için maliyeti önemsizdir.
+        let _ = self
+            .conn
+            .query_row("PRAGMA wal_checkpoint(TRUNCATE)", [], |_| Ok(()));
         Ok(silinen)
     }
 }

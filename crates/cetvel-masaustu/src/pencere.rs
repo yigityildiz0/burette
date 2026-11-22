@@ -7,9 +7,81 @@ use tauri::{AppHandle, Emitter, Manager, PhysicalPosition, WebviewWindow};
 use crate::durum::{MasaustuDurum, SeritDurumu};
 
 // wry'nin varsayılan özellik listesini korur. GPU ve site izolasyonu açık kalır.
-// Ek bellek bayrakları ancak ayrı ölçümle doğrulanırsa buraya alınmalıdır.
-pub const TARAYICI_ARGUMANLARI: &str =
-    "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection";
+// Arayüz yerel dosyalardan yüklendiği için ağ önbelleği gereksizdir; bileşen güncelleyicisi
+// (Widevine, konuşma, alt kaynak filtresi vb. ~60 MB) uygulamanın hiçbir işine yaramaz.
+pub const TARAYICI_ARGUMANLARI: &str = "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --disable-component-update --disk-cache-size=1048576 --media-cache-size=1048576";
+
+/// Uygulama oturum açılışında `--arka-plan` ile başlatılır; elle açılışta ana pencere görünür.
+pub const ARKA_PLAN_BAYRAGI: &str = "--arka-plan";
+
+/// Verilen argümanlar arka plan (oturum açılışı) başlatmasını mı gösteriyor.
+pub fn arka_planda_mi<I, S>(argumanlar: I) -> bool
+where
+    I: IntoIterator<Item = S>,
+    S: AsRef<str>,
+{
+    argumanlar
+        .into_iter()
+        .any(|a| a.as_ref() == ARKA_PLAN_BAYRAGI)
+}
+
+/// WebView2'nin yeniden üretebildiği önbellek ve gereksiz bileşen klasörleri (EBWebView köküne göre).
+/// Profil verisine (`Default` altındaki yerel depolama, çerezler, `Local State`) dokunulmaz.
+const WEBVIEW_ATILABILIR: &[&[&str]] = &[
+    &["Default", "Cache"],
+    &["Default", "Code Cache"],
+    &["Default", "GPUCache"],
+    &["GPUPersistentCache"],
+    &["GrShaderCache"],
+    &["ShaderCache"],
+    &["DawnGraphiteCache"],
+    &["DawnWebGPU"],
+    &["component_crx_cache"],
+    &["extensions_crx_cache"],
+    &["WidevineCdm"],
+    &["Subresource Filter"],
+    &["Speech Recognition"],
+    &["hyphen-data"],
+    &["BrowserMetrics-spare.pma"],
+];
+
+/// `kok` altındaki atılabilir önbellek ve bileşenleri siler; silinen öğe sayısını döndürür.
+/// Hatalar yutulur (dosya kullanımda olabilir), bir sonraki temizlikte yeniden denenir.
+pub fn webview_onbellegi_temizle_kok(kok: &std::path::Path) -> usize {
+    let mut silinen = 0;
+    for yol in WEBVIEW_ATILABILIR {
+        let mut hedef = kok.to_path_buf();
+        for parca in *yol {
+            hedef.push(parca);
+        }
+        let sonuc = if hedef.is_dir() {
+            std::fs::remove_dir_all(&hedef)
+        } else if hedef.is_file() {
+            std::fs::remove_file(&hedef)
+        } else {
+            continue;
+        };
+        if sonuc.is_ok() {
+            silinen += 1;
+        }
+    }
+    silinen
+}
+
+/// WebView2 kullanıcı verisi klasöründeki atılabilir önbelleği temizler. Yalnız hiç pencere
+/// (WebView) yokken çağrılmalıdır.
+pub fn webview_onbellegi_temizle() {
+    let Some(yerel) = std::env::var_os("LOCALAPPDATA") else {
+        return;
+    };
+    let kok = std::path::PathBuf::from(yerel)
+        .join("dev.cetvel.masaustu")
+        .join("EBWebView");
+    let silinen = webview_onbellegi_temizle_kok(&kok);
+    if silinen > 0 {
+        tracing::info!(silinen, "WebView2 önbelleği temizlendi");
+    }
+}
 
 #[derive(Debug, Clone)]
 pub enum BekleyenAcilis {
@@ -414,6 +486,15 @@ pub fn temizlik_baslat(app: &AppHandle) {
                                     .entry(etiket.to_string())
                                     .or_default()
                                     .yok_etme_baslat();
+                                drop(g);
+                                // Pencere yok olduktan sonra, başka WebView kalmadıysa önbelleği at.
+                                let app_t = app_k.clone();
+                                std::thread::spawn(move || {
+                                    std::thread::sleep(Duration::from_secs(8));
+                                    if app_t.webview_windows().is_empty() {
+                                        webview_onbellegi_temizle();
+                                    }
+                                });
                             }
                             Err(err) => {
                                 tracing::warn!(%err, etiket, "Gizli pencere yok edilemedi");
@@ -981,6 +1062,44 @@ pub fn serit_secenek_uygula(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn arka_plan_bayragi_yalniz_acik_bayrakla_taninir() {
+        assert!(!arka_planda_mi(["cetvel-masaustu.exe"]));
+        assert!(arka_planda_mi(["cetvel-masaustu.exe", "--arka-plan"]));
+        assert!(!arka_planda_mi([
+            "cetvel-masaustu.exe",
+            "--arka-plan-degil"
+        ]));
+    }
+
+    #[test]
+    fn webview_temizligi_onbellegi_siler_profil_verisine_dokunmaz() {
+        let kok = std::env::temp_dir().join(format!("cetvel-wv-test-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&kok);
+        for yol in [
+            "Default/Cache",
+            "Default/Local Storage",
+            "WidevineCdm",
+            "GrShaderCache",
+            "component_crx_cache",
+        ] {
+            let d = kok.join(yol);
+            std::fs::create_dir_all(&d).unwrap();
+            std::fs::write(d.join("x.bin"), b"0123456789").unwrap();
+        }
+        std::fs::write(kok.join("Local State"), b"{}").unwrap();
+
+        let silinen = webview_onbellegi_temizle_kok(&kok);
+        assert_eq!(silinen, 4);
+        assert!(!kok.join("Default/Cache").exists());
+        assert!(!kok.join("WidevineCdm").exists());
+        assert!(kok.join("Default/Local Storage/x.bin").exists());
+        assert!(kok.join("Local State").exists());
+        // Tekrar çağrı sessizce 0 döner.
+        assert_eq!(webview_onbellegi_temizle_kok(&kok), 0);
+        let _ = std::fs::remove_dir_all(&kok);
+    }
 
     #[test]
     fn yalniz_gizli_ve_suresi_dolmus_pencere_yok_edilir() {

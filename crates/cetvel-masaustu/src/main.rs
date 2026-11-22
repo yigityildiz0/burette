@@ -308,6 +308,12 @@ fn ilk_kurulum(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
         g.deger_yonu = DegerYonu::koddan(&ayarlar.masaustu.deger_yonu);
     }
     windows_ile_baslat_kaydet(otomatik_baslat_etkin);
+    if otomatik_baslat_etkin {
+        // Eski kayıtlar bayraksızdır; `--arka-plan` ile yeniden yazılır (idempotent).
+        let _ = app_handle.autolaunch().enable();
+    }
+    // Henüz hiç pencere yok: WebView2 önbelleği ve gereksiz bileşenler güvenle atılabilir.
+    pencere::webview_onbellegi_temizle();
     let (tepsi_dili, deger_yonu) = {
         let g = durum.ic.lock().unwrap_or_else(|e| e.into_inner());
         (g.tepsi_dili, g.deger_yonu)
@@ -375,6 +381,10 @@ fn ilk_kurulum(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     // Başlangıç durumunu arka planda senkronize et (çevrimdışıysa UI'da servis başlatma önerilir).
     let ilk_durum_app = app_handle;
     let ilk_durum_yeni = app.state::<MasaustuDurum>().inner().clone();
+    // Elle açılışta ana pencereyi göster; oturum açılışında (`--arka-plan`) yalnız tepsi.
+    if !pencere::arka_planda_mi(std::env::args()) {
+        pencere::pencere_ac_ve_odakla(&ilk_durum_app, &ilk_durum_yeni, None);
+    }
     tauri::async_runtime::spawn(async move {
         let saglik = ilk_durum_yeni.istemci.saglik_kontrol().await;
         let anlik = if saglik.calisiyor {
@@ -432,6 +442,8 @@ fn main() {
         .plugin(
             tauri_plugin_autostart::Builder::new()
                 .app_name("Cetvel")
+                // Oturum açılışında pencere açılmasın; elle açılışta ana pencere görünür.
+                .args([pencere::ARKA_PLAN_BAYRAGI])
                 .build(),
         )
         .invoke_handler(tauri::generate_handler![
