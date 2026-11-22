@@ -703,7 +703,7 @@
   const SENARYO_NORMAL = {
     sema: 2,
     yazan: "cetvel",
-    surum: "0.2.0",
+    surum: "0.2.1",
     zaman: "2026-11-15T19:50:00Z",
     sira: 1842,
     havuzlar: {
@@ -1339,7 +1339,7 @@
   }
 
   function bosAnlikOlustur() {
-    return { sema: 2, yazan: "cetvel", surum: "0.2.0", zaman: new Date().toISOString(), sira: 0, havuzlar: {} };
+    return { sema: 2, yazan: "cetvel", surum: "0.2.1", zaman: new Date().toISOString(), sira: 0, havuzlar: {} };
   }
 
   const baslangicTercih = tercihleriOku();
@@ -5072,7 +5072,7 @@
           ayarSatirHtml({
             baslik: t("ayarlar.surumEtiket"),
             not: t("ayarlar.mimariNot"),
-            denetimHtml: `<code class="salt-okuma-kutu rakam">v${escHtml(durum.anlik?.surum || "0.2.0")}</code>`,
+            denetimHtml: `<code class="salt-okuma-kutu rakam">v${escHtml(durum.anlik?.surum || "0.2.1")}</code>`,
           }),
           ayarSatirHtml({
             baslik: t("ayarlar.gizlilikBaslik"),
@@ -5374,7 +5374,7 @@
       kisayolEl.dataset.ipucu = t("genel.kisayolIpucu");
     }
 
-    const sVer = `v${durum.anlik?.surum || "0.2.0"}`;
+    const sVer = `v${durum.anlik?.surum || "0.2.1"}`;
     for (const id of ["btn-surum-acilir", "btn-surum-genis"]) {
       const el = document.getElementById(id);
       if (el) {

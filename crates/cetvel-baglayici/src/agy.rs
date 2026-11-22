@@ -576,6 +576,27 @@ pub fn agy_ikili_coz() -> Option<PathBuf> {
     None
 }
 
+/// `~/.gemini/antigravity-cli/last_check.timestamp` damgasını şimdiye çeker (bkz. [`agy_surec_oku`]).
+/// Dosya ve klasör yoksa hiçbir şey yapmaz; hatalar yutulur, okuma bundan etkilenmez.
+fn guncelleme_denetimini_ertele() {
+    if let Some(profil) = std::env::var_os("USERPROFILE") {
+        let yol = Path::new(&profil)
+            .join(".gemini")
+            .join("antigravity-cli")
+            .join("last_check.timestamp");
+        denetim_damgasini_tazele(&yol);
+    }
+}
+
+fn denetim_damgasini_tazele(yol: &Path) {
+    if !yol.is_file() {
+        return;
+    }
+    if let Ok(dosya) = std::fs::OpenOptions::new().write(true).open(yol) {
+        let _ = dosya.set_modified(std::time::SystemTime::now());
+    }
+}
+
 /// `agy -p /usage --output-format json --print-timeout 40s` komutunu MSYS olmadan doğrudan çalıştırır.
 ///
 /// Süreç askıda başlatılır, Job Object'e eklenir, sonra devam ettirilir (erken doğan torunlar da
@@ -597,6 +618,12 @@ pub async fn agy_surec_oku(
     } else {
         Command::new(ikili_yol)
     };
+
+    // agy her açılışta, son denetimden 5-30 dk geçmişse ayrık bir `--bg-updater` başlatır; bu süreç
+    // konsolsuz olduğundan `agy --version` çağrısı için yeni konsol açar ve varsayılan terminal
+    // Windows Terminal ise ekranda anlık pencere yanıp söner. Ortam değişkeni bunu engellemez
+    // (ölçüldü); denetim damgası taze tutulunca güncelleyici hiç başlamaz.
+    guncelleme_denetimini_ertele();
 
     cmd.args([
         "-p",
@@ -1434,6 +1461,33 @@ mod tests {
 
     fn z(s: &str) -> UtcZaman {
         UtcZaman::parse_tarih_veya_zaman(s).expect("zaman")
+    }
+
+    #[test]
+    fn denetim_damgasi_tazelenir_ve_olmayan_dosya_olusturulmaz() {
+        let dizin = std::env::temp_dir().join(format!("cetvel-agy-damga-{}", std::process::id()));
+        std::fs::create_dir_all(&dizin).expect("dizin");
+        let yol = dizin.join("last_check.timestamp");
+
+        denetim_damgasini_tazele(&yol);
+        assert!(!yol.exists(), "olmayan damga dosyası oluşturulmamalı");
+
+        let dosya = std::fs::File::create(&yol).expect("dosya");
+        let eski = std::time::SystemTime::now() - Duration::from_secs(3 * 3600);
+        dosya.set_modified(eski).expect("eski zaman");
+        drop(dosya);
+
+        denetim_damgasini_tazele(&yol);
+        let yas = std::time::SystemTime::now()
+            .duration_since(
+                std::fs::metadata(&yol)
+                    .and_then(|m| m.modified())
+                    .expect("zaman"),
+            )
+            .unwrap_or_default();
+        assert!(yas < Duration::from_secs(60), "damga yenilenmedi: {yas:?}");
+
+        let _ = std::fs::remove_dir_all(&dizin);
     }
 
     #[tokio::test]

@@ -1722,7 +1722,10 @@ mod tests {
         assert!(ESKI_GOREV_ADLARI.contains(&r"Cetvel\CetvelServis"));
         assert!(!ESKI_GOREV_ADLARI.contains(&GOREV_ADI));
         let run = servis_run_komutu(Path::new(r"C:\Program Files\Cetvel\cetvel.exe"));
-        assert!(run.starts_with('"') && run.contains(r"\System32\conhost.exe"), "{run}");
+        assert!(
+            run.starts_with('"') && run.contains(r"\System32\conhost.exe"),
+            "{run}"
+        );
         assert!(
             run.ends_with(r#"" --headless "C:\Program Files\Cetvel\cetvel.exe" servis --gizli"#),
             "{run}"
